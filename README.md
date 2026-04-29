@@ -1,7 +1,9 @@
-# [Your Name] — Portfolio
+# [Dmitri Tsizov] — Portfolio
 
 ## About Me
-Replace this with a short intro about yourself and your business -->
+Hi! I'm Dmitri, and I'm learning workflow automation 
+with 02Signal. I'm building automations to help small 
+businesses save time on repetitive tasks.
 
 ---
 
