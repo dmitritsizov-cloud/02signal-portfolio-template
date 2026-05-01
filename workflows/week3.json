@@ -1,0 +1,64 @@
+{
+  "name": "UrbanStyle TEST Telegram 1",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fee5ee8f-c5c3-42a6-9533-69f0de0cd6ba",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "chatId": "6205033039",
+        "text": "Tere! 🎉 See on UrbanStyle FAQ boti esimene automatiseeritud sõnum n8n-ist!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1934fd84-984b-4a68-8c2e-169d31261dce",
+      "name": "Send a text message",
+      "webhookId": "c74a5121-a086-4291-89a1-cda8962c2e23",
+      "credentials": {
+        "telegramApi": {
+          "id": "ylCU6R3fsV60y5qE",
+          "name": "UrbanStyle FAQ Bot 1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9822e5dc-0d09-4c84-8007-125d91ab7923",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5949fab626268d8b88b21dc50348a43b1823770fe66fe1bcebd9d5e1e0dd23d0"
+  },
+  "id": "YveJpAD37F4aq9aS",
+  "tags": []
+}
