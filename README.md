@@ -21,7 +21,6 @@ In this portfolio I document my work in the 02Signal program — a 7-week journe
 ### Week 2
 **What I built:** **What it does:** **Link to workflow:** [Click here to view workflow](PASTE_YOUR_LINK_HERE)
 
-### Week 3
 ### Week 3 — UrbanStyle FAQ Telegram Bot
 
 **What I built:** A Telegram bot for UrbanStyle.ltd customer service, connected to an n8n workflow.
