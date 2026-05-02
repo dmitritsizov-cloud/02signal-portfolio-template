@@ -29,8 +29,8 @@ In this portfolio I document my work in the **02Signal program** — a 7-week jo
 
 **Try it / view it:**
 - 🤖 [Live bot demo: @DmitriTsizov_bot](https://t.me/DmitriTsizov_bot)
-- ⚙️ [Workflow file (n8n export)](./workflows/week3.json)
-- 📄 [Business documentation & ROI estimate](./docs/week3.md)
+- ⚙️ [Workflow file (n8n export)](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/workflows/week3.json)
+- 📄 [Business documentation & ROI estimate](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week3.md)
 
 ### Week 4
 *Coming soon — AI-generated content & marketing*
