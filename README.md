@@ -29,8 +29,19 @@ In this portfolio I document my work in the **02Signal program** — a 7-week jo
 - 📄 [Full segmentation analysis](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week1.md)
 - 🎯 [The exact prompt I used (for reproducibility)](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/prompts/week1-segmentation-prompt.md)
 
-### Week 2
-*Coming soon — Process mapping*
+### Week 2 — Operations & Process Analysis ✅
+
+**What I built:** A systematic evaluation of UrbanStyle's business processes using the Estonian **TÄPNE framework** (Frequency, Recognizability, Structure, Visible Value, Predictability — each scored 1-5, max 25 points).
+
+**What it covers:** Ten candidate processes identified across core, support, and management categories — then scored individually against the TÄPNE criteria. Results: two processes hit a perfect 25/25 (sales reports, loyalty program management), three more in Tier 1 (20-22/25), and one deliberate counter-example at 7/25 (recruitment) showing the framework's discriminating power.
+
+**Key strategic insight:** Not every high-scoring process is an AI project. Staff scheduling and inventory tracking score 22/25 but are solved by standard SaaS (Planday, ERP) — not AI. Mislabeling them as "AI" wastes budget. The genuinely AI-suited processes are loyalty program automation, customer support (already built in Week 4), and email personalization.
+
+**Validates Week 4 retroactively:** The FAQ bot built in Week 4 addresses Customer Support — TÄPNE score 20/25, and the highest-scoring process that is genuinely an AI problem rather than a standard software problem.
+
+**View it:**
+- 📄 [Full process analysis with TÄPNE scoring](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week2.md)
+- 🎯 [The two prompts I used (for reproducibility)](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/prompts/week2-process-analysis-prompts.md)
 
 ### Week 3 — UrbanStyle FAQ Telegram Bot ✅
 
@@ -95,7 +106,12 @@ Reusable prompt templates I've designed are in [the prompts folder](https://gith
 **What clicked:** Segmentation isn't demographics — it's behavior + value. The most useful insight wasn't "this segment is 25-35 years old" but "this segment generates 35% of revenue from only 15% of customers." That single ratio drove the entire prioritization. Also: the most consultant-level move Claude made was flagging that Narva's low conversion is **not an AI problem** — it's a localization/staffing problem. Knowing what *not* to automate is just as important as knowing what to automate.
 
 ### Week 2
-*Coming soon*
+
+**What was new:** The TÄPNE framework gives systematic discipline to a question that usually devolves into opinions. "Should we automate this?" becomes a 1-5 score across five concrete criteria, comparable across processes. The framework doesn't make decisions for you — but it forces honest evaluation and reveals where intuition was wrong. Also new: distinguishing **AI projects** from **ordinary automation projects**. Several high-scoring processes (staff scheduling, inventory tracking) are solved by standard SaaS, not AI. Mislabeling them costs budget and credibility.
+
+**What was hard:** Resisting uniform high scores. When everything ranks 22-25, the framework is useless. The quality check on Claude's evaluation was: are some scores genuinely low? Recruitment got 7/25, social media 13/25 — and that honesty is what makes the rest of the rankings credible. Also hard: distinguishing cost-savings ROI from revenue-protection ROI. Marko's 8 hours/week is real money, but protecting €1.4M of Klubi-Maret revenue through churn prevention is an order of magnitude larger. Both are valid; both deserve separate analysis.
+
+**What clicked:** Process analysis is segmentation analysis viewed from a different angle. Week 1 looked at customers; Week 2 looked at the work UrbanStyle does for those customers. The same insights re-emerge — Klubi-Maret matters most, Narva needs language work first, Trendi-Liisa drives operational pain — but viewed through where the *work* happens. Both views are needed; neither alone is enough. And the most valuable consultant move was explicitly listing what *not* to automate (recruitment, AI-generated content for Eco-Kadri). Negative recommendations prevent expensive mistakes.
 
 ### Week 3
 
