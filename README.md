@@ -15,8 +15,19 @@ In this portfolio I document my work in the **02Signal program** — a 7-week jo
 
 ## My Automations
 
-### Week 1
-*Coming soon — Customer & market analysis*
+### Week 1 — Customer Segmentation & Market Analysis ✅
+
+**What I built:** A data-driven customer segmentation framework for UrbanStyle.ltd, generated using Claude as an AI strategic consultant.
+
+**What it covers:** Five distinct customer segments (Eco-Kadri, Klubi-Maret, Trendi-Liisa, Narva-Olga, Ühekordne-Andres) with full demographic, behavioral, and value profiles. Each segment includes a marketing recommendation and a clear AI-automation priority. The analysis ends with a 6-month strategic roadmap for marketing director Anna Mets — including the honest insight that one segment's problem (Narva's 2.1% conversion) is **not** an AI problem but a localization/staffing issue.
+
+**Key business insight:** Klubi-Maret = only 15% of customers but 35% of revenue. A single segment carries one-third of the business — and protecting it (churn prevention) is the highest-ROI AI use case UrbanStyle could deploy.
+
+**Estimated business impact:** ~60,000€ additional annual revenue + risk mitigation on 1.4M€ of revenue from the loyalty segment.
+
+**View it:**
+- 📄 [Full segmentation analysis](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week1.md)
+- 🎯 [The exact prompt I used (for reproducibility)](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/prompts/week1-segmentation-prompt.md)
 
 ### Week 2
 *Coming soon — Process mapping*
@@ -67,12 +78,21 @@ All my n8n workflows are stored as `.json` files in [the workflows folder](https
 
 Business analyses, ROI estimates, and architecture overviews are in [the docs folder](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/tree/main/docs). Each major automation has a corresponding business case.
 
+## My AI Prompts
+
+Reusable prompt templates I've designed are in [the prompts folder](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/tree/main/prompts). These are the exact prompts that produced the analyses in my portfolio — saved for reproducibility and future reuse.
+
 ---
 
 ## What I Learned
 
 ### Week 1
-*Coming soon*
+
+**What was new:** Working with AI as a *strategic consultant* — fundamentally different from using it as a *production component* (like Week 4's bot). Same tool, completely different pattern: one-time deliverable instead of continuous pipeline, conversational interface instead of API workflow, business judgment instead of automated tests. Recognizing which pattern fits a problem is itself a senior skill.
+
+**What was hard:** Validating AI output without real transaction data. Claude generated estimated percentages that *looked* professional and consistent — but they're estimates, not facts. The temptation was to accept the numbers because they were specific. Recognizing them as hypotheses (not conclusions) is part of the consultant's job. The next iteration will validate against actual RFM analysis on transaction records.
+
+**What clicked:** Segmentation isn't demographics — it's behavior + value. The most useful insight wasn't "this segment is 25-35 years old" but "this segment generates 35% of revenue from only 15% of customers." That single ratio drove the entire prioritization. Also: the most consultant-level move Claude made was flagging that Narva's low conversion is **not an AI problem** — it's a localization/staffing problem. Knowing what *not* to automate is just as important as knowing what to automate.
 
 ### Week 2
 *Coming soon*
