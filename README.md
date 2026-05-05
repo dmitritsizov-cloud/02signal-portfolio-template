@@ -78,11 +78,19 @@ In this portfolio I document my work in the **02Signal program** — a 7-week jo
 
 **Architecture:** Form Trigger → Code node (CSV lookup) → Basic LLM Chain (Groq llama-3.3-70b) → Telegram Send Message. Brand voice rules live in code, not PDF — every campaign update changes AI behavior automatically without prompt edits.
 
+![n8n workflow canvas: Form Trigger → Code → AI → Telegram](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/screenshots/n8n-canvas.png?raw=true)
+
 **Tested with 3 different campaigns:**
 
 - ✅ Jätkusuutlik valik (PR-03) × Teadlikud noored (SEG-06) → Instagram post about Recycled tote
 - ✅ Tööpäeva stiil (PR-02) × Tartu silver kliendid (SEG-02) → Email about Nordic chino
 - ✅ Multiple variations confirmed: format consistency, CTA pulled correctly from CSV, no fabricated claims
+
+**Real output example** — first run, AI-generated draft delivered to Telegram for human review (raw, before edits):
+
+![AI-generated marketing draft delivered to Telegram for human review](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/screenshots/telegram-output.png?raw=true)
+
+The draft has authorized claims (eco-certified, recycled materials), correct CTA pulled from CSV, and no fabricated discounts — but also Estonian hallucinations and format gaps that needed human cleanup. The full breakdown of what AI got right and what needed fixing is in the review log below.
 
 **Try it / view it:**
 
@@ -91,7 +99,7 @@ In this portfolio I document my work in the **02Signal program** — a 7-week jo
 - 📄 [Code node technical setup](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week4-code-node-setup.md) — the CSV lookup logic, ~150 lines of JavaScript
 - 📄 [Reference content drafts](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week4-sisu-draftid.md) — 5 expected output examples for comparison
 - 📄 [**Human-in-the-loop review log**](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week4-tagasiside.md) ← the most valuable file
-- 
+
 ### Week 5
 *Coming soon — Data collection & decisions*
 
