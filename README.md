@@ -54,7 +54,7 @@ In this portfolio I document my work in the **02Signal program** — a 7-week jo
 - ⚙️ [Workflow file (n8n export)](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/workflows/week3.json)
 - 📄 [Business documentation & ROI estimate](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week3.md)
 
-### Week 4 — UrbanStyle FAQ Bot powered by AI ✅
+### (Part 1) Week 4 — UrbanStyle FAQ Bot powered by AI ✅
 
 **What I built:** Upgraded the Week 3 bot with AI — it now understands customer questions in Estonian and answers from UrbanStyle's FAQ knowledge base, using Groq's `llama-3.1-8b-instant` model.
 
@@ -70,6 +70,27 @@ In this portfolio I document my work in the **02Signal program** — a 7-week jo
 - ⚙️ [Workflow file (n8n export)](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/workflows/week4.json)
 - 📄 [Business documentation & test results](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week4.md)
 
+### Week 4 (Part 2) — UrbanStyle Sisuloome Workflow ✅
+
+**What I built:** A controllable AI content drafting workflow for UrbanStyle.ltd — turns a campaign brief from a web form into a structured Instagram/Email/Facebook draft delivered to Telegram for human review before publishing.
+
+**What it does:** Marketer fills a form (Campaign × Segment × Channel × Brief). A JavaScript code node looks up the campaign's allowed claims, forbidden claims, segment tone, and product inventory from CSV-style data. The AI gets brand voice rules + the campaign-specific constraints as a system prompt. Output: a structured draft (PEALKIRI / TEKST / CTA / HASHTAGID + AI self-check block) sent to Telegram in ~10 seconds. Human approves or edits before it goes anywhere public.
+
+**Architecture:** Form Trigger → Code node (CSV lookup) → Basic LLM Chain (Groq llama-3.3-70b) → Telegram Send Message. Brand voice rules live in code, not PDF — every campaign update changes AI behavior automatically without prompt edits.
+
+**Tested with 3 different campaigns:**
+
+- ✅ Jätkusuutlik valik (PR-03) × Teadlikud noored (SEG-06) → Instagram post about Recycled tote
+- ✅ Tööpäeva stiil (PR-02) × Tartu silver kliendid (SEG-02) → Email about Nordic chino
+- ✅ Multiple variations confirmed: format consistency, CTA pulled correctly from CSV, no fabricated claims
+
+**Try it / view it:**
+
+- 📁 [Workflow file (n8n export)](workflows/week4-sisuloome.json)
+- 📄 [Brand voice document](docs/week4-brand-voice-et.md) — the Estonian brand voice that goes into AI system prompts
+- 📄 [Code node technical setup](docs/week4-code-node-setup.md) — the CSV lookup logic, ~150 lines of JavaScript
+- 📄 [Reference content drafts](docs/week4-sisu-draftid.md) — 5 expected output examples for comparison
+- 
 ### Week 5
 *Coming soon — Data collection & decisions*
 
@@ -121,13 +142,21 @@ Reusable prompt templates I've designed are in [the prompts folder](https://gith
 
 **What clicked:** This isn't a one-off task — it's infrastructure. The same Telegram credential I created today will be reused in Week 4 (with AI), Week 5 (with Google Sheets), and beyond. Every week stacks on top of the previous one.
 
-### Week 4
-
+### Week 4 (Part 1)
+ 
 **What was new:** First production-grade integration with an AI service. Got hands-on with API key security, prompt engineering, and the two-node architecture (Basic LLM Chain + Chat Model) that n8n uses to keep AI providers swappable.
 
 **What was hard:** Two pitfalls hit me. First, n8n's autocomplete suggested `xAI Grok Chat Model` when I searched "Groq" — I almost configured the wrong service (Grok vs Groq are different companies entirely). Second, when the AI node hung for 60+ seconds, my instinct was to assume my code was broken — but checking Groq Console showed the request had been processed; the issue was the n8n instance, not my workflow.
 
 **What clicked:** The biggest insight was that **prompt quality is 90% of AI bot quality**, not model choice. The same `llama-3.1-8b-instant` model can either confidently fabricate fake products OR honestly say "I don't know" — entirely depending on how the system prompt is written. Hallucination protection is non-negotiable for customer-facing bots, and it's just a few well-placed sentences in the prompt.
+
+### Week 4 (Part 2) — Sisuloome Workflow
+
+**What was new:** CSV-as-config for AI behavior. Until this week I thought "AI prompts" meant writing one good text and reusing it. Realized prompts can be **dynamically constructed** from structured data — every brief gets a campaign-specific prompt with the exact allowed/forbidden claims for that campaign. The result: AI cannot fabricate marketing claims because the constraints are baked into its input, not added as a hopeful instruction.
+
+**What was hard:** Three things, in order of how much time they ate. First, Form Trigger field names must match Code node lookup keys character-by-character — one wrong `ä` and `.find()` returns nothing. Second, I didn't realize I had two triggers (Manual + Form) running in parallel — Submit hung because the workflow was confused which path to follow. Third, AI hallucinations in Estonian. Even llama-3.3-70b invents words ("üksmeele", "käsugas", "stiilililisemaks") and uses outdated years (#kevad2024 in 2026). Fact-level constraints work; stylistic constraints are fuzzier.
+
+**What clicked:** The system's value isn't the AI — it's the **structured input data**. Code node guarantees AI sees only authorized claims and excludes low-stock products (US-P-202 Merino, 9 units, never appears in any draft). Without that filtering, AI is a nice text generator. With it, AI is a content assistant that can't sabotage the brand. Brand voice is code, not a PDF nobody reads. And the Telegram review checkpoint takes 30 seconds per draft — not because human review is slow, but because the human-in-the-loop is **structurally fast** when AI does the typing and the human only judges.
 
 ### Week 5
 *Coming soon*
