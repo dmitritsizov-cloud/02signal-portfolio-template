@@ -1,0 +1,245 @@
+{
+  "name": "UrbanStyle N4 - Sisuloome workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "6205033039",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        0
+      ],
+      "id": "e20648e5-ef92-4bdb-987b-a2dc088c635b",
+      "name": "Send a text message",
+      "webhookId": "54db3bbb-85c3-41fd-8c1a-5e765df4c3e9",
+      "credentials": {
+        "telegramApi": {
+          "id": "ylCU6R3fsV60y5qE",
+          "name": "UrbanStyle FAQ Bot 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        624,
+        240
+      ],
+      "id": "20cd36a5-6a0c-4809-96ca-1b5c4577e19e",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "cebMUANbR5nxiYdi",
+          "name": "Groq UrbanStyle FAQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.ai_user_prompt }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "={{ $json.ai_system_prompt }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        624,
+        0
+      ],
+      "id": "ea6b0d46-ed6c-4c15-a4de-079fea4969ba",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "formTitle": "UrbanStyle sisubrief",
+        "formDescription": "Sisesta kampaania brief — AI loob esmase mustandi Telegrami",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Kampaania",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": " Kevadine garderoob"
+                  },
+                  {
+                    "option": "Tööpäeva stiil"
+                  },
+                  {
+                    "option": "Jätkusuutlik valik"
+                  },
+                  {
+                    "option": "Uue poe tervitus"
+                  },
+                  {
+                    "option": "E-poe nädal"
+                  },
+                  {
+                    "option": " Capsule wardrobe"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Sihtrühm",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Tallinn gold kliendid"
+                  },
+                  {
+                    "option": "Tartu silver kliendid"
+                  },
+                  {
+                    "option": "Pärnu suveostjad"
+                  },
+                  {
+                    "option": "Narva uued kliendid"
+                  },
+                  {
+                    "option": "E-poe korduvostjad"
+                  },
+                  {
+                    "option": "Teadlikud noored"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Kanal",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Instagram"
+                  },
+                  {
+                    "option": "Email"
+                  },
+                  {
+                    "option": "Facebook"
+                  },
+                  {
+                    "option": "Tootekirjeldus"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Põhisõnum",
+              "fieldType": "textarea",
+              "placeholder": "Recycled tote kotile fookus, kevadine teadlik valik"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fd80d696-c065-4258-8736-d89ffdef6a98",
+      "name": "UrbanStyle sisubrief",
+      "webhookId": "51c3b749-d299-48e8-814f-4b333fccaf5f"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =================================================================\n// UrbanStyle N4 — Ha-taseme CSV lookup\n// Form Trigger → [SEE NODE] → AI node → Telegram\n// =================================================================\n\n// --- 1. CSV-andmed (kõvastiseatud demo jaoks) ---\n\nconst SEGMENTS = [\n  { id: \"SEG-01\", name: \"Tallinn gold kliendid\",  city: \"Tallinn\", tier: \"gold\",   main_need: \"kvaliteetsed ja ajatud esemed\", channel: \"Instagram\", tone: \"premium ja inspireeriv\" },\n  { id: \"SEG-02\", name: \"Tartu silver kliendid\",  city: \"Tartu\",   tier: \"silver\", main_need: \"praktiline argimood\",            channel: \"Email\",     tone: \"selge ja kasulik\" },\n  { id: \"SEG-03\", name: \"Pärnu suveostjad\",       city: \"Pärnu\",   tier: \"bronze\", main_need: \"kerged kevad- ja suveriided\",    channel: \"Instagram\", tone: \"soe ja hooajaline\" },\n  { id: \"SEG-04\", name: \"Narva uued kliendid\",    city: \"Narva\",   tier: \"new\",    main_need: \"usaldus ja poe tutvustus\",       channel: \"Facebook\",  tone: \"lihtne ja kutsuv\" },\n  { id: \"SEG-05\", name: \"E-poe korduvostjad\",     city: \"online\",  tier: \"gold\",   main_need: \"kiire valik ja sobivus\",         channel: \"Email\",     tone: \"personaalne ja konkreetne\" },\n  { id: \"SEG-06\", name: \"Teadlikud noored\",       city: \"online\",  tier: \"silver\", main_need: \"jätkusuutlikkus ja stiil\",       channel: \"Instagram\", tone: \"energiline aga mitte ülemüüdud\" },\n];\n\nconst PROMOTIONS = [\n  { id: \"PR-01\", name: \"Kevadine garderoob\",  context: \"naiste riided\", offer: \"Uus kevadkollektsioon on e-poes ja poodides\",      allowed: \"uus kollektsioon, ajatud lõiked\",     forbidden: \"allahindlust või piiramatut laoseisu\",     cta: \"Vaata kevadkollektsiooni\" },\n  { id: \"PR-02\", name: \"Tööpäeva stiil\",      context: \"meeste riided\", offer: \"Valik mugavaid kontori- ja linnariideid\",          allowed: \"mugavus, lihtne kombineerida\",        forbidden: \"ametlik dresscode garantii\",               cta: \"Leia oma argipäeva lemmik\" },\n  { id: \"PR-03\", name: \"Jätkusuutlik valik\",  context: \"aksessuaarid\",  offer: \"Eco-certified aksessuaarid teadlikule kliendile\",  allowed: \"eco-certified tooted, praktilisus\",   forbidden: \"100% süsinikuneutraalsus\",                 cta: \"Tutvu teadliku valikuga\" },\n  { id: \"PR-04\", name: \"Uue poe tervitus\",    context: \"Narva\",         offer: \"Narva poe avamise tutvustuskampaania\",             allowed: \"uus pood, kohalik valik\",             forbidden: \"täpseid avamisaegu ilma kinnitatud infota\", cta: \"Külasta UrbanStyle Narva poodi\" },\n  { id: \"PR-05\", name: \"E-poe nädal\",         context: \"online\",        offer: \"E-poes esile tõstetud hooajatooted\",               allowed: \"mugav ostmine, kiire valik\",          forbidden: \"tasuta tarne, kui seda ei ole briefis\",    cta: \"Vaata e-poe valikut\" },\n  { id: \"PR-06\", name: \"Capsule wardrobe\",    context: \"naiste riided\", offer: \"Baasesemed, mida saab kombineerida mitmel viisil\", allowed: \"ajatus, kombineeritavus\",             forbidden: \"üks ese sobib kõigile\",                    cta: \"Ehita oma capsule wardrobe\" },\n];\n\nconst PRODUCTS = [\n  { id: \"US-P-101\", name: \"Linen Flow kleit\",     category: \"naiste riided\", price: 89,  eco: true,  msg: \"hingav linasest segust kleit\",   angle: \"ajatu kevadine garderoob\" },\n  { id: \"US-P-102\", name: \"City Soft bleiser\",    category: \"naiste riided\", price: 119, eco: false, msg: \"pehme kontoribleiser\",            angle: \"tööpäevast õhtuni\" },\n  { id: \"US-P-103\", name: \"Everyday rib top\",     category: \"naiste riided\", price: 34,  eco: true,  msg: \"mugav baastopp\",                  angle: \"capsule wardrobe alus\" },\n  { id: \"US-P-201\", name: \"Nordic chino püksid\",  category: \"meeste riided\", price: 79,  eco: false, msg: \"sirge lõikega chino\",             angle: \"praktiline argistiil\" },\n  { id: \"US-P-202\", name: \"Merino light kampsun\", category: \"meeste riided\", price: 99,  eco: true,  msg: \"kerge meriinovill\",               angle: \"kihiline kevadriietus\" },\n  { id: \"US-P-203\", name: \"Urban overshirt\",      category: \"meeste riided\", price: 69,  eco: false, msg: \"särkjakk linnaliikumiseks\",       angle: \"üks ese mitmeks olukorraks\" },\n  { id: \"US-P-301\", name: \"Recycled tote kott\",   category: \"aksessuaarid\",  price: 29,  eco: true,  msg: \"taaskasutatud materjalist kott\",  angle: \"igapäevane teadlik valik\" },\n  { id: \"US-P-302\", name: \"Minimal nahkvöö\",      category: \"aksessuaarid\",  price: 39,  eco: false, msg: \"lihtne kvaliteetne vöö\",          angle: \"väike detail, suur mõju\" },\n  { id: \"US-P-303\", name: \"Soft scarf sall\",      category: \"aksessuaarid\",  price: 45,  eco: true,  msg: \"pehme kevadsall\",                 angle: \"värv ja mugavus\" },\n  { id: \"US-P-401\", name: \"Studio denim jacket\",  category: \"naiste riided\", price: 109, eco: false, msg: \"klassikaline teksajakk\",          angle: \"kevadine üleminekukiht\" },\n  { id: \"US-P-402\", name: \"Relaxed linen shirt\",  category: \"meeste riided\", price: 74,  eco: true,  msg: \"linasegune suvesärk\",             angle: \"hingav ja rahulik stiil\" },\n  { id: \"US-P-403\", name: \"Travel pouch\",         category: \"aksessuaarid\",  price: 24,  eco: true,  msg: \"väike tarvikute kott\",            angle: \"korrahoid liikumisel\" },\n];\n\nconst INVENTORY = [\n  { id: \"US-P-101\", online: 42,  note: \"sobib kampaaniasse\" },\n  { id: \"US-P-102\", online: 12,  note: \"kasuta ettevaatlikult, madalam laoseis\" },\n  { id: \"US-P-103\", online: 80,  note: \"sobib suurema nähtavusega kampaaniasse\" },\n  { id: \"US-P-201\", online: 30,  note: \"sobib kampaaniasse\" },\n  { id: \"US-P-202\", online: 9,   note: \"ära luba laialdast saadavust\" },\n  { id: \"US-P-203\", online: 36,  note: \"sobib kampaaniasse\" },\n  { id: \"US-P-301\", online: 120, note: \"sobib kampaaniasse\" },\n  { id: \"US-P-302\", online: 26,  note: \"sobib piiratud fookusega kampaaniasse\" },\n  { id: \"US-P-303\", online: 18,  note: \"kasuta ettevaatlikult\" },\n  { id: \"US-P-401\", online: 21,  note: \"sobib väiksema kampaaniaga\" },\n  { id: \"US-P-402\", online: 33,  note: \"sobib kampaaniasse\" },\n  { id: \"US-P-403\", online: 65,  note: \"sobib kampaaniasse\" },\n];\n\n\n// --- 2. SISEND VORMIST ---\n\nconst form = $input.first().json;\n\nconst segmentInput    = (form[\"Sihtrühm\"]  || \"\").trim();\nconst promotionInput  = (form[\"Kampaania\"] || \"\").trim();\nconst customMessage   = (form[\"Põhisõnum\"] || \"\").trim();\nconst channelOverride = (form[\"Kanal\"]     || \"\").trim();\n\n\n// --- 3. CSV-otsing ---\n\nconst segment   = SEGMENTS.find(s => s.name === segmentInput);\nconst promotion = PROMOTIONS.find(p => p.name === promotionInput);\n\nif (!segment) {\n  throw new Error(`Sihtrühma \"${segmentInput}\" ei leitud. Kontrolli vormi dropdown'i väärtusi.`);\n}\nif (!promotion) {\n  throw new Error(`Kampaaniat \"${promotionInput}\" ei leitud. Kontrolli vormi dropdown'i väärtusi.`);\n}\n\n\n// --- 4. KANAL ---\n\nconst ALLOWED_CHANNELS = [\"Instagram\", \"Email\", \"Facebook\", \"Tootekirjeldus\"];\nconst channel = ALLOWED_CHANNELS.includes(channelOverride) \n  ? channelOverride \n  : segment.channel;\n\n\n// --- 5. TOOTEVALIK + LAOSEISU FILTER ---\n\nconst KATEGORIAD = [\"naiste riided\", \"meeste riided\", \"aksessuaarid\"];\nconst isCategoryContext = KATEGORIAD.includes(promotion.context);\n\nlet candidates = PRODUCTS;\nif (isCategoryContext) {\n  candidates = PRODUCTS.filter(p => p.category === promotion.context);\n}\n// Kui context on \"online\" või linn (nt \"Narva\"), kasutame kõiki kategooriaid.\n\nconst enriched = candidates.map(p => {\n  const inv = INVENTORY.find(i => i.id === p.id) || { online: 0, note: \"puudub\" };\n  return { ...p, inventory_note: inv.note, online_stock: inv.online };\n});\n\n// Reegel: tooted märkega \"ära luba laialdast\" → välistame täielikult.\nconst excluded = enriched.filter(p => p.inventory_note.includes(\"ära luba laialdast\"));\nconst safe     = enriched.filter(p => !p.inventory_note.includes(\"ära luba laialdast\"));\n\n// Top 3 laoseisu järgi.\nconst featured = safe.sort((a, b) => b.online_stock - a.online_stock).slice(0, 3);\n\n\n// --- 6. AI SYSTEM PROMPT ---\n\nconst systemPrompt = `Sa oled UrbanStyle.ltd turundusassistent.\nBrand voice: soe, selge, teadlik. Kõik tekstid eesti keeles.\n\nKOHUSTUSLIKUD REEGLID:\n- Toon: ${segment.tone}\n- Lubatud väited (kasuta ainult neid!): ${promotion.allowed}\n- KEELATUD väited: ${promotion.forbidden}\n- Maksimaalselt 2 emoji ja 1 hüüumärk kogu postituse kohta.\n- Ära luba allahindlust, tasuta tarnet ega kliimaneutraalsust, kui see pole briefis.\n- Vaikimisi CTA: ${promotion.cta}\n\nVÄLJUNDFORMAAT (range struktuur — Telegram'is kiiresti ülevaadatav):\nKANAL: ${channel}\nSIHTRÜHM: ${segment.id} — ${segment.name}\nPEALKIRI: [üks rida, kuni 60 tähemärki]\nTEKST: [Instagram post 60–90 sõna · Email body 100–180 sõna · Story 20–40 sõna · Tootekirjeldus 80–120 sõna]\nCTA: [täpselt üks rida]\nHASHTAGID: [Instagram'is 3–5; muudel kanalitel jäta tühjaks]\n\nKVALITEEDIKONTROLL (vastusta endale ausalt):\n- Kasutasin ainult lubatud väiteid? [jah/ei]\n- Vältisin keelatud väiteid? [jah/ei]\n- Mida peaks inimene-toimetaja enne avaldamist üle kontrollima?`;\n\n\n// --- 7. AI USER PROMPT (kampaania brief) ---\n\nconst productLines = featured.map(p => \n  `  - ${p.id} ${p.name} (${p.category}, ${p.price}€${p.eco ? \", eco\" : \"\"}) — ${p.msg} | märkus: ${p.inventory_note}`\n).join(\"\\n\");\n\nconst userPrompt = `KAMPAANIA: ${promotion.name} (${promotion.id})\nPROMO KIRJELDUS: ${promotion.offer}\n\nSIHTRÜHM: ${segment.name} (${segment.id})\nPEAMINE VAJADUS: ${segment.main_need}\nKANAL: ${channel}\n\nVÕIMALIKUD TOOTED (vali 1–2, ÄRA viita kõigile korraga):\n${productLines}\n\nKASUTAJA SÕNUM: ${customMessage || \"(brief puudub — kasuta promo kirjeldust aluseks)\"}\n\nKoosta üks sisuühik ülaltoodud formaadi järgi.`;\n\n\n// --- 8. VÄLJUND ---\n\nreturn [\n  {\n    json: {\n      ai_system_prompt: systemPrompt,\n      ai_user_prompt: userPrompt,\n\n      meta: {\n        promotion_id: promotion.id,\n        promotion_name: promotion.name,\n        segment_id: segment.id,\n        segment_name: segment.name,\n        channel: channel,\n        products_featured: featured.map(p => p.id),\n        products_excluded_by_inventory: excluded.map(p => p.id),\n      },\n\n      telegram_header: `📋 ${promotion.name} → ${segment.name} (${channel})\\nTooted: ${featured.map(p => p.id).join(\", \") || \"(ei leitud)\"}`,\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "4a481fab-1b71-420b-ac15-c583ab71bfb8",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UrbanStyle sisubrief": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "fa58520f-97dc-4d8f-be67-228ef8351587",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5949fab626268d8b88b21dc50348a43b1823770fe66fe1bcebd9d5e1e0dd23d0"
+  },
+  "id": "i1obdth9iD15l85q",
+  "tags": []
+}
