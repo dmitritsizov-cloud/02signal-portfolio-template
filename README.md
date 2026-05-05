@@ -86,7 +86,7 @@ In this portfolio I document my work in the **02Signal program** — a 7-week jo
 
 **Try it / view it:**
 
-- 📁 [Workflow file (n8n export)](workflows/week4-sisuloome.json)
+- 📁 [Workflow file (n8n export)](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/workflows/week4-sisuloome.json)
 - 📄 [Brand voice document](docs/week4-brand-voice-et.md) — the Estonian brand voice that goes into AI system prompts
 - 📄 [Code node technical setup](docs/week4-code-node-setup.md) — the CSV lookup logic, ~150 lines of JavaScript
 - 📄 [Reference content drafts](docs/week4-sisu-draftid.md) — 5 expected output examples for comparison
