@@ -1,0 +1,210 @@
+{
+  "name": "N4 UrbanStyle Sisuloome HÜBRIID v1.0 (Form + Telegram + Schedule)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "N4 HÜBRIID — KOLM SISENDIT, ÜKS LOOGIKA\n\nSee workflow ühendab:\n• N4 Shu nõude (Form → AI → Telegram)\n• N4 Ha andmelookup (tooted, segmendid, kampaaniad, laoseis)\n• N4 Ha+ tagasiside-loop (PARANDA: ...)\n• N3 ideed (multi-kanal väljund + päevane auto-postitus)\n\nSEADISTAMINE (5 sammu):\n1. Vali kõikidel Telegram node'idel oma credential\n2. Vali AI mudeli node'is oma Groq/OpenAI credential\n3. Asenda CHAT_ID_HERE oma Telegram chat ID-ga (Code node 'Telegram chat ID')\n4. Salvesta + Activate workflow\n5. Testi Form Triggeri linki → kontrolli Telegrami\n\nDEMO STSENAARIUM (3 min):\n• Shu: täida Form → näita drafti Telegramis\n• Ha: rõhuta, et AI kasutas tegelikku tooteinfot ja kampaania reegleid\n• Ha+: saada Telegramis 'PARANDA: tee lühemaks' → näita parandatud versiooni",
+        "height": 480,
+        "width": 540,
+        "color": 4
+      },
+      "id": "note-main-setup",
+      "name": "Loe enne käivitamist",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-1200, -260]
+    },
+    {
+      "parameters": {
+        "content": "3 SISENDIT (Triggerid)\n\n🟢 Form Trigger — turundaja täidab vormi\n   → N4 Shu põhivoog\n\n🔵 Telegram Trigger — käsk botis\n   • PARANDA: ... → revision (Ha+)\n   • /reklaam [toote nimi] → kiire draft\n   • muu tekst → free brief\n\n🟡 Schedule — iga päev 9:00\n   → automaatne tsükliline draft\n   (N3 idee säilitatud)\n\nKõik kolm sisendit suunduvad ühte\n'Andmete lookup' node'i, mis valib\nkonteksti N4 andmepakist.",
+        "height": 380,
+        "width": 360,
+        "color": 5
+      },
+      "id": "note-triggers",
+      "name": "3 sisendi selgitus",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-630, -260]
+    },
+    {
+      "parameters": {
+        "content": "ANDMEPAKK koodis\n\nKogu N4 andmepakk (tooted, segmendid,\nkampaaniad, laoseis) on Code node'is\nhardcoded. See töötab ka ilma Google\nSheets'ita — Shu/Ha demo läheb käima\nkohe.\n\nKui tahad päris andmebaasi (N5):\nasenda PRODUCTS/SEGMENTS/PROMOTIONS\nblokid Google Sheets read'iga.\n\nMatchimise loogika:\n• Otsib brief'ist ID-d (US-P-101, SEG-01)\n• Kui ID puudub → matchib märksõnu\n• Lisab laoseisu hoiatuse (do_not_claim)",
+        "height": 360,
+        "width": 360,
+        "color": 7
+      },
+      "id": "note-data",
+      "name": "Andmete selgitus",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-220, -260]
+    },
+    {
+      "parameters": {
+        "content": "AI VÄLJUND — multi-kanal\n\nAI tagastab JSON'i kus on:\n• telegram_draft (lühike, 3 lauset, emoji)\n• instagram_caption + hashtags\n• facebook_text + cta\n• email_subject + email_body\n• tootekirjeldus (e-poe jaoks)\n• meta (kvaliteet, kasutatud andmed)\n\nDemo päeval valid kanali Form'is\nja näitad ainult selle versiooni.\nPortfolios mainid: 'üks brief = 5 kanalit'",
+        "height": 340,
+        "width": 360,
+        "color": 6
+      },
+      "id": "note-output",
+      "name": "Väljundi selgitus",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [380, -260]
+    },
+    {
+      "parameters": {
+        "formTitle": "UrbanStyle sisubrief (N4)",
+        "formDescription": "Täida brief — AI loob draft'i kõigile kanalitele ja saadab Telegrami kinnitamiseks. Inimene jääb kontrolli.",
+        "formFields": {
+          "values": [
+            {"fieldLabel": "Kampaania nimi", "placeholder": "Kevadine garderoob", "requiredField": true},
+            {"fieldLabel": "Kanal", "fieldType": "dropdown", "fieldOptions": {"values": [{"option": "Instagram"}, {"option": "Facebook"}, {"option": "Email"}, {"option": "Tootekirjeldus"}, {"option": "Telegram"}, {"option": "Kõik kanalid"}]}, "requiredField": true},
+            {"fieldLabel": "Tootekategooria", "fieldType": "dropdown", "fieldOptions": {"values": [{"option": "naiste riided"}, {"option": "meeste riided"}, {"option": "aksessuaarid"}, {"option": "kõik"}]}, "requiredField": true},
+            {"fieldLabel": "Sihtrühm", "fieldType": "dropdown", "fieldOptions": {"values": [{"option": "SEG-01 Tallinn gold kliendid"}, {"option": "SEG-02 Tartu silver kliendid"}, {"option": "SEG-03 Pärnu suveostjad"}, {"option": "SEG-04 Narva uued kliendid"}, {"option": "SEG-05 E-poe korduvostjad"}, {"option": "SEG-06 Teadlikud noored"}]}, "requiredField": true},
+            {"fieldLabel": "Toon", "fieldType": "dropdown", "fieldOptions": {"values": [{"option": "inspireeriv"}, {"option": "praktiline"}, {"option": "premium"}, {"option": "soodne"}, {"option": "rahulik"}]}, "requiredField": true},
+            {"fieldLabel": "Põhisõnum", "fieldType": "textarea", "placeholder": "Jätkusuutlik garderoob kevadeks", "requiredField": true},
+            {"fieldLabel": "Konkreetne toode (vabatahtlik)", "placeholder": "nt US-P-101 või Linen Flow kleit", "requiredField": false}
+          ]
+        },
+        "options": {"buttonLabel": "Loo sisudraft"}
+      },
+      "id": "trigger-form",
+      "name": "Form Trigger - sisubrief",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [-900, 0],
+      "webhookId": "n4-hybrid-form"
+    },
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {}
+      },
+      "id": "trigger-telegram",
+      "name": "Telegram Trigger - PARANDA või /reklaam",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [-900, 200],
+      "webhookId": "n4-hybrid-telegram"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "trigger-schedule",
+      "name": "Schedule - iga päev 9:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-900, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =========================================================\n// SISENDI NORMALIZER — kõik 3 triggerit ühele kujule\n// =========================================================\nconst input = $input.first().json;\nconst now = new Date().toISOString();\nconst staticData = $getWorkflowStaticData('global');\nstaticData.lastDraftByChat = staticData.lastDraftByChat || {};\nstaticData.cycleIndex = staticData.cycleIndex || 0;\n\nlet source, brief, channel, segment_hint, tone, category, message, product_hint, feedback, chat_id, user_name;\n\n// 1) FORM TRIGGER\nif (input['Kampaania nimi']) {\n  source = 'form';\n  brief = input['Kampaania nimi'];\n  channel = input['Kanal'] || 'Instagram';\n  category = input['Tootekategooria'] || 'naiste riided';\n  segment_hint = input['Sihtrühm'] || 'SEG-01';\n  tone = input['Toon'] || 'inspireeriv';\n  message = input['Põhisõnum'] || '';\n  product_hint = input['Konkreetne toode (vabatahtlik)'] || '';\n  feedback = '';\n  chat_id = 'CHAT_ID_HERE'; // Asenda oma Telegram chat ID-ga\n  user_name = 'turundaja (vorm)';\n}\n// 2) TELEGRAM TRIGGER\nelse if (input.message?.text) {\n  source = 'telegram';\n  const text = input.message.text.trim();\n  chat_id = input.message.chat.id;\n  user_name = input.message.from?.first_name || 'kasutaja';\n  \n  if (/^paranda:/i.test(text)) {\n    feedback = text.replace(/^paranda:\\s*/i, '').trim();\n    brief = 'revision';\n    channel = 'Telegram';\n    const last = staticData.lastDraftByChat[String(chat_id)];\n    message = last?.draft_text || '';\n    product_hint = last?.product_hint || '';\n    segment_hint = last?.segment_hint || 'SEG-01';\n    category = last?.category || 'naiste riided';\n    tone = 'sama nagu eelmine';\n  } else if (/^\\/reklaam/i.test(text)) {\n    product_hint = text.replace(/^\\/reklaam\\s*/i, '').trim();\n    brief = 'kiire reklaam';\n    channel = 'Telegram';\n    message = 'kiire reklaam Telegrami kanalile';\n    segment_hint = 'SEG-06'; // Teadlikud noored\n    category = '';\n    tone = 'inspireeriv';\n    feedback = '';\n  } else {\n    brief = text.split('\\n')[0] || 'vaba brief';\n    channel = 'Kõik kanalid';\n    message = text;\n    segment_hint = 'SEG-01';\n    category = '';\n    tone = 'inspireeriv';\n    product_hint = '';\n    feedback = '';\n  }\n}\n// 3) SCHEDULE TRIGGER (tsükliline)\nelse {\n  source = 'schedule';\n  const products = ['US-P-101','US-P-102','US-P-103','US-P-201','US-P-202','US-P-203','US-P-301','US-P-302','US-P-303','US-P-401','US-P-402','US-P-403'];\n  const idx = staticData.cycleIndex % products.length;\n  product_hint = products[idx];\n  staticData.cycleIndex = idx + 1;\n  brief = 'Päevane auto-draft';\n  channel = 'Kõik kanalid';\n  message = 'Hooaja sisuline postitus';\n  segment_hint = 'SEG-06';\n  category = '';\n  tone = 'inspireeriv';\n  feedback = '';\n  chat_id = 'CHAT_ID_HERE';\n  user_name = 'auto-schedule';\n}\n\nreturn [{\n  json: {\n    source, brief, channel, category, segment_hint, tone, message, product_hint, feedback,\n    chat_id: String(chat_id), user_name, created_at: now,\n    draft_id: 'N4-' + now.replace(/[-:.TZ]/g,'').slice(0,14) + '-' + Math.random().toString(36).slice(2,5).toUpperCase()\n  }\n}];"
+      },
+      "id": "code-normalize",
+      "name": "Normaliseeri sisend (3 triggerit → 1 vorm)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-560, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =========================================================\n// N4 ANDMEPAKK + LOOKUP — Ha-tase 100%\n// =========================================================\nconst input = $input.first().json;\n\nconst PRODUCTS = [\n  {product_id:'US-P-101',product_name:'Linen Flow kleit',category:'naiste riided',price_eur:89,eco_certified:true,key_message:'hingav linasest segust kleit',content_angle:'ajatu kevadine garderoob'},\n  {product_id:'US-P-102',product_name:'City Soft bleiser',category:'naiste riided',price_eur:119,eco_certified:false,key_message:'pehme kontoribleiser',content_angle:'tööpäevast õhtuni'},\n  {product_id:'US-P-103',product_name:'Everyday rib top',category:'naiste riided',price_eur:34,eco_certified:true,key_message:'mugav baastopp',content_angle:'capsule wardrobe alus'},\n  {product_id:'US-P-201',product_name:'Nordic chino püksid',category:'meeste riided',price_eur:79,eco_certified:false,key_message:'sirge lõikega chino',content_angle:'praktiline argistiil'},\n  {product_id:'US-P-202',product_name:'Merino light kampsun',category:'meeste riided',price_eur:99,eco_certified:true,key_message:'kerge meriinovill',content_angle:'kihiline kevadriietus'},\n  {product_id:'US-P-203',product_name:'Urban overshirt',category:'meeste riided',price_eur:69,eco_certified:false,key_message:'särkjakk linnaliikumiseks',content_angle:'üks ese mitmeks olukorraks'},\n  {product_id:'US-P-301',product_name:'Recycled tote kott',category:'aksessuaarid',price_eur:29,eco_certified:true,key_message:'taaskasutatud materjalist kott',content_angle:'igapäevane teadlik valik'},\n  {product_id:'US-P-302',product_name:'Minimal nahkvöö',category:'aksessuaarid',price_eur:39,eco_certified:false,key_message:'lihtne kvaliteetne vöö',content_angle:'väike detail, suur mõju'},\n  {product_id:'US-P-303',product_name:'Soft scarf sall',category:'aksessuaarid',price_eur:45,eco_certified:true,key_message:'pehme kevadsall',content_angle:'värv ja mugavus'},\n  {product_id:'US-P-401',product_name:'Studio denim jacket',category:'naiste riided',price_eur:109,eco_certified:false,key_message:'klassikaline teksajakk',content_angle:'kevadine üleminekukiht'},\n  {product_id:'US-P-402',product_name:'Relaxed linen shirt',category:'meeste riided',price_eur:74,eco_certified:true,key_message:'linasegune suvesärk',content_angle:'hingav ja rahulik stiil'},\n  {product_id:'US-P-403',product_name:'Travel pouch',category:'aksessuaarid',price_eur:24,eco_certified:true,key_message:'väike tarvikute kott',content_angle:'korrahoid liikumisel'}\n];\n\nconst SEGMENTS = [\n  {segment_id:'SEG-01',segment_name:'Tallinn gold kliendid',city:'Tallinn',loyalty_tier:'gold',main_need:'kvaliteetsed ja ajatud esemed',preferred_channel:'Instagram',tone_hint:'premium ja inspireeriv'},\n  {segment_id:'SEG-02',segment_name:'Tartu silver kliendid',city:'Tartu',loyalty_tier:'silver',main_need:'praktiline argimood',preferred_channel:'Email',tone_hint:'selge ja kasulik'},\n  {segment_id:'SEG-03',segment_name:'Pärnu suveostjad',city:'Pärnu',loyalty_tier:'bronze',main_need:'kerged kevad- ja suveriided',preferred_channel:'Instagram',tone_hint:'soe ja hooajaline'},\n  {segment_id:'SEG-04',segment_name:'Narva uued kliendid',city:'Narva',loyalty_tier:'new',main_need:'usaldus ja poe tutvustus',preferred_channel:'Facebook',tone_hint:'lihtne ja kutsuv'},\n  {segment_id:'SEG-05',segment_name:'E-poe korduvostjad',city:'online',loyalty_tier:'gold',main_need:'kiire valik ja sobivus',preferred_channel:'Email',tone_hint:'personaalne ja konkreetne'},\n  {segment_id:'SEG-06',segment_name:'Teadlikud noored',city:'online',loyalty_tier:'silver',main_need:'jätkusuutlikkus ja stiil',preferred_channel:'Instagram',tone_hint:'energiline aga mitte ülemüüdud'}\n];\n\nconst PROMOTIONS = [\n  {promotion_id:'PR-01',promotion_name:'Kevadine garderoob',valid_context:'naiste riided',offer_text:'Uus kevadkollektsioon on e-poes ja poodides',allowed_claims:'uus kollektsioon, ajatud lõiked',do_not_claim:'allahindlust või piiramatut laoseisu',cta:'Vaata kevadkollektsiooni'},\n  {promotion_id:'PR-02',promotion_name:'Tööpäeva stiil',valid_context:'meeste riided',offer_text:'Valik mugavaid kontori- ja linnariideid',allowed_claims:'mugavus, lihtne kombineerida',do_not_claim:'ametlik dresscode garantii',cta:'Leia oma argipäeva lemmik'},\n  {promotion_id:'PR-03',promotion_name:'Jätkusuutlik valik',valid_context:'aksessuaarid',offer_text:'Eco-certified aksessuaarid teadlikule kliendile',allowed_claims:'eco-certified tooted, praktilisus',do_not_claim:'100% süsinikuneutraalsus',cta:'Tutvu teadliku valikuga'},\n  {promotion_id:'PR-04',promotion_name:'Uue poe tervitus',valid_context:'Narva',offer_text:'Narva poe avamise tutvustuskampaania',allowed_claims:'uus pood, kohalik valik',do_not_claim:'täpseid avamisaegu',cta:'Külasta UrbanStyle Narva poodi'},\n  {promotion_id:'PR-05',promotion_name:'E-poe nädal',valid_context:'online',offer_text:'E-poes esile tõstetud hooajatooted',allowed_claims:'mugav ostmine, kiire valik',do_not_claim:'tasuta tarne',cta:'Vaata e-poe valikut'},\n  {promotion_id:'PR-06',promotion_name:'Capsule wardrobe',valid_context:'naiste riided',offer_text:'Baasesemed, mida saab kombineerida mitmel viisil',allowed_claims:'ajatus, kombineeritavus',do_not_claim:'üks ese sobib kõigile',cta:'Ehita oma capsule wardrobe'}\n];\n\nconst INVENTORY = [\n  {product_id:'US-P-101',online_stock:42,inventory_note:'sobib kampaaniasse'},\n  {product_id:'US-P-102',online_stock:12,inventory_note:'kasuta ettevaatlikult, madalam laoseis'},\n  {product_id:'US-P-103',online_stock:80,inventory_note:'sobib suurema nähtavusega kampaaniasse'},\n  {product_id:'US-P-201',online_stock:30,inventory_note:'sobib kampaaniasse'},\n  {product_id:'US-P-202',online_stock:9,inventory_note:'ära luba laialdast saadavust'},\n  {product_id:'US-P-203',online_stock:36,inventory_note:'sobib kampaaniasse'},\n  {product_id:'US-P-301',online_stock:120,inventory_note:'sobib kampaaniasse'},\n  {product_id:'US-P-302',online_stock:26,inventory_note:'sobib piiratud fookusega kampaaniasse'},\n  {product_id:'US-P-303',online_stock:18,inventory_note:'kasuta ettevaatlikult'},\n  {product_id:'US-P-401',online_stock:21,inventory_note:'sobib väiksema kampaaniaga'},\n  {product_id:'US-P-402',online_stock:33,inventory_note:'sobib kampaaniasse'},\n  {product_id:'US-P-403',online_stock:65,inventory_note:'sobib kampaaniasse'}\n];\n\nfunction normalize(s){return String(s||'').toLowerCase();}\nfunction matches(text, needle){return normalize(text).includes(normalize(needle));}\n\n// 1. Sihtrühm\nlet segment = SEGMENTS.find(s => matches(input.segment_hint, s.segment_id) || matches(input.segment_hint, s.segment_name));\nif(!segment) segment = SEGMENTS[0];\n\n// 2. Tooted (kuni 3)\nlet selectedProducts = [];\nif(input.product_hint){\n  const direct = PRODUCTS.find(p => matches(input.product_hint, p.product_id) || matches(input.product_hint, p.product_name));\n  if(direct) selectedProducts.push(direct);\n}\nif(selectedProducts.length === 0 && input.category){\n  selectedProducts = PRODUCTS.filter(p => normalize(p.category) === normalize(input.category)).slice(0, 3);\n}\nif(selectedProducts.length === 0){\n  selectedProducts = PRODUCTS.slice(0, 3);\n}\n\n// 3. Kampaania\nlet promotion = PROMOTIONS.find(p => matches(input.brief, p.promotion_name) || matches(input.brief, p.promotion_id));\nif(!promotion){\n  const cat = selectedProducts[0]?.category || input.category;\n  promotion = PROMOTIONS.find(p => p.valid_context === cat) || PROMOTIONS[0];\n}\n\n// 4. Laoseis hoiatus\nconst inventoryWarnings = selectedProducts.map(p => {\n  const inv = INVENTORY.find(i => i.product_id === p.product_id);\n  return inv ? `${p.product_name}: ${inv.inventory_note} (online: ${inv.online_stock} tk)` : '';\n}).filter(Boolean).join('; ');\n\n// 5. Andmekontekst AI'le\nconst dataContext = [\n  `SIHTRÜHM: ${segment.segment_name} (${segment.city}, ${segment.loyalty_tier})`,\n  `Sihtrühma vajadus: ${segment.main_need}`,\n  `Eelistatud kanal: ${segment.preferred_channel}, toon: ${segment.tone_hint}`,\n  ``,\n  `KAMPAANIA: ${promotion.promotion_name} (${promotion.promotion_id})`,\n  `Pakkumine: ${promotion.offer_text}`,\n  `Lubatud väited: ${promotion.allowed_claims}`,\n  `EI TOHI väita: ${promotion.do_not_claim}`,\n  `Soovitatud CTA: ${promotion.cta}`,\n  ``,\n  `TOOTED:`,\n  selectedProducts.map(p => `- ${p.product_id} ${p.product_name} (${p.price_eur} EUR, ${p.eco_certified?'eco':'standard'}): ${p.key_message} | ${p.content_angle}`).join('\\n'),\n  ``,\n  `LAOSEISU HOIATUSED: ${inventoryWarnings}`\n].join('\\n');\n\nreturn [{\n  json: {\n    ...input,\n    segment_id: segment.segment_id,\n    segment_name: segment.segment_name,\n    segment_city: segment.city,\n    promotion_id: promotion.promotion_id,\n    promotion_name: promotion.promotion_name,\n    promotion_cta: promotion.cta,\n    promotion_do_not_claim: promotion.do_not_claim,\n    product_ids: selectedProducts.map(p=>p.product_id).join(', '),\n    product_names: selectedProducts.map(p=>p.product_name).join(', '),\n    data_context: dataContext,\n    is_revision: !!input.feedback\n  }\n}];"
+      },
+      "id": "code-lookup",
+      "name": "Andmete lookup (N4 andmepakk)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-220, 200]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Sa oled UrbanStyle.ltd turundusassistent. Loo kontrollitav sisudraft.\n\nKui IS_REVISION = true, paranda eelmist drafti TAGASISIDE järgi ja säilita brand voice. Ära alusta nullist.\n\nIS_REVISION: {{ $json.is_revision }}\nALLIKAS: {{ $json.source }}\nKANAL: {{ $json.channel }}\nTOON: {{ $json.tone }}\nKAMPAANIA BRIEF: {{ $json.brief }}\nPÕHISÕNUM: {{ $json.message }}\nTAGASISIDE (kui revision): {{ $json.feedback }}\nEELMINE DRAFT (kui revision): {{ $json.message }}\n\nANDMEKONTEKST (kasuta ainult seda, ära leiuta):\n{{ $json.data_context }}\n\nBRAND VOICE:\n- eesti keel\n- sõbralik, praktiline, rahulikult inspireeriv\n- kvaliteet ja jätkusuutlikkus, mitte agressiivne müük\n- max 2 emoji kogu väljundi peale\n- ÄRA luba allahindlust, tasuta tarnet ega laopiiranguid, mida andmed ei kinnita\n- Järgi 'EI TOHI väita' reegleid kampaaniast\n\nTAGASTA AINULT KEHTIV JSON ilma markdown koodiplokita selles formaadis:\n{\n  \"telegram\": {\"text\": \"max 3 lauset, 1 emoji, lõpus link urbanstyle.ee\"},\n  \"instagram\": {\"caption\": \"3-4 lauset inspireeriv\", \"hashtags\": \"6-8 hashtagi\"},\n  \"facebook\": {\"text\": \"4-5 lauset selgituse ja CTA-ga\", \"cta\": \"selge tegevuse kutse\"},\n  \"email\": {\"subject\": \"max 50 tähemärki\", \"body\": \"3 lõiku, viimane CTA-ga\"},\n  \"tootekirjeldus\": {\"text\": \"e-poe toote kirjeldus 80-120 sõna\"},\n  \"meta\": {\n    \"used_segment\": \"{{ $json.segment_name }}\",\n    \"used_promotion\": \"{{ $json.promotion_name }}\",\n    \"used_products\": \"{{ $json.product_names }}\",\n    \"quality_ok\": true,\n    \"human_check\": [\"kontroll 1\", \"kontroll 2\", \"kontroll 3\"]\n  }\n}",
+        "options": {
+          "systemMessage": "Sa oled UrbanStyle.ltd turundusassistent. Vasta ALATI eesti keeles. Tagasta AINULT puhas JSON, mitte markdown ega seletused."
+        }
+      },
+      "id": "ai-agent",
+      "name": "AI Agent - multi-kanal draft",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [120, 200]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "id": "ai-model",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [120, 460]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =========================================================\n// PARSE AI JSON + valmista Telegram sõnumid\n// =========================================================\nconst aiOut = $input.first().json.output || $input.first().json.text || '';\nconst meta = $('Andmete lookup (N4 andmepakk)').first().json;\n\nlet parsed;\ntry {\n  const cleaned = String(aiOut).replace(/```json/gi,'').replace(/```/g,'').trim();\n  parsed = JSON.parse(cleaned);\n} catch(e) {\n  parsed = {\n    telegram: {text: '⚠️ Viga AI väljundis. Vaata workflow execution logi. Algne väljund: ' + String(aiOut).slice(0,200)},\n    instagram: {caption: '', hashtags: ''},\n    facebook: {text: '', cta: ''},\n    email: {subject: '', body: ''},\n    tootekirjeldus: {text: ''},\n    meta: {quality_ok: false, human_check: ['Kontrolli AI väljundit']}\n  };\n}\n\n// Salvesta drafti staticData'sse, et PARANDA: saaks selle leida\nconst staticData = $getWorkflowStaticData('global');\nstaticData.lastDraftByChat = staticData.lastDraftByChat || {};\nstaticData.lastDraftByChat[String(meta.chat_id)] = {\n  draft_id: meta.draft_id,\n  draft_text: parsed.telegram?.text || '',\n  product_hint: meta.product_ids,\n  segment_hint: meta.segment_id,\n  category: meta.category,\n  created_at: meta.created_at\n};\n\n// Telegram välja vormistamine — vali kanal Form'ist\nconst channel = (meta.channel || 'Kõik kanalid').toLowerCase();\nconst showAll = channel.includes('kõik');\n\nconst sections = [];\nsections.push(`📋 *UrbanStyle N4 sisudraft*`);\nsections.push(`Draft ID: \\`${meta.draft_id}\\` • Allikas: ${meta.source}`);\nsections.push(`Sihtrühm: ${meta.segment_name} • Kampaania: ${meta.promotion_name}`);\nsections.push(`Tooted: ${meta.product_names}`);\nsections.push('');\n\nif(meta.is_revision){\n  sections.push(`✏️ *PARANDATUD VERSIOON*`);\n  sections.push(`Tagasiside: ${meta.feedback}`);\n  sections.push('');\n}\n\nif(showAll || channel.includes('telegram')){\n  sections.push(`*📱 Telegram:*`);\n  sections.push(parsed.telegram?.text || '-');\n  sections.push('');\n}\nif(showAll || channel.includes('instagram')){\n  sections.push(`*📸 Instagram:*`);\n  sections.push(parsed.instagram?.caption || '-');\n  sections.push(parsed.instagram?.hashtags || '');\n  sections.push('');\n}\nif(showAll || channel.includes('facebook')){\n  sections.push(`*📘 Facebook:*`);\n  sections.push(parsed.facebook?.text || '-');\n  sections.push(`CTA: ${parsed.facebook?.cta || meta.promotion_cta}`);\n  sections.push('');\n}\nif(showAll || channel.includes('email')){\n  sections.push(`*✉️ Email:*`);\n  sections.push(`Subject: ${parsed.email?.subject || '-'}`);\n  sections.push(parsed.email?.body || '-');\n  sections.push('');\n}\nif(showAll || channel.includes('tootekirjeldus')){\n  sections.push(`*🛍 Tootekirjeldus (e-pood):*`);\n  sections.push(parsed.tootekirjeldus?.text || '-');\n  sections.push('');\n}\n\nsections.push('━━━━━━━━━━━━━━━');\nsections.push(`✅ *Inimese kontroll enne avaldamist:*`);\n(parsed.meta?.human_check || ['Kontrolli kampaania reegleid','Kontrolli laoseisu','Kontrolli CTA-d']).forEach(c => sections.push(`• ${c}`));\nsections.push('');\nsections.push(`💬 Tagasiside: kirjuta botile \\`PARANDA: <sinu juhis>\\``);\n\nconst telegramText = sections.join('\\n');\n\nreturn [{\n  json: {\n    chat_id: meta.chat_id,\n    telegram_text: telegramText,\n    draft_id: meta.draft_id,\n    parsed,\n    meta\n  }\n}];"
+      },
+      "id": "code-format",
+      "name": "Vorminda multi-kanal Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 200]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.telegram_text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "telegram-send",
+      "name": "Telegram - saada draft kinnitamiseks",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [800, 200]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Form Trigger - sisubrief": {
+      "main": [[{"node": "Normaliseeri sisend (3 triggerit → 1 vorm)", "type": "main", "index": 0}]]
+    },
+    "Telegram Trigger - PARANDA või /reklaam": {
+      "main": [[{"node": "Normaliseeri sisend (3 triggerit → 1 vorm)", "type": "main", "index": 0}]]
+    },
+    "Schedule - iga päev 9:00": {
+      "main": [[{"node": "Normaliseeri sisend (3 triggerit → 1 vorm)", "type": "main", "index": 0}]]
+    },
+    "Normaliseeri sisend (3 triggerit → 1 vorm)": {
+      "main": [[{"node": "Andmete lookup (N4 andmepakk)", "type": "main", "index": 0}]]
+    },
+    "Andmete lookup (N4 andmepakk)": {
+      "main": [[{"node": "AI Agent - multi-kanal draft", "type": "main", "index": 0}]]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [[{"node": "AI Agent - multi-kanal draft", "type": "ai_languageModel", "index": 0}]]
+    },
+    "AI Agent - multi-kanal draft": {
+      "main": [[{"node": "Vorminda multi-kanal Telegram", "type": "main", "index": 0}]]
+    },
+    "Vorminda multi-kanal Telegram": {
+      "main": [[{"node": "Telegram - saada draft kinnitamiseks", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {"executionOrder": "v1"},
+  "id": "N4UrbanStyleHybridV1",
+  "tags": [{"name": "02Signal"}, {"name": "N4"}, {"name": "Hübriid"}, {"name": "Shu+Ha+Ha+"}]
+}
