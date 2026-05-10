@@ -1,8 +1,8 @@
 # Week 4 (Part 3) — Hybrid Workflow: Production Debugging Log
 
-This is a candid record of the four issues that hit me during the first deployment of `week4-sisuloome-hybrid.json` into a fresh n8n environment. Each one was a real-world problem that no template, tutorial, or import file solves automatically. Each one took 2–5 minutes to diagnose and fix once I knew what to look for. The point of writing them down is not to celebrate solving them — it's to make the next deployment (yours, mine, or someone else's) take five minutes total instead of forty-five.
+This is a candid record of the five real-world issues that hit me during the first deployment of `week4-sisuloome-hybrid.json` into a fresh n8n environment, plus the platform migration that followed. None of these issues were solvable by a template, tutorial, or import file. Each one took 2–5 minutes to fix once diagnosed; the fifth took a different kind of decision — when to stop fixing and switch tools. The point of writing them down is not to celebrate solving them — it's to make the next deployment (yours, mine, or someone else's) take a few minutes total instead of a few hours.
 
-## TL;DR — the five-minute pre-flight checklist
+## TL;DR — the pre-flight checklist
 
 Before testing any imported n8n workflow, run through this list. Skipping any item costs more time than doing all of them.
 
@@ -11,6 +11,7 @@ Before testing any imported n8n workflow, run through this list. Skipping any it
 3. ☐ Find every Telegram `chat_id` field. Confirm it's the *recipient's* user ID (a person), not the *bot's* ID.
 4. ☐ Workflow Settings → Timezone → set to your real timezone. Default is America/New_York.
 5. ☐ Publish the workflow before testing Telegram or Schedule triggers. Test mode does not register webhooks.
+6. ☐ For pure static sites (no build step needed), prefer GitHub Pages over Vercel — fewer moving parts, no auth-toggle pitfalls, no framework auto-detection surprises.
 
 ## Issue 1 — Imported credentials look bound but aren't
 
@@ -154,20 +155,56 @@ After Step 1–3, the next test is *not* "send a Telegram message." The next ste
 
 ---
 
-## What I take away from these four
+## Issue 5 — Vercel couldn't reliably serve README.md; migrated to GitHub Pages
 
-The four issues together are roughly **8 minutes of total fix time** if you know what to look for, and **45+ minutes** if you don't. The difference is the pre-flight checklist at the top of this document.
+### Symptom
 
-More importantly, these are not n8n-specific problems. The same patterns will appear in any environment where:
+After Issues 1–4 were resolved, Vercel kept returning 404 for `/README.md` even though the file was committed to the repo root with the correct content (24.4 KB, 237 lines, visible on github.com). The site loaded `index.html` and docsify started rendering, but `fetch('/README.md')` returned 404 from Vercel's edge. Direct navigation to `vercel.app/README.md` returned Vercel's native NOT_FOUND page. Every redeploy also re-enabled "Vercel Authentication: Require Log In" by Hobby-tier default — requiring manual toggle-off each time.
 
-- A configuration file references named secrets that don't exist yet in the target environment (Issue 1 & 2).
+I tried the standard fixes: explicit `vercel.json` static configuration, fresh project deletion and re-import, build cache clearing, framework preset overrides. Same 404 returned each time.
+
+### Why it happens
+
+Vercel auto-detects project type from repo contents — presence of `package.json`, framework markers, output directory hints. For repos that have `package.json` but no build script, Vercel applies opaque defaults that don't always match a pure-static expectation. Combined with Hobby-tier behaviors (auto-enabled deployment protection, aggressive CDN caching, limited diagnostic surface), the debugging cost exceeded the value of the platform for a docsify site that needs zero build steps.
+
+### Fix
+
+Migrated to GitHub Pages — purpose-built for serving repo files as static content with no framework detection. Three-step migration:
+
+1. Repo **Settings → Pages → Source: Deploy from a branch → Branch: `main` / `/(root)` → Save**
+2. Created empty `.nojekyll` file in repo root. Without it, GitHub runs Jekyll on the content, which silently strips files starting with `_` and applies markdown transforms docsify doesn't expect.
+3. Updated repo "About" Website field from the old Vercel URL to `https://dmitritsizov-cloud.github.io/02signal-portfolio-template/`.
+
+Site went live within 60 seconds of the second commit. README, sidebar navigation, all internal links, all screenshots — everything worked on first load. No 404s, no auth toggle, no cache battles.
+
+### Diagnostic time
+
+Migration itself: **~5 minutes**. The work before deciding to migrate (Issues 1–4 plus the unfixable README 404) was ~90 minutes. The valuable lesson is not the migration steps — it's the judgement call to stop fixing and switch platforms.
+
+### Prevention
+
+For pure static sites (docsify, plain HTML, MkDocs output), default to GitHub Pages from the start. Vercel is excellent for projects that need serverless functions, edge middleware, or framework auto-detection (Next.js, SvelteKit, Astro). For a folder of `.md` files served by client-side JavaScript, those features add debugging surface without delivering value. The 02Signal setup guide recommended Vercel because it works for the majority case; for this specific portfolio shape (docsify + zero build step), GitHub Pages is the simpler architectural fit. Choosing the right host is part of the engineering, not just a checklist item.
+
+---
+
+## What I take away from these five
+
+The first four issues together are roughly **8 minutes of total fix time** if you know what to look for, and **45+ minutes** if you don't. The difference is the pre-flight checklist at the top of this document.
+
+The fifth — the migration decision — was a separate kind of lesson: knowing when fixing costs more than switching. Issues 1 through 4 had clear diagnostic patterns and clear fixes. Issue 5 didn't. After the third workaround failed on Vercel, the right move wasn't to keep debugging the platform — it was to recognize that the platform's defaults didn't match the project's shape, and to choose a tool that did. That recognition takes longer than the technical fix it leads to.
+
+More importantly, none of these are n8n-specific or Vercel-specific problems. The same patterns will appear in any environment where:
+
+- A configuration file references named secrets that don't exist yet in the target environment (Issues 1 & 2).
 - Two entities of the same type have similar identifiers but different roles (Issue 3 — bot vs user, but generalize: producer vs consumer, source vs destination, request vs response IDs).
 - A trigger requires registration with an external service that only happens in a specific deployment mode (Issue 4 — webhooks, but generalize: cron jobs, scheduled events, async listeners).
+- A platform's default behaviors don't match the project's actual needs, and the cost of bending the platform exceeds the cost of switching to one that fits (Issue 5 — Vercel for static, but generalize: any tool where the configuration overhead grows faster than the value delivered).
 
-Production deployment is a skill separate from prototyping. Prototyping ends when the workflow runs once in the environment you built it in. Deployment ends when the workflow runs reliably in an environment you didn't build it in. The work in between is what this log is about.
+Production deployment is a skill separate from prototyping. Prototyping ends when the workflow runs once in the environment you built it in. Deployment ends when the workflow runs reliably in an environment you didn't build it in, served by infrastructure you didn't pick yourself. The work in between is what this log is about.
 
 ## Related files
 
 - Workflow: [`workflows/week4-sisuloome-hybrid.json`](../workflows/week4-sisuloome-hybrid.json)
 - Setup & demo guide: [`docs/week4-hybrid-setup.md`](week4-hybrid-setup.md)
 - Original v1.0 review log: [`docs/week4-tagasiside.md`](week4-tagasiside.md)
+- Live portfolio: [https://dmitritsizov-cloud.github.io/02signal-portfolio-template/](https://dmitritsizov-cloud.github.io/02signal-portfolio-template/)
