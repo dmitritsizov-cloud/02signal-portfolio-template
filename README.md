@@ -143,8 +143,40 @@ The Normalize node converts all three input shapes into one unified format. The 
 - 📄 [Setup & demo guide](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week4-hybrid-setup.md) — five-step deployment + three-minute demo script
 - 📄 [Production debugging notes](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week4-hybrid-debug-log.md) — the four import issues and how to diagnose them in under a minute each
 
-### Week 5
-*Coming soon — Data collection & decisions*
+### Week 5 — UrbanStyle Andmeraport **Hybrid v1.0** ✅
+
+**What I built:** A data-aware reporting workflow that turns 25 rows of UrbanStyle daily sales into a five-field executive report — delivered to Telegram and logged in Google Sheets for time-series analysis. Same three-trigger Hybrid pattern as Week 4 (Part 3), but adapted for N5's job: **data → insight → decision**, not brief → content.
+
+**What it does:** Triggered by Form, Telegram command, or a 9:00 daily Schedule → reads 25 rows of sales data from Google Sheets `SisendLogi` → a JavaScript Code node aggregates the data deterministically (Narva share 5.96% vs 12% KPI target, 4 `stock_risk = high` rows all from Narva womenswear, period-over-KPI achievement 96.3%) → AI Agent receives the pre-calculated aggregates and writes a 5-field JSON report (`key_metric` / `finding` / `recommendation` / `human_check` / `ai_limitation`) in business Estonian → output is **simultaneously** logged as a new row in Google Sheets `Raportid` AND sent as a formatted Markdown message to Telegram for Marko's review.
+
+**Architecture (8 nodes):**
+
+```
+Form Trigger ────┐                                                                                       ┌─→ Sheets Write (Raportid)
+Telegram Trigger ─┼─→ Normalize → Sheets Read (SisendLogi) → Code (Agregeeri müük) → AI Agent (Groq) ──┤
+Schedule ────────┘                                                                                       └─→ Telegram Send
+```
+
+**The deterministic-creative split (most important architectural decision):** the Code node calculates *every* number — total revenue, Narva share, stock_risk count, KPI achievement percentage — and labels statuses (`CRITICAL` / `BELOW_TARGET` / `OK`, `EXCEEDS_KPI` / `WITHIN_KPI`). AI receives these as structured input and only writes prose around them. **AI cannot fabricate cifras because it never sees raw rows — it sees aggregates.** When I cross-checked the same analysis prompt against Groq (in-workflow), Grok, and Gemini, all three got the anchor metrics (Narva 5.96%, stockRisk 4×, Tallinn 5,780€) correct because they came from the aggregator; the external models got *secondary* numbers wrong (Tartu 2,010€ instead of 3,210€, Online 3,310€ instead of 4,910€) because they were trying to recalculate from raw data. Removing AI's ability to do arithmetic is what makes the report trustworthy.
+
+**The Narva discovery (real strategic insight, not a demo):** running the workflow on five days of data surfaced a pattern that wouldn't have been visible without aggregation. Narva produces **5.96% of revenue** against a 12% KPI target — but the problem is not demand. All four `stock_risk = high` rows came from one combination: **Narva store × women's clothing × Spring Wardrobe campaign**. The same campaign works elsewhere: Tallinn 5,780€, Tartu 3,210€, Online 4,910€. The note field has customers saying *"kliendid küsivad puuduvaid suurusi"* four days in a row. This is a **supply problem, not a demand problem** — and Narva is the closest analog UrbanStyle has to what their Riga expansion will look like. The report Kristi takes to the board has one sentence: *do not finance Riga expansion until Narva supply chain is audited.* That's not generated content. That's a finding that survives audit.
+
+**The Sheets-as-memory pattern:** every report writes a new row to the `Raportid` tab with 11 columns including a `human_check` field that captures what Marko has to verify before the report goes external (e.g. *"are the note-column flags confirmed by Liis?"*, *"does the 5-day window cover the full campaign period?"*). Over 3+ weeks, the log becomes searchable history — comparing this week's Narva pattern to last week's, tracking how many high-risk warnings preceded a real stock-out, watching whether recommendations got acted on. Google Sheets is not the long-term database, but it's the right starting point: zero infrastructure, human-readable, an n8n node away from any future Postgres migration. **The workflow doesn't just deliver a report — it accumulates a decision log.**
+
+**Real output example** — full 5-day sales analysis, all five AI fields populated from pre-calculated aggregates, delivered to Telegram in ~10 seconds and simultaneously logged in Google Sheets:
+
+![N5 Telegram report — deterministic numbers + AI narrative](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/screenshots/n5-telegram-report.png?raw=true)
+
+**Tested with cross-AI validation:** ran the same prompt and aggregates through Groq (in-workflow), Grok (external chat), and Gemini (external chat). All three correctly identified Narva 5.96% / 12% target / supply-chain risk as the primary finding. Differences only appeared in non-anchor numbers — confirming that the deterministic-creative split is the right architecture for any data-to-narrative workflow.
+
+**Estimated business impact:** Marko currently spends ~90 minutes per manual report — pulling data from 5 sources, asking Liis for inventory status, checking promo calendars, summarizing for Kristi. At 4 reports per week × 80 minutes saved = **5 hours/week × 50 weeks = ~250 hours/year**, roughly equivalent to **12,500€** of director-level cost recovered, plus a measurable reduction in time-to-decision for board-level questions. The Sheets log adds a second compounding effect: every week of accumulated reports makes the next analysis cheaper because patterns become comparable across time.
+
+**Try it / view it:**
+
+- 📁 [N5 workflow file (n8n export)](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/workflows/week5-andmeraport-hybrid.json)
+- 📊 [Google Sheets template (SisendLogi + Raportid headers)](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/data/week5-sheets-template.csv)
+- 📄 [Setup & deployment guide](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week5-hybrid-setup.md) — Google Cloud OAuth, Sheets credentials, and the Narva test scenario in under 15 minutes
+- 📄 [The Narva analysis](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week5-narva-finding.md) — full data breakdown of the supply-side pattern and what it means for the Riga expansion case
 
 ### Week 6
 *Coming soon — AI strategy presentation*
@@ -223,8 +255,21 @@ Reusable prompt templates I've designed are in [the prompts folder](https://gith
 
 **What clicked:** Production deployment is an entirely different skill from prototyping. The v1.0 workflow worked the moment I built it, because everything was on the same machine and I had set every credential by hand. The v1.1 import felt like deploying to a new environment for the first time — and that's exactly what it was. The credentials are the *interface between the workflow and reality*, and an exported `.json` cannot carry that interface across environments. **This is the most useful operational lesson of the week:** treat every workflow import like a fresh deployment, run a five-minute credential audit before testing, and verify Active/Test mode for each trigger type. Skipping any of the four checks costs more time than doing all of them. Also clicked: the **"1 brief = 5 channels"** framing. Until I produced all five outputs from one input, I thought of channels as separate workflows. After: one brief is the unit of work, the channels are projections. That reframing alone is what makes the workflow worth 75 minutes of saved time per execution.
 
-### Week 5
-*Coming soon*
+### Week 5 — Andmeraport Hybrid v1.0
+
+**What was new:** Splitting work between **deterministic logic** and **creative AI** as an architectural rule, not just a preference. Previous weeks had AI doing both the calculating and the writing — and tolerating the occasional fabrication as long as the prose was good. Week 5 forced the separation: every numeric claim in the report comes from a Code node that ran in 50 milliseconds with auditable math; every sentence around those numbers comes from AI that explicitly cannot do arithmetic. The result is a report I can defend to a CEO without checking the figures, because the figures were never AI's job in the first place. Also new: Google Sheets as **workflow memory**, not just a data source — every execution writes a row, and rows accumulate into a searchable decision log over time. The same `Raportid` table that records this week's analysis is what I'll query in week 8 to ask "how many high-risk Narva warnings preceded a real stock-out?"
+
+**What was hard:** Three things, in descending order of time cost.
+
+1. **Google Cloud OAuth setup.** n8n self-hosted requires creating an OAuth Client ID in Google Cloud Console — enable Sheets API + Drive API, configure consent screen, register the redirect URI (`https://n8n.02signal.com/rest/oauth2-credential/callback`), and add my own Google email as a test user before any auth flow works. About 15 minutes one-time, but with zero margin for error: a single missing test user invalidates the entire flow with "Access blocked" and gives almost no signal what's actually wrong. The fix order matters too: skip the test user step and you don't find out until step 9 of 9.
+2. **CSV import into Google Sheets does not auto-parse.** Pasting 25 rows of comma-separated text creates 25 cells in column A, not 25 rows × 10 columns. The fix is *Data → Split text to columns*, but the menu option is **greyed out unless you select a cell range** (not entire rows). I spent five minutes clicking row numbers and wondering why the option was disabled before realizing the selection had to be `A2:A26`, not `2:26`.
+3. **AI's `output` field returns a JSON string, not a parsed object.** Using `{{ $json.output.key_metric }}` in downstream nodes produces blank values — the field is literally the string `"{\"key_metric\":\"...\"}"`. The fix is `{{ JSON.parse($json.output).key_metric }}` everywhere the AI's structured output is consumed, including the Sheets Write node and the Telegram message template. Five expressions, one mistake, two debugging cycles in Telegram before I caught it.
+
+Also: the Vorminda node from the v1.1 template that I duplicated had a hardcoded reference to a deleted upstream node (`$('02Signal N5 raportilogi')`), which silently broke the whole branch with `Cannot assign to read only property 'name'`. **When you fork a workflow template, the broken nodes from the original are debt you inherit.** Audit-then-delete, not the reverse.
+
+**What clicked:** The Hybrid v1.1 pattern from Week 4 (Part 3) is **template-able**. Week 5 is Week 4's architecture with two pieces swapped: hardcoded Data Lookup → Google Sheets Read, and Multi-channel Formatter → Sheets Write + single Telegram. The pipeline shape — three triggers, Normalize node, deterministic enrichment, AI as text generator, dual output — is the same. This is the difference between Shu, Ha, and Ri: Shu is following a template; Ha is adapting it to a new problem; Ri is recognizing that *the template itself is the asset*. After two iterations on this Hybrid pattern, I can estimate that the next workflow with the same shape — a weekly customer-service quality report, a daily inventory-alert digest, a monthly board-metrics summary — would take 2-3 hours, not 2-3 days. **The pattern is the product.**
+
+And the Narva 5.96% finding is the proof that boring data tooling, applied honestly, produces consultant-grade insights without consultants. The exact same five days of data, viewed without the aggregator, look like "Narva is doing badly, probably needs more marketing." Viewed with the aggregator, they say "Narva has 4 of 4 high-risk markers in one product category, supply chain is broken, do not extrapolate to Riga." Same data, two different conclusions, and the second one is worth tens of thousands of euros in averted misallocation. **The architecture is what produces the insight — not the AI.**
 
 ### Week 6
 *Coming soon*
