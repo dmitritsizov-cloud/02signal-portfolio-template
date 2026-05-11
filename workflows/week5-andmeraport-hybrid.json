@@ -1,0 +1,643 @@
+{
+  "name": "N5 UrbanStyle Andmeraport HÜBRIID v1.0 (Form + Telegram + Schedule)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "N4 HÜBRIID — KOLM SISENDIT, ÜKS LOOGIKA\n\nSee workflow ühendab:\n• N4 Shu nõude (Form → AI → Telegram)\n• N4 Ha andmelookup (tooted, segmendid, kampaaniad, laoseis)\n• N4 Ha+ tagasiside-loop (PARANDA: ...)\n• N3 ideed (multi-kanal väljund + päevane auto-postitus)\n\nSEADISTAMINE (5 sammu):\n1. Vali kõikidel Telegram node'idel oma credential\n2. Vali AI mudeli node'is oma Groq/OpenAI credential\n3. Asenda CHAT_ID_HERE oma Telegram chat ID-ga (Code node 'Telegram chat ID')\n4. Salvesta + Activate workflow\n5. Testi Form Triggeri linki → kontrolli Telegrami\n\nDEMO STSENAARIUM (3 min):\n• Shu: täida Form → näita drafti Telegramis\n• Ha: rõhuta, et AI kasutas tegelikku tooteinfot ja kampaania reegleid\n• Ha+: saada Telegramis 'PARANDA: tee lühemaks' → näita parandatud versiooni",
+        "height": 480,
+        "width": 540,
+        "color": 4
+      },
+      "id": "f6de07ab-b517-481b-82b4-a112ef22e338",
+      "name": "Loe enne käivitamist",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -368
+      ]
+    },
+    {
+      "parameters": {
+        "content": "3 SISENDIT (Triggerid)\n\n🟢 Form Trigger — turundaja täidab vormi\n   → N4 Shu põhivoog\n\n🔵 Telegram Trigger — käsk botis\n   • PARANDA: ... → revision (Ha+)\n   • /reklaam [toote nimi] → kiire draft\n   • muu tekst → free brief\n\n🟡 Schedule — iga päev 9:00\n   → automaatne tsükliline draft\n   (N3 idee säilitatud)\n\nKõik kolm sisendit suunduvad ühte\n'Andmete lookup' node'i, mis valib\nkonteksti N4 andmepakist.",
+        "height": 380,
+        "width": 360,
+        "color": 5
+      },
+      "id": "28d6eb3f-8099-43d4-afa3-178e49fda10a",
+      "name": "3 sisendi selgitus",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "ANDMEPAKK koodis\n\nKogu N4 andmepakk (tooted, segmendid,\nkampaaniad, laoseis) on Code node'is\nhardcoded. See töötab ka ilma Google\nSheets'ita — Shu/Ha demo läheb käima\nkohe.\n\nKui tahad päris andmebaasi (N5):\nasenda PRODUCTS/SEGMENTS/PROMOTIONS\nblokid Google Sheets read'iga.\n\nMatchimise loogika:\n• Otsib brief'ist ID-d (US-P-101, SEG-01)\n• Kui ID puudub → matchib märksõnu\n• Lisab laoseisu hoiatuse (do_not_claim)",
+        "height": 360,
+        "width": 360,
+        "color": 7
+      },
+      "id": "1fae0b70-32ac-42b2-964f-97ca1ccf13a9",
+      "name": "Andmete selgitus",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "AI VÄLJUND — multi-kanal\n\nAI tagastab JSON'i kus on:\n• telegram_draft (lühike, 3 lauset, emoji)\n• instagram_caption + hashtags\n• facebook_text + cta\n• email_subject + email_body\n• tootekirjeldus (e-poe jaoks)\n• meta (kvaliteet, kasutatud andmed)\n\nDemo päeval valid kanali Form'is\nja näitad ainult selle versiooni.\nPortfolios mainid: 'üks brief = 5 kanalit'",
+        "height": 340,
+        "width": 360,
+        "color": 6
+      },
+      "id": "77d93d73-3288-4557-8528-23e36d620171",
+      "name": "Väljundi selgitus",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "UrbanStyle sisubrief (N4)",
+        "formDescription": "Täida brief — AI loob draft'i kõigile kanalitele ja saadab Telegrami kinnitamiseks. Inimene jääb kontrolli.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Kampaania nimi",
+              "placeholder": "Kevadine garderoob",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Kanal",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Instagram"
+                  },
+                  {
+                    "option": "Facebook"
+                  },
+                  {
+                    "option": "Email"
+                  },
+                  {
+                    "option": "Tootekirjeldus"
+                  },
+                  {
+                    "option": "Telegram"
+                  },
+                  {
+                    "option": "Kõik kanalid"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Tootekategooria",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "naiste riided"
+                  },
+                  {
+                    "option": "meeste riided"
+                  },
+                  {
+                    "option": "aksessuaarid"
+                  },
+                  {
+                    "option": "kõik"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Sihtrühm",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "SEG-01 Tallinn gold kliendid"
+                  },
+                  {
+                    "option": "SEG-02 Tartu silver kliendid"
+                  },
+                  {
+                    "option": "SEG-03 Pärnu suveostjad"
+                  },
+                  {
+                    "option": "SEG-04 Narva uued kliendid"
+                  },
+                  {
+                    "option": "SEG-05 E-poe korduvostjad"
+                  },
+                  {
+                    "option": "SEG-06 Teadlikud noored"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Toon",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "inspireeriv"
+                  },
+                  {
+                    "option": "praktiline"
+                  },
+                  {
+                    "option": "premium"
+                  },
+                  {
+                    "option": "soodne"
+                  },
+                  {
+                    "option": "rahulik"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Põhisõnum",
+              "fieldType": "textarea",
+              "placeholder": "Jätkusuutlik garderoob kevadeks",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Konkreetne toode (vabatahtlik)",
+              "placeholder": "nt US-P-101 või Linen Flow kleit"
+            }
+          ]
+        },
+        "options": {
+          "buttonLabel": "Loo sisudraft"
+        }
+      },
+      "id": "595ceda6-25df-4f58-85ed-66b49cf3ff61",
+      "name": "Form Trigger - sisubrief",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        336
+      ],
+      "webhookId": "11e6e1ad-a9d8-457a-a1aa-6f61d9df8a53"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "d1fa29bd-30f6-40ca-a4b2-ed9b7afb2dfb",
+      "name": "Telegram Trigger - PARANDA või /reklaam",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        512
+      ],
+      "webhookId": "68ce1258-60cd-4a25-878f-2e9259f6389c",
+      "credentials": {
+        "telegramApi": {
+          "id": "ylCU6R3fsV60y5qE",
+          "name": "UrbanStyle FAQ Bot 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "0f645213-2217-4beb-9a58-3b26f3f37df4",
+      "name": "Schedule - iga päev 9:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        736
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// =========================================================\n// SISENDI NORMALIZER — kõik 3 triggerit ühele kujule\n// =========================================================\nconst input = $input.first().json;\nconst now = new Date().toISOString();\nconst staticData = $getWorkflowStaticData('global');\nstaticData.lastDraftByChat = staticData.lastDraftByChat || {};\nstaticData.cycleIndex = staticData.cycleIndex || 0;\n\nlet source, brief, channel, segment_hint, tone, category, message, product_hint, feedback, chat_id, user_name;\n\n// 1) FORM TRIGGER\nif (input['Kampaania nimi']) {\n  source = 'form';\n  brief = input['Kampaania nimi'];\n  channel = input['Kanal'] || 'Instagram';\n  category = input['Tootekategooria'] || 'naiste riided';\n  segment_hint = input['Sihtrühm'] || 'SEG-01';\n  tone = input['Toon'] || 'inspireeriv';\n  message = input['Põhisõnum'] || '';\n  product_hint = input['Konkreetne toode (vabatahtlik)'] || '';\n  feedback = '';\n  chat_id = '8773999500'; // Asenda oma Telegram chat ID-ga\n  user_name = 'turundaja (vorm)';\n}\n// 2) TELEGRAM TRIGGER\nelse if (input.message?.text) {\n  source = 'telegram';\n  const text = input.message.text.trim();\n  chat_id = input.message.chat.id;\n  user_name = input.message.from?.first_name || 'kasutaja';\n  \n  if (/^paranda:/i.test(text)) {\n    feedback = text.replace(/^paranda:\\s*/i, '').trim();\n    brief = 'revision';\n    channel = 'Telegram';\n    const last = staticData.lastDraftByChat[String(chat_id)];\n    message = last?.draft_text || '';\n    product_hint = last?.product_hint || '';\n    segment_hint = last?.segment_hint || 'SEG-01';\n    category = last?.category || 'naiste riided';\n    tone = 'sama nagu eelmine';\n  } else if (/^\\/reklaam/i.test(text)) {\n    product_hint = text.replace(/^\\/reklaam\\s*/i, '').trim();\n    brief = 'kiire reklaam';\n    channel = 'Telegram';\n    message = 'kiire reklaam Telegrami kanalile';\n    segment_hint = 'SEG-06'; // Teadlikud noored\n    category = '';\n    tone = 'inspireeriv';\n    feedback = '';\n  } else {\n    brief = text.split('\\n')[0] || 'vaba brief';\n    channel = 'Kõik kanalid';\n    message = text;\n    segment_hint = 'SEG-01';\n    category = '';\n    tone = 'inspireeriv';\n    product_hint = '';\n    feedback = '';\n  }\n}\n// 3) SCHEDULE TRIGGER (tsükliline)\nelse {\n  source = 'schedule';\n  const products = ['US-P-101','US-P-102','US-P-103','US-P-201','US-P-202','US-P-203','US-P-301','US-P-302','US-P-303','US-P-401','US-P-402','US-P-403'];\n  const idx = staticData.cycleIndex % products.length;\n  product_hint = products[idx];\n  staticData.cycleIndex = idx + 1;\n  brief = 'Päevane auto-draft';\n  channel = 'Kõik kanalid';\n  message = 'Hooaja sisuline postitus';\n  segment_hint = 'SEG-06';\n  category = '';\n  tone = 'inspireeriv';\n  feedback = '';\n  chat_id = '6205033039';\n  user_name = 'auto-schedule';\n}\n\nreturn [{\n  json: {\n    source, brief, channel, category, segment_hint, tone, message, product_hint, feedback,\n    chat_id: String(chat_id), user_name, created_at: now,\n    draft_id: 'N4-' + now.replace(/[-:.TZ]/g,'').slice(0,14) + '-' + Math.random().toString(36).slice(2,5).toUpperCase()\n  }\n}];"
+      },
+      "id": "9cd46ff1-8686-4e12-a9ce-e852a61860f5",
+      "name": "Normaliseeri sisend (3 triggerit → 1 vorm)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Andmed Code node'ist (Agregeeri müük):\n\n{{ JSON.stringify($json, null, 2) }}\n\nKoosta JSON-vormingus N5 andmeraport vastavalt System Message reeglitele. Kasuta ainult ülaltoodud agregaate.",
+        "options": {
+          "systemMessage": "Sa oled UrbanStyle andmeanalüütik. Sinu töö on aidata tootejuhil Markol koostada lühike andmepõhine raport CEO Kristile, mis toetab nõukogu otsuseid Riia laienemise kontekstis.\n\nKONTEKST\nUrbanStyle on Eesti moe- ja jaekaubandusettevõte. Poed: Tallinn, Tartu, Pärnu, Narva. E-pood (Online). Plaanitakse Riia laienemist.\n\nKPI sihid:\n- Päevakäive: 3500 EUR\n- Tellimusi päevas: 55\n- Keskmine ost: 65 EUR\n- Narva osakaal käibest: 12%\n- Stock_risk = high: max 3 korda nädalas\n\nREEGLID\n1. Kasuta AINULT etteantud agregaate. Iga number raportis peab tulema sisendist. ÄRA leiuta numbreid, ÄRA arvuta uuesti.\n2. Kui narva.status = \"CRITICAL\" või \"BELOW_TARGET\", nimeta seda Riia laienemise riskiks.\n3. Kui stockRisk.status = \"EXCEEDS_KPI\", nimeta seda supply chain riskiks.\n4. Erista korrelatsiooni ja põhjuslikkust. Ära väida põhjuslikkust 5 päeva andmete põhjal.\n5. Vastus eesti keeles, ärikeel, kuni 200 sõna.\n\nVÄLJUNDI FORMAAT\nTagasta AINULT puhas JSON ilma markdownita ja ilma seletusteta:\n\n{\n  \"key_metric\": \"üks lause põhinumbriga, mis on Kristile kõige olulisem\",\n  \"finding\": \"üks korduv muster andmetes, konkreetsete numbritega\",\n  \"recommendation\": \"üks otsust toetav soovitus Kristile Riia laienemise kontekstis\",\n  \"human_check\": \"mida Marko peab enne nõukogule esitamist üle vaatama\",\n  \"ai_limitation\": \"mida 5 päeva 25 rida EI saa öelda\"\n}\n\nIga väli kuni 30 sõna. Ole konkreetne, mitte üldsõnaline."
+        }
+      },
+      "id": "0414a412-0f95-4315-822e-7cc60653be65",
+      "name": "AI Agent - multi-kanal draft",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1616,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "id": "22630d46-7395-49fd-b6ad-e9bc779892d6",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        704
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "ClKCoL5Vni40uIjo",
+          "name": "Groq account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=6205033039",
+        "text": "=📊 *N5 UrbanStyle andmeraport*\n\n📅 Periood: {{ $('Agregeeri müük').first().json.period }}\n\n💰 *Põhinumbrid:*\n- Käive: {{ $('Agregeeri müük').first().json.totals.revenue }} €\n- Tellimused: {{ $('Agregeeri müük').first().json.totals.orders }}\n- Päevakäive: {{ $('Agregeeri müük').first().json.totals.avgDailyRevenue }} € (KPI siht 3500 €, täidetud {{ $('Agregeeri müük').first().json.totals.kpiAchievement_pct }}%)\n- Narva osakaal: {{ $('Agregeeri müük').first().json.narva.share_pct }}% (siht 12%, staatus: {{ $('Agregeeri müük').first().json.narva.status }})\n- Stock risk high: {{ $('Agregeeri müük').first().json.stockRisk.highCount }}x (KPI max 3, staatus: {{ $('Agregeeri müük').first().json.stockRisk.status }})\n\n🎯 *Key metric:* {{ JSON.parse($json.output).key_metric }}\n\n🔍 *Muster:* {{ JSON.parse($json.output).finding }}\n\n💡 *Soovitus Kristile:* {{ JSON.parse($json.output).recommendation }}\n\n✅ *Inimese kontroll:* {{ JSON.parse($json.output).human_check }}\n\n⚠️ *AI piirang:* {{ JSON.parse($json.output).ai_limitation }}\n\n_Allikas: n8n workflow N5 v1.0_",
+        "additionalFields": {
+          "appendAttribution": true,
+          "disable_web_page_preview": true,
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "a5941fef-eabd-48c4-85b0-75c763f1cac8",
+      "name": "Telegram - saada draft kinnitamiseks",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2128,
+        480
+      ],
+      "webhookId": "68686c47-052f-47bb-afbf-6c8f3e4ea6bd",
+      "credentials": {
+        "telegramApi": {
+          "id": "ylCU6R3fsV60y5qE",
+          "name": "UrbanStyle FAQ Bot 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1JhGGSZjz_8e6jcfa1m_j-Ou-siXW4k-hFtc6gTuzJmk",
+          "mode": "list",
+          "cachedResultName": "02Signal N5 raportilogi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JhGGSZjz_8e6jcfa1m_j-Ou-siXW4k-hFtc6gTuzJmk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "SisendLogi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JhGGSZjz_8e6jcfa1m_j-Ou-siXW4k-hFtc6gTuzJmk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1200,
+        480
+      ],
+      "id": "d10d32ab-00f6-4b86-8b6e-9316aa946873",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uaAAOJZuSPHdfgWq",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// =====================================================\n// N5 Müügiandmete agregaator\n// Sisend: Google Sheets Read SisendLogi (25 rida)\n// Väljund: kõik, mida AI vajab + raporti meta\n// =====================================================\n\nconst rows = $input.all().map(item => item.json);\n\nif (!rows.length) {\n  throw new Error('SisendLogi tühi — kontrolli Google Sheets Read node');\n}\n\nconst num = (v) => Number(v) || 0;\nconst sum = (key) => rows.reduce((s, r) => s + num(r[key]), 0);\nconst sumWhere = (filter, key) => rows.filter(filter).reduce((s, r) => s + num(r[key]), 0);\n\nconst totalRevenue = sum('revenue_eur');\nconst totalOrders = sum('orders');\nconst days = new Set(rows.map(r => r.date)).size;\nconst avgDailyRevenue = Math.round(totalRevenue / days);\nconst avgOrderValue = Number((totalRevenue / totalOrders).toFixed(2));\n\nconst stores = ['Tallinn', 'Tartu', 'Pärnu', 'Narva', 'Online'];\nconst storeStats = stores.map(store => {\n  const revenue = sumWhere(r => r.store === store, 'revenue_eur');\n  return {\n    store,\n    revenue,\n    orders: sumWhere(r => r.store === store, 'orders'),\n    share_pct: Number(((revenue / totalRevenue) * 100).toFixed(2))\n  };\n});\n\nconst highRiskRows = rows.filter(r => r.stock_risk === 'high');\nconst highRiskStores = [...new Set(highRiskRows.map(r => r.store))];\nconst highRiskCategories = [...new Set(highRiskRows.map(r => r.category))];\nconst highRiskNotes = highRiskRows.map(r => `${r.date} ${r.store}: ${r.note}`);\n\nconst narvaShare = storeStats.find(s => s.store === 'Narva').share_pct;\nconst NARVA_TARGET = 12;\n\nconst dates = [...new Set(rows.map(r => r.date))].sort();\nconst period = `${dates[0]} kuni ${dates[dates.length - 1]} (${days} päeva, ${rows.length} rida)`;\n\nreturn [{\n  json: {\n    period,\n    totals: {\n      revenue: totalRevenue,\n      orders: totalOrders,\n      avgDailyRevenue,\n      avgOrderValue,\n      kpiDailyRevenue: 3500,\n      kpiAchievement_pct: Number(((avgDailyRevenue / 3500) * 100).toFixed(1))\n    },\n    storeStats,\n    narva: {\n      share_pct: narvaShare,\n      target_pct: NARVA_TARGET,\n      gap_pp: Number((NARVA_TARGET - narvaShare).toFixed(2)),\n      status: narvaShare < 8 ? 'CRITICAL' : narvaShare < NARVA_TARGET ? 'BELOW_TARGET' : 'OK'\n    },\n    stockRisk: {\n      highCount: highRiskRows.length,\n      kpiMaxHighPerWeek: 3,\n      stores: highRiskStores,\n      categories: highRiskCategories,\n      notes: highRiskNotes,\n      status: highRiskRows.length > 3 ? 'EXCEEDS_KPI' : 'WITHIN_KPI'\n    },\n    rawData: rows\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        480
+      ],
+      "id": "42a137c2-cd99-4c89-bc70-33c35e4e837c",
+      "name": "Agregeeri müük"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1JhGGSZjz_8e6jcfa1m_j-Ou-siXW4k-hFtc6gTuzJmk",
+          "mode": "list",
+          "cachedResultName": "02Signal N5 raportilogi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JhGGSZjz_8e6jcfa1m_j-Ou-siXW4k-hFtc6gTuzJmk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1683717041,
+          "mode": "list",
+          "cachedResultName": "Raportid",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JhGGSZjz_8e6jcfa1m_j-Ou-siXW4k-hFtc6gTuzJmk/edit#gid=1683717041"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "created_at": "={{ $now.toISO() }}",
+            "report_id": "={{ \"N5-\" + $now.format(\"yyyyMMdd-HHmmss\") }}",
+            "report_type": "sales",
+            "period": "={{ $('Agregeeri müük').first().json.period }}",
+            "key_metric": "={{ JSON.parse($('AI Agent - multi-kanal draft').first().json.output).key_metric }}",
+            "finding": "={{ JSON.parse($('AI Agent - multi-kanal draft').first().json.output).finding }}",
+            "recommendation": "={{ JSON.parse($('AI Agent - multi-kanal draft').first().json.output).recommendation }}",
+            "human_check": "={{ JSON.parse($('AI Agent - multi-kanal draft').first().json.output).human_check }}",
+            "source": "={{ $('Normaliseeri sisend (3 triggerit → 1 vorm)').first().json.source }}",
+            "workflow_level": "=ri",
+            "data_context": "={{ \"n5_sales_sample.csv 25 rida / käive \" + $('Agregeeri müük').first().json.totals.revenue + \" EUR\" }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "report_id",
+              "displayName": "report_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "report_type",
+              "displayName": "report_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "period",
+              "displayName": "period",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "key_metric",
+              "displayName": "key_metric",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "finding",
+              "displayName": "finding",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "recommendation",
+              "displayName": "recommendation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "human_check",
+              "displayName": "human_check",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "workflow_level",
+              "displayName": "workflow_level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data_context",
+              "displayName": "data_context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1936,
+        480
+      ],
+      "id": "43931422-f5fb-4ea3-89c4-0266db25d816",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uaAAOJZuSPHdfgWq",
+          "name": "Google Sheets account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Form Trigger - sisubrief": {
+      "main": [
+        [
+          {
+            "node": "Normaliseeri sisend (3 triggerit → 1 vorm)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger - PARANDA või /reklaam": {
+      "main": [
+        [
+          {
+            "node": "Normaliseeri sisend (3 triggerit → 1 vorm)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule - iga päev 9:00": {
+      "main": [
+        [
+          {
+            "node": "Normaliseeri sisend (3 triggerit → 1 vorm)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normaliseeri sisend (3 triggerit → 1 vorm)": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - multi-kanal draft",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - multi-kanal draft": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Agregeeri müük",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregeeri müük": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - multi-kanal draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Telegram - saada draft kinnitamiseks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Europe/Tallinn",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedPerExecution": 75
+  },
+  "versionId": "956c8cb9-fa4e-46c5-8cae-7ab0c63fe7f2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5949fab626268d8b88b21dc50348a43b1823770fe66fe1bcebd9d5e1e0dd23d0"
+  },
+  "id": "6QTZjFA3rJAtIwsF",
+  "tags": []
+}
