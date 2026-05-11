@@ -219,7 +219,7 @@
       "webhookId": "68ce1258-60cd-4a25-878f-2e9259f6389c",
       "credentials": {
         "telegramApi": {
-          "id": "ylCU6R3fsV60y5qE",
+          "id": "",
           "name": "UrbanStyle FAQ Bot 1"
         }
       }
@@ -289,14 +289,14 @@
       ],
       "credentials": {
         "groqApi": {
-          "id": "ClKCoL5Vni40uIjo",
+          "id": "",
           "name": "Groq account 5"
         }
       }
     },
     {
       "parameters": {
-        "chatId": "=6205033039",
+        "chatId": "=CHAT_ID_HERE",
         "text": "=📊 *N5 UrbanStyle andmeraport*\n\n📅 Periood: {{ $('Agregeeri müük').first().json.period }}\n\n💰 *Põhinumbrid:*\n- Käive: {{ $('Agregeeri müük').first().json.totals.revenue }} €\n- Tellimused: {{ $('Agregeeri müük').first().json.totals.orders }}\n- Päevakäive: {{ $('Agregeeri müük').first().json.totals.avgDailyRevenue }} € (KPI siht 3500 €, täidetud {{ $('Agregeeri müük').first().json.totals.kpiAchievement_pct }}%)\n- Narva osakaal: {{ $('Agregeeri müük').first().json.narva.share_pct }}% (siht 12%, staatus: {{ $('Agregeeri müük').first().json.narva.status }})\n- Stock risk high: {{ $('Agregeeri müük').first().json.stockRisk.highCount }}x (KPI max 3, staatus: {{ $('Agregeeri müük').first().json.stockRisk.status }})\n\n🎯 *Key metric:* {{ JSON.parse($json.output).key_metric }}\n\n🔍 *Muster:* {{ JSON.parse($json.output).finding }}\n\n💡 *Soovitus Kristile:* {{ JSON.parse($json.output).recommendation }}\n\n✅ *Inimese kontroll:* {{ JSON.parse($json.output).human_check }}\n\n⚠️ *AI piirang:* {{ JSON.parse($json.output).ai_limitation }}\n\n_Allikas: n8n workflow N5 v1.0_",
         "additionalFields": {
           "appendAttribution": true,
@@ -312,10 +312,10 @@
         2128,
         480
       ],
-      "webhookId": "68686c47-052f-47bb-afbf-6c8f3e4ea6bd",
+      "webhookId": "",
       "credentials": {
         "telegramApi": {
-          "id": "ylCU6R3fsV60y5qE",
+          "id": "",
           "name": "UrbanStyle FAQ Bot 1"
         }
       }
@@ -348,7 +348,7 @@
       "name": "Get row(s) in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "uaAAOJZuSPHdfgWq",
+          "id": "",
           "name": "Google Sheets account 3"
         }
       }
@@ -515,7 +515,7 @@
       "name": "Append row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "uaAAOJZuSPHdfgWq",
+          "id": "",
           "name": "Google Sheets account 3"
         }
       }
