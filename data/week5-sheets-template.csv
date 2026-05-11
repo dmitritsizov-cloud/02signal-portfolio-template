@@ -25,5 +25,3 @@ date,store,channel,category,revenue_eur,orders,avg_order_eur,campaign,stock_risk
 2026-05-05,Pärnu,store,aksessuaarid,420,6,70,Jätkusuutlik valik,low,kõrgem keskmine ost
 2026-05-05,Narva,store,naiste riided,200,4,50,Kevadine garderoob,high,korduv risk
 2026-05-05,Online,online,aksessuaarid,990,18,55,Jätkusuutlik valik,low,aksessuaaride lõpetav nädal
-
-# Raportid tab — create a SECOND empty sheet named "Raportid" with ONLY this header row (no data rows):
