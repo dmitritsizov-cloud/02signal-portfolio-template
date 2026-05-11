@@ -1,0 +1,32 @@
+# SisendLogi tab — paste rows 3-27 into a sheet named "SisendLogi"
+# Total: 16855 EUR / 283 orders / 5 days / 5 stores
+# Narva pattern: 1005 EUR (5.96% of revenue) vs 12% KPI target, 4 of 5 days flagged stock_risk=high, all womenswear/Kevadine garderoob
+date,store,channel,category,revenue_eur,orders,avg_order_eur,campaign,stock_risk,note
+2026-05-01,Tallinn,store,naiste riided,1280,18,71,Kevadine garderoob,low,stabiilne müük
+2026-05-01,Tartu,store,meeste riided,640,9,71,Tööpäeva stiil,low,hea keskmine ost
+2026-05-01,Pärnu,store,aksessuaarid,310,7,44,Jätkusuutlik valik,low,väike aga tervislik maht
+2026-05-01,Narva,store,naiste riided,200,4,50,Kevadine garderoob,high,kleitide laoseis madal
+2026-05-01,Online,online,naiste riided,980,18,54,Kevadine garderoob,low,e-pood toetab kampaaniat
+2026-05-02,Tallinn,store,meeste riided,1140,17,67,Tööpäeva stiil,low,püsiv nõudlus
+2026-05-02,Tartu,store,naiste riided,580,9,64,Kevadine garderoob,low,suvepäeva mõjul
+2026-05-02,Pärnu,store,naiste riided,380,6,63,Kevadine garderoob,low,madal aga stabiilne
+2026-05-02,Narva,store,naiste riided,210,5,42,Kevadine garderoob,high,kliendid küsivad puuduvaid suurusi
+2026-05-02,Online,online,aksessuaarid,850,16,53,Jätkusuutlik valik,low,aksessuaaride hea nädal
+2026-05-03,Tallinn,store,aksessuaarid,1050,17,62,Jätkusuutlik valik,low,nädalavahetuse mõju
+2026-05-03,Tartu,store,naiste riided,690,11,63,Kevadine garderoob,low,järelnõudlus garderoobile
+2026-05-03,Pärnu,store,meeste riided,410,7,59,Tööpäeva stiil,low,töökoha riided
+2026-05-03,Narva,store,aksessuaarid,195,4,49,Jätkusuutlik valik,low,aksessuaaride kampaania toimib
+2026-05-03,Online,online,naiste riided,1100,21,52,Kevadine garderoob,low,nädalavahetuse tipp
+2026-05-04,Tallinn,store,naiste riided,1090,16,68,Kevadine garderoob,low,kampaania püsib
+2026-05-04,Tartu,store,aksessuaarid,720,13,55,Jätkusuutlik valik,low,kotid ja vööd populaarsed
+2026-05-04,Pärnu,store,naiste riided,430,8,54,Kevadine garderoob,low,suvise kollektsiooni huvi
+2026-05-04,Narva,store,naiste riided,200,4,50,Kevadine garderoob,high,laoseisu risk kordub
+2026-05-04,Online,online,meeste riided,990,18,55,Tööpäeva stiil,low,e-pood toetab meeste kollektsiooni
+2026-05-05,Tallinn,store,meeste riided,1220,19,64,Tööpäeva stiil,low,nädala parim päev
+2026-05-05,Tartu,store,naiste riided,580,8,73,Kevadine garderoob,low,kallis ost
+2026-05-05,Pärnu,store,aksessuaarid,420,6,70,Jätkusuutlik valik,low,kõrgem keskmine ost
+2026-05-05,Narva,store,naiste riided,200,4,50,Kevadine garderoob,high,korduv risk
+2026-05-05,Online,online,aksessuaarid,990,18,55,Jätkusuutlik valik,low,aksessuaaride lõpetav nädal
+
+# Raportid tab — create a SECOND empty sheet named "Raportid" with ONLY this header row (no data rows):
+# created_at,report_id,report_type,period,key_metric,finding,recommendation,human_check,source,workflow_level,data_context
