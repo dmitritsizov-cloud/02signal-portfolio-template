@@ -1,6 +1,4 @@
-# SisendLogi tab — paste rows 3-27 into a sheet named "SisendLogi"
-# Total: 16855 EUR / 283 orders / 5 days / 5 stores
-# Narva pattern: 1005 EUR (5.96% of revenue) vs 12% KPI target, 4 of 5 days flagged stock_risk=high, all womenswear/Kevadine garderoob
+
 date,store,channel,category,revenue_eur,orders,avg_order_eur,campaign,stock_risk,note
 2026-05-01,Tallinn,store,naiste riided,1280,18,71,Kevadine garderoob,low,stabiilne müük
 2026-05-01,Tartu,store,meeste riided,640,9,71,Tööpäeva stiil,low,hea keskmine ost
@@ -29,4 +27,3 @@ date,store,channel,category,revenue_eur,orders,avg_order_eur,campaign,stock_risk
 2026-05-05,Online,online,aksessuaarid,990,18,55,Jätkusuutlik valik,low,aksessuaaride lõpetav nädal
 
 # Raportid tab — create a SECOND empty sheet named "Raportid" with ONLY this header row (no data rows):
-# created_at,report_id,report_type,period,key_metric,finding,recommendation,human_check,source,workflow_level,data_context
