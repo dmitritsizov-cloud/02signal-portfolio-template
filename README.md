@@ -13,6 +13,24 @@ In this portfolio I document my work in the **02Signal program** — a 7-week jo
 
 ---
 
+## Portfolio at a glance
+
+| Week | Topic | Artifact | Level |
+|---|---|---|---|
+| 1 | Customer Segmentation | UrbanStyle 5-segment framework with Claude | Shu |
+| 2 | Process Analysis | TÄPNE-scored process inventory | Shu |
+| 3 | FAQ Telegram Bot | n8n + Telegram (no AI yet) | Ha |
+| 4 (P1) | FAQ Bot powered by AI | Groq llama-3.1 with hallucination guards | Ha |
+| 4 (P2) | Content drafting v1.0 | Form → Code (CSV lookup) → AI → Telegram | Ha+ |
+| 4 (P3) | Content **Hybrid v1.1** | 3 triggers → 1 logic → 5 channels | Ha+ |
+| **5** | **Data & Decisions Hybrid v1.0** | **3 triggers → Sheets read → Code aggregator → AI report → Sheets log + Telegram** | **Ha+** |
+| 6 | AI strategy presentation | *Coming soon* | — |
+| 7 | Final demo | *Coming soon* | — |
+
+→ [**Week 5 mini-lab walkthrough (Estonian, with bug log v1.0 → v1.2) →**](nadal-5.md)
+
+---
+
 ## My Automations
 
 ### Week 1 — Customer Segmentation & Market Analysis ✅
@@ -177,6 +195,7 @@ Schedule ────────┘                                            
 - 📊 [Google Sheets template (SisendLogi + Raportid headers)](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/data/week5-sheets-template.csv)
 - 📄 [Setup & deployment guide](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week5-hybrid-setup.md) — Google Cloud OAuth, Sheets credentials, and the Narva test scenario in under 15 minutes
 - 📄 [The Narva analysis](https://github.com/dmitritsizov-cloud/02signal-portfolio-template/blob/main/docs/week5-narva-finding.md) — full data breakdown of the supply-side pattern and what it means for the Riga expansion case
+- 📊 [**N5 mini-lab walkthrough (Estonian)**](nadal-5.md) — week-5 S1 retrospective: full bug log (v1.0 → v1.1 → v1.2), demo statement, Marko's human-check list, and the AI limitation discipline
 
 ### Week 6
 *Coming soon — AI strategy presentation*
@@ -270,6 +289,8 @@ Also: the Vorminda node from the v1.1 template that I duplicated had a hardcoded
 **What clicked:** The Hybrid v1.1 pattern from Week 4 (Part 3) is **template-able**. Week 5 is Week 4's architecture with two pieces swapped: hardcoded Data Lookup → Google Sheets Read, and Multi-channel Formatter → Sheets Write + single Telegram. The pipeline shape — three triggers, Normalize node, deterministic enrichment, AI as text generator, dual output — is the same. This is the difference between Shu, Ha, and Ri: Shu is following a template; Ha is adapting it to a new problem; Ri is recognizing that *the template itself is the asset*. After two iterations on this Hybrid pattern, I can estimate that the next workflow with the same shape — a weekly customer-service quality report, a daily inventory-alert digest, a monthly board-metrics summary — would take 2-3 hours, not 2-3 days. **The pattern is the product.**
 
 And the Narva 5.96% finding is the proof that boring data tooling, applied honestly, produces consultant-grade insights without consultants. The exact same five days of data, viewed without the aggregator, look like "Narva is doing badly, probably needs more marketing." Viewed with the aggregator, they say "Narva has 4 of 4 high-risk markers in one product category, supply chain is broken, do not extrapolate to Riga." Same data, two different conclusions, and the second one is worth tens of thousands of euros in averted misallocation. **The architecture is what produces the insight — not the AI.**
+
+> 📊 **For the live S1 mini-lab debugging story** (workflow_level "=ri" → "Ha+", report_id parsing as a formula, AI output reference fix) — see [the Estonian-language N5 walkthrough →](nadal-5.md). It documents three bugs caught from the Sheets log and the Telegram output, with the v1.0 → v1.1 → v1.2 evolution.
 
 ### Week 6
 *Coming soon*
