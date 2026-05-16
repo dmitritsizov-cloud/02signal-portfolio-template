@@ -151,32 +151,6 @@
     }
     .login-btn:hover { background: var(--purple-pale); }
 
-    /* ===== TRANSLATING OVERLAY ===== */
-    .translating {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      background: var(--navy);
-      color: var(--white);
-      padding: 10px 20px;
-      text-align: center;
-      font-size: 13px;
-      z-index: 200;
-      transform: translateY(-100%);
-      transition: transform 0.3s;
-    }
-    .translating.show { transform: translateY(0); }
-    .translating .spinner {
-      display: inline-block;
-      width: 12px; height: 12px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: var(--white);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-      vertical-align: -2px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
     /* ===== HERO ===== */
     .hero {
       max-width: 1400px;
@@ -774,11 +748,6 @@
 </head>
 <body>
 
-  <!-- Translation status bar -->
-  <div class="translating" id="translatingBar">
-    <span class="spinner"></span><span data-i18n-status>Translating page…</span>
-  </div>
-
   <!-- ===== NAV ===== -->
   <nav class="nav">
     <div class="nav-inner">
@@ -1293,12 +1262,10 @@
     })();
 
     /* ============================================================
-       2. LANGUAGE DROPDOWN
+       2. LANGUAGE DROPDOWN + INSTANT TRANSLATION
        ============================================================ */
     const langBtn = document.getElementById('langBtn');
     const langDropdown = document.getElementById('langDropdown');
-    const translatingBar = document.getElementById('translatingBar');
-    const statusEl = document.querySelector('[data-i18n-status]');
 
     langBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -1306,122 +1273,367 @@
     });
     document.addEventListener('click', () => langDropdown.classList.remove('open'));
 
-    /* ============================================================
-       3. TRANSLATION — calls Claude via Anthropic API
-       ============================================================ */
-    // Cache: { 'en': { ...keys }, 'et': { ...keys }, 'ru': { ...keys } }
-    const cache = { en: {} };
-    let currentLang = 'en';
-
-    // Status strings per language for the "Translating..." bar
-    const statusStrings = {
-      en: 'Translating page…',
-      et: 'Lehte tõlgitakse…',
-      ru: 'Перевод страницы…'
+    // Pre-translated dictionaries embedded at build time — no API call, works on any host.
+    const I18N = {
+      et: {
+      'page_title': 'Dmitri Tsizov — AI-automaatika konsultatsioon',
+      'nav_about': 'Minust',
+      'nav_portfolio': 'Portfoolio',
+      'nav_automations': 'Automatiseerimised',
+      'nav_learning': 'Õppetunnid',
+      'nav_contact': 'Kontakt',
+      'nav_github': 'GitHubi profiil',
+      'hero_tag': '02Signal Portfoolio',
+      'hero_title': 'Praktiline AI-automaatika tulevikuvalmis ettevõtetele',
+      'hero_sub': 'Eritellimusel n8n töövood ja AI-assistendid, mis muudavad käsitsi tehtavad protsessid 24/7 automaatikaks — inimesi asendamata.',
+      'hero_btn1': 'Võta ühendust',
+      'hero_btn2': 'Avasta',
+      'hero_h1': 'Dmitri Tsizov — sinu partner AI-automaatikas',
+      'hero_p1': 'Eestis väikeettevõtte juhtimine tähendab pidevat käsitsi tööd — alates klienditeeninduse vastustest kuni nädalaaruanneteni. Praktilise AI-automaatika abil saad rohkem kui tööriistad: saad partneri, kes pakub selgust, praktilist inseneritööd ja värsket vaadet sinu tegevusele.',
+      'hero_p2': 'Analüüsin sinu praegust seadistust, avastan automatiseerimise potentsiaali ja ehitan tegutsemiseks valmis töövoogusid — andmete, tõestatud mustrite ja sinu pikaajaliste eesmärkide põhjal. Praegune juhtumiuuring: <strong>UrbanStyle.ltd</strong>, 4 kauplust üle Eesti, ~3000 aktiivset klienti, ~600 tundi aastas korduvat tööd, mis viiakse AI-le üle kolmes põhivaldkonnas: klienditeenindus, sisuloome ja andmearuandlus.',
+      'sheets_tag': 'Portfooliotööraamat',
+      'sheets_title': 'Lahendused, mis sobivad sinu ärile',
+      'sheets_intro': 'Iga nädal on tööraamatu üks leht. Vajuta vahekaardile, et projektide vahel liikuda — sama arhitektuur kui Google Sheetsil, koos auditit talunud mõõdikutega.',
+      'sheet_filename': 'tsizov-portfolio-2026.xlsx — 02Signal',
+      'cell_w1_h': 'Klientide segmenteerimise raamistik',
+      'cell_w1_p': 'Andmepõhine 5-segmendiline klientide raamistik UrbanStyle.ltd jaoks — koostatud Claude\'iga strateegilise konsultandina. Analüüs lõpeb 6-kuulise strateegilise teekaardiga turundusjuht Anna Metsale.',
+      'cell_w1_m1': 'Aastane tulumõju',
+      'cell_w1_m2': 'Lojaalsussegment kaitstud',
+      'cell_w1_m3': 'Eristuvat kliendisegmenti',
+      'cell_w2_h': 'TÄPNE protsessianalüüs',
+      'cell_w2_p': 'Süstemaatiline 1–5 hindamine 10 äriprotsessi kohta Eesti TÄPNE raamistiku järgi (sagedus, äratuntavus, struktuur, nähtav väärtus, ennustatavus). Raamistik sunnib ausat hindamist — ja paljastab, kus intuitsioon eksis.',
+      'cell_w2_m1': 'Hinnatud protsessi',
+      'cell_w2_m2': 'Müügiaruanded, lojaalsusprogrammi haldus',
+      'cell_w2_m3': 'AI-prioriteediks valitud protsessi',
+      'cell_w3_h': 'FAQ Telegrami bot',
+      'cell_w3_p': 'Brändiline Telegrami bot UrbanStyle.ltd klienditeeninduseks, ühendatud n8n töövooga. Alus tulevaseks AI-integratsiooniks — ~75% klientide päringutest on korduvad ja botile vastamiseks sobivad.',
+      'cell_w3_m1': 'Töötav demo',
+      'cell_w3_m2': 'Trigger + Action — n8n muster',
+      'cell_w3_m3': 'Klientide päringutest botile vastatav',
+      'cell_w41_h': 'AI-toega FAQ bot',
+      'cell_w41_p': 'Bot täiendatud AI-ga — mõistab klientide küsimusi eesti keeles ja vastab KKK teadmistebaasist, kasutades Groq llama-3.1-8b-instant mudelit. KKK-välised küsimused käivitavad viisaka „ma ei tea, võta ühendust inimesega" vastuse. Hallutsinatsioone pole.',
+      'cell_w41_m1': 'Keskmine vastamisaeg',
+      'cell_w41_m2': 'Testistsenaariumi läbitud',
+      'cell_w41_m3': 'Hallutsinatsiooni (kaitstud prompti abil)',
+      'cell_w42_h': 'Sisuloome töövoog v1.0',
+      'cell_w42_p': 'Form → Code (CSV otsing) → AI → Telegram. Brändihääle reeglid elavad koodis, mitte PDF-is. AI ei saa väljamõelda turundusväiteid, sest piirangud on sisendis sees, mitte lootuse kombel juhisesse lisatud.',
+      'cell_w42_m1': 'Iga genereeritud kavandi kohta',
+      'cell_w42_m2': 'Groq mudel tootmises',
+      'cell_w42_m3': 'Lõpust lõpuni testitud kampaaniat',
+      'cell_w43_h': 'Sisuloome Hybrid v1.1',
+      'cell_w43_p': 'Kolm sisendtriggerit (Form, Telegram, Schedule) söödavad ühte AI-loogikat, genereerides ühest briifist viis kanalispetsiifilist kavandit. Täielik human-in-the-loop koos PARANDA: tagasisidega. „1 briif = 5 kanalit" töövoog.',
+      'cell_w43_m1': 'Triggerit → väljundkanalit',
+      'cell_w43_m2': 'Säästetud iga käivituse kohta',
+      'cell_w43_m3': 'Toodangus Europe/Tallinn ajavööndiga',
+      'cell_w5_h': 'Andmeraport Hybrid v1.0',
+      'cell_w5_p': 'Töö jaotamine deterministliku loogika (Code node arvutab iga numbri) ja loomingulise AI vahel (kirjutab proosa numbrite ümber). Narva avastus: 5,96% käibest vs 12% KPI eesmärk — kuid see on tarne-, mitte nõudlusprobleem.',
+      'cell_w5_m1': 'Direktoritasandi aega säästetud',
+      'cell_w5_m2': 'Aastane kulu tagasi võidetud',
+      'cell_w5_m3': 'Raportid logi = otsuste ajalugu',
+      'cell_w6_h': 'AI strateegia esitlus',
+      'cell_w6_p': 'Tulekul — täielik juhtkonna esitlus, mis sünteesib segmenteerimise tulemused, TÄPNE prioritiseerimise ja tootmisautomaatikad ühtseks strateegiliseks soovituseks UrbanStyle.ltd jaoks.',
+      'cell_w6_m1': 'Töös',
+      'cell_w6_m2': 'Juhtkonna esitlus',
+      'cell_w6_m3': 'Nõukogu tasandi soovitus',
+      'cell_w7_h': 'Lõplik demo',
+      'cell_w7_p': 'Tulekul — täieliku 02Signal portfoolio elav läbivaatamine kolme tootmise töövooga, mis töötavad UrbanStyle.ltd reaalsete andmetega.',
+      'cell_w7_m1': 'Töös',
+      'cell_w7_m2': 'Live demo',
+      'cell_w7_m3': '7-nädalane süntees',
+      'cards_tag': 'Portfoolio ülevaade',
+      'cards_title': 'Lahendused, mis on ehitatud reaalse äri jaoks',
+      'cards_intro': 'Iga projekt lahendab konkreetset probleemi UrbanStyle.ltd juures. Demosid pole, mänguasju pole — ainult reaalsete andmetega töövood koos reaalsete ROI hinnangutega.',
+      'card1_title': 'Strateegia &amp; analüüs',
+      'card1_desc': 'Mõista, kus äri seisab ja kuhu see võib minna. AI strateegilise konsultandina: klientide segmenteerimine, Eesti TÄPNE protsessiraamistik ja selged andmepõhised teekaardid.',
+      'card1_cta': 'Vaata analüüsi',
+      'card2_title': 'Tootmise automatiseerimised',
+      'card2_desc': 'Lihtsustada üleminekut käsitsi tehtavalt automaatsele tööle. Telegrami KKK bot hallutsinatsioonikaitsega, sisuloome hübriid v1.1 (1 briif → 5 kanalit) ja iganädalased andmeraportid, mis ühendavad deterministliku matemaatika AI-narratiiviga.',
+      'card2_cta': 'Vaata töövoogusid',
+      'card3_title': 'Tulekul',
+      'card3_desc': '02Signal programmi 6. ja 7. nädal: täielik AI strateegia esitlus ja lõplik demo. 4.–5. nädala arhitektuurimustrid muutuvad mustriks igale andme-narratiivi töövoole.',
+      'card3_cta': 'Mis järgmiseks',
+      'weeks_tag': 'Portfoolio ülevaade',
+      'weeks_title': 'Seitse nädalat, üks tehnoloogiapakk',
+      'weeks_intro': '02Signal teekond: iga nädal ehitab eelmise peale. Shu → Ha → Ri.',
+      'w1_title': 'Klientide segmenteerimine',
+      'w1_desc': 'UrbanStyle 5-segmendiline raamistik, ehitatud Claude\'iga strateegilise konsultandina.',
+      'w1_meta_t': 'Claude · Strateegia',
+      'w1_meta_v': '~60 000€ aastane mõju',
+      'w2_title': 'Protsessianalüüs (TÄPNE)',
+      'w2_desc': '10 äriprotsessi süstemaatiline hindamine Eesti TÄPNE raamistiku järgi.',
+      'w2_meta_t': 'Claude · Raamistik',
+      'w2_meta_v': '5 prioriteetset protsessi',
+      'w3_title': 'FAQ Telegrami bot',
+      'w3_desc': 'Brändiline Telegrami bot, mis on ühendatud n8n töövooga — alus AI-integratsiooniks.',
+      'w3_meta_t': 'n8n · Telegram',
+      'w3_meta_v': '@DmitriTsizov_bot',
+      'w41_title': 'AI-toega FAQ bot',
+      'w41_desc': 'Groq llama-3.1-8b-instant vastab eesti keeles klientide küsimustele koos hallutsinatsioonikaitsega.',
+      'w41_meta_t': 'n8n · Groq · Telegram',
+      'w41_meta_v': '~5s vastamisaeg',
+      'w42_title': 'Sisuloome v1.0',
+      'w42_desc': 'Form → Code (CSV otsing) → AI → Telegram. Brändihääl koodis, mitte PDF-is.',
+      'w42_meta_t': 'n8n · llama-3.3-70b',
+      'w42_meta_v': '~10s kavandi kohta',
+      'w43_title': 'Sisuloome Hybrid v1.1',
+      'w43_desc': '3 triggerit → 1 loogika → 5 kanalit. Form + Telegram + Schedule, täielik human-in-the-loop.',
+      'w43_meta_t': 'n8n · Toodang',
+      'w43_meta_v': '75 min säästetud / käivitus',
+      'w5_title': 'Andmed &amp; otsused Hybrid v1.0',
+      'w5_desc': '3 triggerit → Sheets lugemine → Code agregaator → AI narratiiv → Sheets logi + Telegram. Narva tarneahela avastus.',
+      'w5_meta_t': 'n8n · Google Sheets · Groq',
+      'w5_meta_v': '~250 tundi / aasta säästetud',
+      'w6_title': 'AI strateegia esitlus',
+      'w6_desc': 'Tulekul — täielik AI strateegia esitlus UrbanStyle.ltd jaoks.',
+      'w6_meta_t': 'Töös',
+      'w7_title': 'Lõplik demo',
+      'w7_desc': 'Tulekul — lõplik programmi demo ja 7-nädalase portfoolio süntees.',
+      'w7_meta_t': 'Töös',
+      'cases_tag': 'Valitud juhtumid',
+      'cases_title': 'Lähemalt töö juurde',
+      'cases_intro': 'Kolm lipulaev-automatiseerimist koos täieliku arhitektuuri, ärimõju ja linkidega lähtetöövoogudele.',
+      'case1_title': 'Nädal 1 — Klientide segmenteerimise raamistik',
+      'case1_p1': '<strong>Mida ehitasin:</strong> Andmepõhine klientide segmenteerimise raamistik UrbanStyle.ltd jaoks, koostatud Claude\'iga AI strateegilise konsultandina.',
+      'case1_p2': 'Viis eristuvat kliendisegmenti (Eco-Kadri, Klubi-Maret, Trendi-Liisa, Narva-Olga, Ühekordne-Andres) koos täieliku demograafilise, käitumusliku ja väärtusprofiiliga. Iga segment sisaldab turundussoovitust ja selget AI-automatiseerimise prioriteeti. Analüüs lõpeb 6-kuulise strateegilise teekaardiga turundusjuht Anna Metsale.',
+      'case1_dt1': 'Põhitähelepanek',
+      'case1_dd1': 'Klubi-Maret = vaid 15% klientidest, kuid 35% käibest. Lahkumise ärahoidmine siin on kõrgeima ROI-ga AI-kasutusjuht.',
+      'case1_dt2': 'Ärimõju',
+      'case1_dd2': '~60 000€ täiendavat aastast tulu + riski maandamine 1,4M€ tulule lojaalsussegmendist.',
+      'case1_dt3': 'Konsultandi käik',
+      'case1_dd3': 'Tähelepanu juhtimine sellele, et Narva 2,1% konversioon <strong>ei ole</strong> AI probleem — see on lokaliseerimise/personali probleem.',
+      'case1_l1': '📄 Täielik segmenteerimisanalüüs',
+      'case1_l2': '🎯 Kasutatud täpne prompt',
+      'case3_title': 'Nädal 4 (3. osa) — Sisuloome Hybrid v1.1',
+      'case3_p1': '<strong>Mida ehitasin:</strong> Tootmisastme sisuloome töövoog — kolm sisendtriggerit söödavad ühte AI-loogikat, genereerides ühest briifist viis kanalispetsiifilist kavandit, koos Telegrami tagasisideringiga.',
+      'case3_p2': 'Sisemiselt turundatud kui <strong>„1 briif = 5 kanalit"</strong> töövoog. Form + Telegram (<code>/reklaam</code>, <code>PARANDA:</code>) + Schedule triggerid koonduvad ühte Normalize sõlme. Brändihääle reeglid elavad koodis, mitte PDF-is — iga kampaania uuendus muudab AI käitumist automaatselt.',
+      'case3_dt1': 'Arhitektuur',
+      'case3_dd1': '3 triggerit → Normalize → CSV otsing (tooted + kampaaniad + segmendid + laoseis) → AI (Groq llama-3.3-70b) → 5 kanaliväljundit.',
+      'case3_dt2': 'Väljundkanalid',
+      'case3_dd2': 'Telegram / Instagram / Facebook / Email / Tootekirjeldus — kõik ühest briifist ~10 sekundiga.',
+      'case3_dt3': 'Säästetud aeg',
+      'case3_dd3': '~75 minutit iga käivituse kohta, n8n jälgib automaatselt. Brändihääle järjepidevus tagatud koodi tasemel piirangutega.',
+      'case3_dt4': 'Tegevusõpetus',
+      'case3_dd4': 'Volitused on liides töövoo ja reaalsuse vahel — eksporditud JSON ei suuda seda liidest keskkondade vahel kaasa võtta.',
+      'case3_l1': '📁 Töövoo JSON',
+      'case3_l2': '📄 Brändihääle dokument',
+      'case3_l3': '📄 Human-in-the-loop ülevaatuse logi',
+      'case5_title': 'Nädal 5 — Andmeraport Hybrid v1.0',
+      'case5_p1': '<strong>Mida ehitasin:</strong> Iganädalane müügiandmete raporti töövoog, mis eraldab <strong>deterministliku loogika</strong> (Code node arvutab iga numbri) <strong>loomingulisest AI-st</strong> (kirjutab proosa numbrite ümber).',
+      'case5_p2': 'Code node arvutab iga numbri — kogutulu, Narva osa, stock_risk arv, KPI saavutus. AI saab need struktureeritud sisendina ja kirjutab ainult proosa nende ümber. <strong>AI ei saa väljamõelda arve, sest ta ei näe kunagi toorridu — ta näeb agregaate.</strong>',
+      'case5_dt1': 'Narva avastus',
+      'case5_dd1': '5,96% käibest vs 12% KPI eesmärk — kuid probleem ei ole nõudluses. Kõik neli <code>stock_risk = high</code> rida tulid ühest kombinatsioonist: Narva × naiste rõivad × Spring Wardrobe. <strong>Tarne-, mitte nõudlusprobleem.</strong>',
+      'case5_dt2': 'Nõukogu tasandi soovitus',
+      'case5_dd2': 'Ärge rahastage Riga laienemist enne, kui Narva tarneahel on auditeeritud. See pole genereeritud sisu — see on avastus, mis kestab auditeerimist.',
+      'case5_dt3': 'Sheets-mäluna',
+      'case5_dd3': 'Iga raport kirjutab rea Raportid lehele 11 veeruga, sealhulgas <code>human_check</code>. Nädalate jooksul muutub logi otsitavaks otsuste ajalooks.',
+      'case5_dt4': 'Ärimõju',
+      'case5_dd4': '~250 tundi aastas säästetud, umbes 12 500€ direktoritasandi kulu tagasi võidetud. Lisaks otsuste logi liituv väärtus.',
+      'case5_l1': '📁 N5 töövoo JSON',
+      'case5_l2': '📄 Seadistamise &amp; juurutamise juhend',
+      'case5_l3': '📄 Narva analüüs',
+      'case6_title': 'Nädalad 6 &amp; 7 — Tulekul',
+      'case6_p1': '<strong>Nädal 6:</strong> AI strateegia esitlus — täielik juhtkonna ettekanne, mis sünteesib segmenteerimise tulemused, TÄPNE prioritiseerimise ja tootmisautomaatikad ühtseks strateegiliseks soovituseks UrbanStyle.ltd jaoks.',
+      'case6_p2': '<strong>Nädal 7:</strong> Lõplik demo — täieliku 02Signal portfoolio elav läbivaatus koos kolme tootmise töövooga, mis töötavad reaalsete andmetega.',
+      'footer_brand': 'Praktiline AI-automaatika Eesti ettevõtetele. Ehitatud 02Signal programmi ajal. Avatud koostööks n8n töövoogude, AI-integratsioonide ja väikeettevõtete automatiseerimise alal.',
+      'footer_h1': 'Tehnoloogiapakk',
+      'footer_h2': 'Ühendus',
+      'footer_loc': '📍 Eesti',
+      'footer_copy': '© 2026 Dmitri Tsizov · Ehitatud 02Signal portfoolio malliga · Disain inspireeritud Alphabet Consultingust',
+    },
+      ru: {
+      'page_title': 'Дмитрий Цизов — консультации по AI-автоматизации',
+      'nav_about': 'Обо мне',
+      'nav_portfolio': 'Портфолио',
+      'nav_automations': 'Автоматизации',
+      'nav_learning': 'Уроки',
+      'nav_contact': 'Контакты',
+      'nav_github': 'Профиль GitHub',
+      'hero_tag': 'Портфолио 02Signal',
+      'hero_title': 'Практическая AI-автоматизация для бизнеса будущего',
+      'hero_sub': 'Индивидуальные n8n workflow и AI-ассистенты, превращающие ручные процессы в 24/7 автоматизацию — без замены людей.',
+      'hero_btn1': 'Связаться',
+      'hero_btn2': 'Узнать больше',
+      'hero_h1': 'Дмитрий Цизов — твой партнёр в AI-автоматизации',
+      'hero_p1': 'Управлять малым бизнесом в Эстонии — значит постоянно справляться с ручной работой: от ответов клиентам до еженедельных отчётов. С практической AI-автоматизацией ты получаешь больше, чем инструменты: ты получаешь партнёра, который вносит ясность, делает практический инжиниринг и даёт свежий взгляд на твои операции.',
+      'hero_p2': 'Я анализирую текущую настройку, нахожу потенциал для автоматизации и собираю готовые к запуску workflow — на основе данных, проверенных паттернов и твоих долгосрочных целей. Текущий кейс: <strong>UrbanStyle.ltd</strong>, 4 магазина по Эстонии, ~3000 активных клиентов, ~600 часов в год повторяющейся работы, переносимой на AI в трёх ключевых областях: клиентский сервис, создание контента и аналитика данных.',
+      'sheets_tag': 'Рабочая книга портфолио',
+      'sheets_title': 'Решения, которые подходят твоему бизнесу',
+      'sheets_intro': 'Каждая неделя — это лист в рабочей книге. Нажми на вкладку, чтобы переключиться между проектами — та же архитектура, что у Google Sheets, с метриками, выдерживающими аудит.',
+      'sheet_filename': 'tsizov-portfolio-2026.xlsx — 02Signal',
+      'cell_w1_h': 'Фреймворк сегментации клиентов',
+      'cell_w1_p': '5-сегментный клиентский фреймворк UrbanStyle.ltd, основанный на данных — собран с Claude в роли стратегического консультанта. Анализ завершается 6-месячной стратегической дорожной картой для директора по маркетингу Anna Mets.',
+      'cell_w1_m1': 'Годовой прирост выручки',
+      'cell_w1_m2': 'Лояльный сегмент защищён',
+      'cell_w1_m3': 'Отдельных клиентских сегментов',
+      'cell_w2_h': 'TÄPNE-анализ процессов',
+      'cell_w2_p': 'Систематическая оценка 10 бизнес-процессов по эстонскому фреймворку TÄPNE (Частотность, Узнаваемость, Структура, Видимая ценность, Предсказуемость) по шкале 1–5. Фреймворк заставляет честно оценивать — и показывает, где интуиция ошибалась.',
+      'cell_w2_m1': 'Процессов оценено',
+      'cell_w2_m2': 'Отчёты по продажам, управление лояльностью',
+      'cell_w2_m3': 'Процессов с AI-приоритетом',
+      'cell_w3_h': 'FAQ Telegram-бот',
+      'cell_w3_p': 'Брендированный Telegram-бот для клиентского сервиса UrbanStyle.ltd, подключённый к n8n workflow. Фундамент для будущей AI-интеграции — ~75% клиентских запросов повторяющиеся и подходят для бота.',
+      'cell_w3_m1': 'Живое демо',
+      'cell_w3_m2': 'Trigger + Action — паттерн n8n',
+      'cell_w3_m3': 'Клиентских запросов решаемы ботом',
+      'cell_w41_h': 'FAQ-бот с AI',
+      'cell_w41_p': 'Бот дополнен AI — понимает вопросы клиентов на эстонском и отвечает из базы знаний FAQ через Groq llama-3.1-8b-instant. Вопросы вне FAQ запускают вежливый ответ «не знаю, обратись к человеку». Никаких галлюцинаций.',
+      'cell_w41_m1': 'Среднее время ответа',
+      'cell_w41_m2': 'Тестовых сценариев пройдено',
+      'cell_w41_m3': 'Галлюцинаций (защищено промптом)',
+      'cell_w42_h': 'Sisuloome content workflow v1.0',
+      'cell_w42_p': 'Form → Code (CSV lookup) → AI → Telegram. Правила tone of voice живут в коде, а не в PDF. AI не может выдумать маркетинговые утверждения, потому что ограничения встроены во входные данные, а не добавлены как пожелание в инструкции.',
+      'cell_w42_m1': 'На каждый созданный черновик',
+      'cell_w42_m2': 'Модель Groq в проде',
+      'cell_w42_m3': 'Кампаний протестировано полностью',
+      'cell_w43_h': 'Sisuloome Hybrid v1.1',
+      'cell_w43_p': 'Три триггера на вход (Form, Telegram, Schedule) питают одну AI-логику и генерируют пять канальных черновиков из одного брифа. Полный human-in-the-loop с обратной связью PARANDA:. Workflow «1 бриф = 5 каналов».',
+      'cell_w43_m1': 'Триггеров → выходных каналов',
+      'cell_w43_m2': 'Сэкономлено за один запуск',
+      'cell_w43_m3': 'В проде с таймзоной Europe/Tallinn',
+      'cell_w5_h': 'Andmeraport Hybrid v1.0',
+      'cell_w5_p': 'Разделение работы между детерминированной логикой (Code node считает каждое число) и творческим AI (пишет текст вокруг чисел). Открытие по Нарве: 5,96% выручки против KPI в 12% — но это проблема снабжения, а не спроса.',
+      'cell_w5_m1': 'Времени директора сэкономлено',
+      'cell_w5_m2': 'Годовой возврат расходов',
+      'cell_w5_m3': 'Лог Raportid = история решений',
+      'cell_w6_h': 'Презентация AI-стратегии',
+      'cell_w6_p': 'Скоро — полная управленческая презентация, объединяющая результаты сегментации, приоритизацию TÄPNE и production-автоматизации в единую стратегическую рекомендацию для UrbanStyle.ltd.',
+      'cell_w6_m1': 'В работе',
+      'cell_w6_m2': 'Управленческая презентация',
+      'cell_w6_m3': 'Рекомендация уровня совета директоров',
+      'cell_w7_h': 'Финальное демо',
+      'cell_w7_p': 'Скоро — живой обзор полного портфолио 02Signal с тремя production workflow, работающими на реальных данных UrbanStyle.ltd.',
+      'cell_w7_m1': 'В работе',
+      'cell_w7_m2': 'Живое демо',
+      'cell_w7_m3': 'Синтез 7 недель',
+      'cards_tag': 'Обзор портфолио',
+      'cards_title': 'Решения, построенные для реального бизнеса',
+      'cards_intro': 'Каждый проект решает конкретную задачу UrbanStyle.ltd. Никаких демо, никаких игрушек — только workflow на реальных данных с реальными ROI-оценками.',
+      'card1_title': 'Стратегия &amp; анализ',
+      'card1_desc': 'Понять, где бизнес сейчас и куда он может пойти. AI как стратегический консультант: сегментация клиентов, эстонский фреймворк процессов TÄPNE и чёткие дорожные карты на основе данных.',
+      'card1_cta': 'Смотреть анализ',
+      'card2_title': 'Production-автоматизации',
+      'card2_desc': 'Упростить переход от ручного к автоматическому. Telegram FAQ-бот с защитой от галлюцинаций, content hybrid v1.1 (1 бриф → 5 каналов) и еженедельные отчёты, объединяющие детерминированную математику с AI-нарративом.',
+      'card2_cta': 'Смотреть workflow',
+      'card3_title': 'Скоро',
+      'card3_desc': 'Недели 6 и 7 программы 02Signal: полная презентация AI-стратегии и финальное демо. Архитектурные паттерны 4–5 недель становятся шаблоном для любого data-to-narrative workflow.',
+      'card3_cta': 'Что дальше',
+      'weeks_tag': 'Портфолио кратко',
+      'weeks_title': 'Семь недель, один стек',
+      'weeks_intro': 'Путь 02Signal: каждая неделя надстраивается над предыдущей. Shu → Ha → Ri.',
+      'w1_title': 'Сегментация клиентов',
+      'w1_desc': '5-сегментный фреймворк UrbanStyle, собран с Claude в роли стратегического консультанта.',
+      'w1_meta_t': 'Claude · Стратегия',
+      'w1_meta_v': '~60 000€ годовой эффект',
+      'w2_title': 'Анализ процессов (TÄPNE)',
+      'w2_desc': 'Систематическая оценка 10 бизнес-процессов по эстонскому фреймворку TÄPNE.',
+      'w2_meta_t': 'Claude · Фреймворк',
+      'w2_meta_v': '5 приоритетных процессов',
+      'w3_title': 'FAQ Telegram-бот',
+      'w3_desc': 'Брендированный Telegram-бот, подключённый к n8n workflow — фундамент для AI-интеграции.',
+      'w3_meta_t': 'n8n · Telegram',
+      'w3_meta_v': '@DmitriTsizov_bot',
+      'w41_title': 'FAQ-бот с AI',
+      'w41_desc': 'Groq llama-3.1-8b-instant отвечает на эстонском с защитой от галлюцинаций.',
+      'w41_meta_t': 'n8n · Groq · Telegram',
+      'w41_meta_v': '~5с время ответа',
+      'w42_title': 'Sisuloome v1.0',
+      'w42_desc': 'Form → Code (CSV lookup) → AI → Telegram. Tone of voice в коде, а не в PDF.',
+      'w42_meta_t': 'n8n · llama-3.3-70b',
+      'w42_meta_v': '~10с на черновик',
+      'w43_title': 'Content Hybrid v1.1',
+      'w43_desc': '3 триггера → 1 логика → 5 каналов. Form + Telegram + Schedule, полный human-in-the-loop.',
+      'w43_meta_t': 'n8n · Production',
+      'w43_meta_v': '75 мин сэкономлено / запуск',
+      'w5_title': 'Данные &amp; решения Hybrid v1.0',
+      'w5_desc': '3 триггера → чтение Sheets → Code-агрегатор → AI-нарратив → лог Sheets + Telegram. Открытие по цепочке снабжения Нарвы.',
+      'w5_meta_t': 'n8n · Google Sheets · Groq',
+      'w5_meta_v': '~250 часов / год сэкономлено',
+      'w6_title': 'Презентация AI-стратегии',
+      'w6_desc': 'Скоро — полная презентация AI-стратегии для UrbanStyle.ltd.',
+      'w6_meta_t': 'В работе',
+      'w7_title': 'Финальное демо',
+      'w7_desc': 'Скоро — финальное демо программы и синтез 7-недельного портфолио.',
+      'w7_meta_t': 'В работе',
+      'cases_tag': 'Избранные кейсы',
+      'cases_title': 'Подробнее о работе',
+      'cases_intro': 'Три флагманские автоматизации с полной архитектурой, бизнес-эффектом и ссылками на исходные workflow.',
+      'case1_title': 'Неделя 1 — Фреймворк сегментации клиентов',
+      'case1_p1': '<strong>Что я построил:</strong> Фреймворк сегментации клиентов UrbanStyle.ltd на основе данных, собранный с Claude в роли AI-консультанта по стратегии.',
+      'case1_p2': 'Пять отдельных клиентских сегментов (Eco-Kadri, Klubi-Maret, Trendi-Liisa, Narva-Olga, Ühekordne-Andres) с полным демографическим, поведенческим и ценностным профилем. Каждый сегмент включает маркетинговую рекомендацию и чёткий приоритет AI-автоматизации. Анализ завершается 6-месячной стратегической дорожной картой для директора по маркетингу Anna Mets.',
+      'case1_dt1': 'Ключевой инсайт',
+      'case1_dd1': 'Klubi-Maret = всего 15% клиентов, но 35% выручки. Удержание здесь — это AI-кейс с самым высоким ROI.',
+      'case1_dt2': 'Бизнес-эффект',
+      'case1_dd2': '~60 000€ дополнительной годовой выручки + снижение риска на 1,4M€ выручки от лояльного сегмента.',
+      'case1_dt3': 'Ход консультанта',
+      'case1_dd3': 'Указать, что 2,1% конверсии в Нарве — это <strong>не</strong> AI-проблема, а проблема локализации и подбора персонала.',
+      'case1_l1': '📄 Полный анализ сегментации',
+      'case1_l2': '🎯 Точный использованный промпт',
+      'case3_title': 'Неделя 4 (часть 3) — Sisuloome Hybrid v1.1',
+      'case3_p1': '<strong>Что я построил:</strong> Production-grade workflow для создания контента — три входных триггера питают одну AI-логику, генерируя пять канальных черновиков из одного брифа, с циклом обратной связи через Telegram.',
+      'case3_p2': 'Внутри назван workflow <strong>«1 бриф = 5 каналов»</strong>. Триггеры Form + Telegram (<code>/reklaam</code>, <code>PARANDA:</code>) + Schedule сходятся в одну ноду Normalize. Правила tone of voice живут в коде, а не в PDF — любое обновление кампании автоматически меняет поведение AI.',
+      'case3_dt1': 'Архитектура',
+      'case3_dd1': '3 триггера → Normalize → CSV lookup (товары + кампании + сегменты + складские остатки) → AI (Groq llama-3.3-70b) → 5 канальных выходов.',
+      'case3_dt2': 'Выходные каналы',
+      'case3_dd2': 'Telegram / Instagram / Facebook / Email / Описание товара — всё из одного брифа за ~10 секунд.',
+      'case3_dt3': 'Сэкономленное время',
+      'case3_dd3': '~75 минут за один запуск, отслеживается автоматически в n8n. Целостность tone of voice гарантирована ограничениями на уровне кода.',
+      'case3_dt4': 'Операционный урок',
+      'case3_dd4': 'Credentials — это интерфейс между workflow и реальностью; экспортированный JSON не может перенести этот интерфейс между окружениями.',
+      'case3_l1': '📁 JSON workflow',
+      'case3_l2': '📄 Документ tone of voice',
+      'case3_l3': '📄 Лог human-in-the-loop ревью',
+      'case5_title': 'Неделя 5 — Andmeraport Hybrid v1.0',
+      'case5_p1': '<strong>Что я построил:</strong> Еженедельный workflow отчёта по продажам, который разделяет <strong>детерминированную логику</strong> (Code node считает каждое число) и <strong>творческий AI</strong> (пишет текст вокруг чисел).',
+      'case5_p2': 'Code node считает каждое число — общую выручку, долю Нарвы, количество stock_risk, выполнение KPI. AI получает их как структурированный вход и пишет только текст вокруг них. <strong>AI не может выдумать цифры, потому что никогда не видит сырых строк — только агрегаты.</strong>',
+      'case5_dt1': 'Открытие по Нарве',
+      'case5_dd1': '5,96% выручки против KPI в 12% — но проблема не в спросе. Все четыре строки <code>stock_risk = high</code> пришли из одной комбинации: Нарва × женская одежда × Spring Wardrobe. <strong>Проблема снабжения, а не спроса.</strong>',
+      'case5_dt2': 'Рекомендация уровня совета',
+      'case5_dd2': 'Не финансировать расширение в Ригу, пока не пройден аудит цепочки снабжения Нарвы. Это не сгенерированный контент — это вывод, выдерживающий аудит.',
+      'case5_dt3': 'Sheets как память',
+      'case5_dd3': 'Каждый отчёт пишет строку во вкладку Raportid с 11 столбцами, включая <code>human_check</code>. За недели лог превращается в искомую историю решений.',
+      'case5_dt4': 'Бизнес-эффект',
+      'case5_dd4': '~250 часов в год сэкономлено, примерно 12 500€ возвращённых расходов уровня директора. Плюс накопительная ценность от лога решений.',
+      'case5_l1': '📁 JSON N5 workflow',
+      'case5_l2': '📄 Гид по настройке &amp; деплою',
+      'case5_l3': '📄 Анализ Нарвы',
+      'case6_title': 'Недели 6 &amp; 7 — Скоро',
+      'case6_p1': '<strong>Неделя 6:</strong> Презентация AI-стратегии — полная управленческая колода, синтезирующая результаты сегментации, приоритизацию TÄPNE и production-автоматизации в единую стратегическую рекомендацию для UrbanStyle.ltd.',
+      'case6_p2': '<strong>Неделя 7:</strong> Финальное демо — живой обзор полного портфолио 02Signal с тремя production workflow, работающими на реальных данных.',
+      'footer_brand': 'Практическая AI-автоматизация для эстонского бизнеса. Создано во время программы 02Signal. Открыт к сотрудничеству по n8n workflow, AI-интеграциям и автоматизации малого бизнеса.',
+      'footer_h1': 'Стек',
+      'footer_h2': 'Связь',
+      'footer_loc': '📍 Эстония',
+      'footer_copy': '© 2026 Dmitri Tsizov · Создано на шаблоне портфолио 02Signal · Дизайн вдохновлён Alphabet Consulting',
+    }
     };
 
-    // Snapshot original English text on first load
-    function snapshotEnglish() {
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        cache.en[key] = el.innerHTML;
-      });
-    }
-    snapshotEnglish();
+    let currentLang = 'en';
+    const enSnapshot = {};
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      enSnapshot[el.getAttribute('data-i18n')] = el.innerHTML;
+    });
 
-    function applyTranslations(lang) {
-      const dict = cache[lang];
-      if (!dict) return;
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (dict[key]) el.innerHTML = dict[key];
-      });
-      document.documentElement.lang = lang;
-    }
-
-    async function translateViaClaude(targetLang) {
-      const langName = { et: 'Estonian', ru: 'Russian' }[targetLang];
-      const sourceDict = cache.en;
-      const keys = Object.keys(sourceDict);
-
-      // Build a JSON of {key: text} for batch translation
-      const payload = {};
-      keys.forEach(k => payload[k] = sourceDict[k]);
-
-      const systemPrompt = `You are a professional translator. Translate the VALUES of the following JSON object from English into ${langName}.
-
-Rules:
-- Preserve every HTML tag exactly (<strong>, <code>, etc.) — translate only visible text inside them.
-- Preserve every key exactly. Do not rename keys.
-- Keep proper nouns unchanged: Dmitri Tsizov, UrbanStyle, Tallinn, Narva, Tartu, Riga, Anna Mets, Marko, Kristi, Liis, Eco-Kadri, Klubi-Maret, Trendi-Liisa, Narva-Olga, Ühekordne-Andres, Alphabet, Claude, Groq, n8n, Telegram, Google Sheets, GitHub, 02Signal, TÄPNE, Shu, Ha, Ri.
-- Keep technical terms intelligible: "workflow", "trigger", "node", "API", "Schedule", "Form", "Code node", "AI Agent".
-- Keep numbers, codes (PR-03, SEG-06, US-P-202), euro amounts, hashtags, URLs, emoji, and bot handles unchanged.
-- Return ONLY valid JSON — no preamble, no Markdown fences, no commentary.`;
-
-      const userMessage = JSON.stringify(payload, null, 2);
-
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 8000,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: userMessage }]
-        })
-      });
-
-      if (!response.ok) throw new Error('Translation API error: ' + response.status);
-      const data = await response.json();
-      const text = data.content
-        .filter(c => c.type === 'text')
-        .map(c => c.text)
-        .join('\n')
-        .replace(/```json|```/g, '')
-        .trim();
-
-      return JSON.parse(text);
-    }
-
-    async function setLanguage(lang) {
+    function setLanguage(lang) {
       if (lang === currentLang) return;
-
-      // Update dropdown UI
       document.querySelectorAll('.lang-option').forEach(o => {
         o.classList.toggle('current', o.getAttribute('data-lang') === lang);
       });
       langDropdown.classList.remove('open');
 
-      // If we have a cache for this language, apply instantly
-      if (cache[lang]) {
-        applyTranslations(lang);
-        currentLang = lang;
-        return;
-      }
-
-      // Otherwise, fetch translation from Claude
-      statusEl.textContent = statusStrings[lang] || 'Translating page…';
-      translatingBar.classList.add('show');
-
-      try {
-        const translated = await translateViaClaude(lang);
-        cache[lang] = translated;
-        applyTranslations(lang);
-        currentLang = lang;
-      } catch (err) {
-        console.error('Translation failed:', err);
-        statusEl.textContent = '⚠️ Translation failed — check console';
-        setTimeout(() => translatingBar.classList.remove('show'), 2400);
-        return;
-      }
-      translatingBar.classList.remove('show');
+      const dict = (lang === 'en') ? enSnapshot : I18N[lang];
+      if (!dict) return;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key] !== undefined) el.innerHTML = dict[key];
+      });
+      document.documentElement.lang = lang;
+      currentLang = lang;
     }
 
     document.querySelectorAll('.lang-option').forEach(opt => {
       opt.addEventListener('click', (e) => {
         e.stopPropagation();
-        const lang = opt.getAttribute('data-lang');
-        setLanguage(lang);
+        setLanguage(opt.getAttribute('data-lang'));
       });
     });
 
