@@ -1027,54 +1027,6 @@
     html[lang="en"] .video-card[data-lang="en"],
     html[lang="et"] .video-card[data-lang="et"],
     html[lang="ru"] .video-card[data-lang="ru"] { display: block; }
- /* ===== ABOUT ME PHOTO → GOOGLE DRIVE VIDEO ===== */
-.aboutme-photo {
-  width: 240px;
-  height: 240px;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 3px solid var(--purple-pale);
-  box-shadow: 0 6px 24px rgba(26, 27, 92, 0.12);
-  background: var(--purple-pale);
-  position: relative;
-}
-.aboutme-photo .video-wrapper { display: none; }
-html[lang="en"] .aboutme-photo .video-wrapper[data-lang="en"],
-html[lang="et"] .aboutme-photo .video-wrapper[data-lang="et"],
-html[lang="ru"] .aboutme-photo .video-wrapper[data-lang="ru"] { display: block; }
-.aboutme-photo iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}  
-/* ===== ABOUT ME VIDEO (компактный + анимация) ===== */
-.aboutme-photo {
-  width: 320px;
-  height: 320px;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 3px solid var(--purple-pale);
-  box-shadow: 0 6px 24px rgba(26, 27, 92, 0.12);
-  background: var(--purple-pale);
-  position: relative;
-}
-.aboutme-photo .video-wrapper {
-  display: none;
-  animation: videoFadeIn 0.6s ease forwards;
-  opacity: 0;
-}
-html[lang="en"] .aboutme-photo .video-wrapper[data-lang="en"],
-html[lang="et"] .aboutme-photo .video-wrapper[data-lang="et"],
-html[lang="ru"] .aboutme-photo .video-wrapper[data-lang="ru"] { display: block; }
-.aboutme-photo iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-@keyframes videoFadeIn {
-  from { opacity: 0; transform: scale(0.92); }
-  to { opacity: 1; transform: scale(1); }
-}
   </style>
 </head>
 <body>
@@ -1138,37 +1090,13 @@ html[lang="ru"] .aboutme-photo .video-wrapper[data-lang="ru"] { display: block; 
       <div class="section-tag" data-i18n="aboutme_tag">About me</div>
       <h2 class="section-title" data-i18n="aboutme_title">The person behind the workflows</h2>
 
-     <div class="aboutme-photo">
-  <div class="video-wrapper" data-lang="en"><iframe src="https://drive.google.com/file/d/1YKY6GhN30PHMbnjBPjoOkFi3HW1irgD4/preview" allow="autoplay"></iframe></div>
-  <div class="video-wrapper" data-lang="ru"><iframe src="https://drive.google.com/file/d/181QvRajhuLWX3aHo_ZUOHJZLfiUba4KR/preview" allow="autoplay"></iframe></div>
-  <div class="video-wrapper" data-lang="et"><iframe src="https://drive.google.com/file/d/1FaK0pclXcUWUL50Pd-p4IBggt3MdZHbX/preview" allow="autoplay"></iframe></div>
-</div>
-  
-  <!-- English -->
-  <div class="video-wrapper" data-lang="en">
-    <iframe 
-      src="https://drive.google.com/file/d/1YKY6GhN30PHMbnjBPjoOkFi3HW1irgD4/preview" 
-      allow="autoplay">
-    </iframe>
-  </div>
-
-  <!-- Russian -->
-  <div class="video-wrapper" data-lang="ru">
-    <iframe 
-      src="https://drive.google.com/file/d/181QvRajhuLWX3aHo_ZUOHJZLfiUba4KR/preview" 
-      allow="autoplay">
-    </iframe>
-  </div>
-
-  <!-- Estonian -->
-  <div class="video-wrapper" data-lang="et">
-    <iframe 
-      src="https://drive.google.com/file/d/1FaK0pclXcUWUL50Pd-p4IBggt3MdZHbX/preview" 
-      allow="autoplay">
-    </iframe>
-  </div>
-
-</div>
+      <div class="aboutme-card">
+        <div class="aboutme-photo">
+          <img src="https://avatars.githubusercontent.com/u/273822166?v=4&size=460"
+               alt="Dmitri Tšižov"
+               loading="lazy"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:64px;color:var(--purple-light);background:var(--purple-pale);&quot;>DT</div>';" />
+        </div>
         <div class="aboutme-body">
           <h3 class="aboutme-name">Dmitri Tšižov</h3>
           <p class="aboutme-role" data-i18n="aboutme_role">AI Automation Consultant · Estonia · n8n · Claude · Groq</p>
