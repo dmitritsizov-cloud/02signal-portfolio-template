@@ -916,21 +916,33 @@
       gap: 36px;
       align-items: start;
     }
-    .aboutme-photo {
-      width: 240px;
-      height: 240px;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 3px solid var(--purple-pale);
-      box-shadow: 0 6px 24px rgba(26, 27, 92, 0.12);
-      background: var(--purple-pale);
-    }
-    .aboutme-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+   <div class="aboutme-photo">
+  
+  <!-- English -->
+  <div class="video-wrapper" data-lang="en">
+    <iframe 
+      src="https://drive.google.com/file/d/1YKY6GhN30PHMbnjBPjoOkFi3HW1irgD4/preview" 
+      allow="autoplay">
+    </iframe>
+  </div>
+
+  <!-- Russian -->
+  <div class="video-wrapper" data-lang="ru">
+    <iframe 
+      src="https://drive.google.com/file/d/181QvRajhuLWX3aHo_ZUOHJZLfiUba4KR/preview" 
+      allow="autoplay">
+    </iframe>
+  </div>
+
+  <!-- Estonian -->
+  <div class="video-wrapper" data-lang="et">
+    <iframe 
+      src="https://drive.google.com/file/d/1FaK0pclXcUWUL50Pd-p4IBggt3MdZHbX/preview" 
+      allow="autoplay">
+    </iframe>
+  </div>
+
+</div>
     .aboutme-name {
       font-family: var(--serif);
       font-size: 28px;
