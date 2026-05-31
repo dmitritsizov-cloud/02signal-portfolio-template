@@ -912,7 +912,7 @@
       box-shadow: var(--shadow-md);
       padding: 36px;
       display: grid;
-      grid-template-columns: 240px 1fr;
+      grid-template-columns: 360px 1fr;
       gap: 36px;
       align-items: start;
     }
@@ -1021,12 +1021,49 @@
       .cert-icon { text-align: center; }
     }
 
-    /* ===== VIDEO LANG FILTER (added) ===== */
-    .videos-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0 16px 0; max-width: 480px; }
+    /* ===== LANGUAGE-AWARE INTRO VIDEO (replaces the static About photo) ===== */
+    /* Only the card whose data-lang matches <html lang> is shown — driven by the
+       existing language switcher, no extra JS needed. */
     .video-card { display: none; }
     html[lang="en"] .video-card[data-lang="en"],
     html[lang="et"] .video-card[data-lang="et"],
     html[lang="ru"] .video-card[data-lang="ru"] { display: block; }
+
+    .aboutme-media { width: 100%; }
+    .aboutme-media .intro-video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      display: block;
+      border-radius: 12px;
+      border: 3px solid var(--purple-pale);
+      box-shadow: 0 6px 24px rgba(26, 27, 92, 0.12);
+      background: var(--navy-deep);
+      object-fit: cover;
+    }
+    .aboutme-media .intro-caption {
+      margin-top: 10px;
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .aboutme-media .play-dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--purple-light);
+      color: #fff;
+      font-size: 8px;
+      padding-left: 1px;
+      flex-shrink: 0;
+    }
+    @media (max-width: 768px) {
+      .aboutme-media { max-width: 420px; margin: 0 auto; }
+    }
   </style>
 </head>
 <body>
@@ -1091,11 +1128,31 @@
       <h2 class="section-title" data-i18n="aboutme_title">The person behind the workflows</h2>
 
       <div class="aboutme-card">
-        <div class="aboutme-photo">
-          <img src="https://avatars.githubusercontent.com/u/273822166?v=4&size=460"
-               alt="Dmitri Tšižov"
-               loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:64px;color:var(--purple-light);background:var(--purple-pale);&quot;>DT</div>';" />
+        <div class="aboutme-media">
+          <!-- English -->
+          <div class="video-card" data-lang="en">
+            <video class="intro-video" controls playsinline preload="metadata" poster="videos/poster_en.jpg">
+              <source src="videos/intro_en.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <div class="intro-caption"><span class="play-dot">▶</span> Watch my intro · 0:10</div>
+          </div>
+          <!-- Eesti -->
+          <div class="video-card" data-lang="et">
+            <video class="intro-video" controls playsinline preload="metadata" poster="videos/poster_et.jpg">
+              <source src="videos/intro_et.mp4" type="video/mp4" />
+              Sinu brauser ei toeta videot.
+            </video>
+            <div class="intro-caption"><span class="play-dot">▶</span> Vaata tutvustust · 0:06</div>
+          </div>
+          <!-- Русский -->
+          <div class="video-card" data-lang="ru">
+            <video class="intro-video" controls playsinline preload="metadata" poster="videos/poster_ru.jpg">
+              <source src="videos/intro_ru.mp4" type="video/mp4" />
+              Ваш браузер не поддерживает видео.
+            </video>
+            <div class="intro-caption"><span class="play-dot">▶</span> Смотреть видео · 0:10</div>
+          </div>
         </div>
         <div class="aboutme-body">
           <h3 class="aboutme-name">Dmitri Tšižov</h3>
