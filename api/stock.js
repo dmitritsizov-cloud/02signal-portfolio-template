@@ -17,7 +17,8 @@ module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") { res.status(200).end(); return; }
 
   const q = (req.query && req.query.q ? String(req.query.q) : "").trim();
-  if (!q) { res.status(400).json({ found: false, error: "Пустой запрос" }); return; }
+  const lang = (req.query && req.query.lang ? String(req.query.lang) : "en").toLowerCase();
+  if (!q) { res.status(400).json({ found: false, error: "Empty query" }); return; }
 
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) {
@@ -25,15 +26,17 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  const langName = lang === "ru" ? "Russian" : lang === "et" ? "Estonian" : "English";
   const prompt =
-    `Ты сервис поиска биржевых данных. Запрос пользователя (тикер или название): "${q}". ` +
-    `Найди в интернете самую свежую информацию по этой акции. Верни ТОЛЬКО JSON-объект ` +
-    `(без markdown, без текста до и после) с ключами: found (boolean), name (официальное название), ` +
-    `ticker (символ), exchange (биржа), price (число, последняя цена), currency (3 буквы, валюта цены), ` +
-    `segment (сектор/отрасль кратко), monthChangePct (число, ~% изменения за месяц, может быть отрицательным, ` +
-    `null если нет данных), trendNote (короткая фраза о тренде за месяц на русском), ` +
-    `intro (1-2 предложения о компании на русском), asOf (когда актуальна цена, на русском), ` +
-    `source (название источника). Если акция не найдена — {"found": false}. Только JSON.`;
+    `You are a stock data lookup service. User query (ticker or company name): "${q}". ` +
+    `Search the web for the most recent information about this stock. Return ONLY a JSON object ` +
+    `(no markdown, no text before or after) with keys: found (boolean), name (official company name), ` +
+    `ticker (symbol), exchange, price (number, latest price), currency (3-letter code of the price), ` +
+    `segment (sector/industry, short), monthChangePct (number, approximate % change over the last ~1 month, ` +
+    `can be negative, null if unknown), trendNote (short phrase about the 1-month trend), ` +
+    `intro (1-2 sentence description of the company), asOf (when the price is from), ` +
+    `source (source name). Write the human-readable text fields (name, segment, trendNote, intro, asOf) in ${langName}. ` +
+    `If the stock is not found, return {"found": false}. Output JSON only.`;
 
   try {
     const r = await fetch("https://api.anthropic.com/v1/messages", {
