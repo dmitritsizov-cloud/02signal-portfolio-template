@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Trading Calculator â Dmitri Tsizov</title>
+<title>Trading Calculator — Dmitri Tsizov</title>
 <meta name="description" content="How many shares your capital can buy. Live ECB currency rates (the source Eesti Pank uses)." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,11 +99,11 @@
 <body>
 <div class="wrap">
   <div class="topbar">
-    <a class="back" id="backlink" href="index.html">â Portfolio</a>
+    <a class="back" id="backlink" href="index.html">← Portfolio</a>
     <div class="langsw">
-      <button data-lang="en" title="English">ð¬ð§</button>
-      <button data-lang="et" title="Eesti">ðªðª</button>
-      <button data-lang="ru" title="Ð ÑÑÑÐºÐ¸Ð¹">ð·ðº</button>
+      <button data-lang="en" title="English">🇬🇧</button>
+      <button data-lang="et" title="Eesti">🇪🇪</button>
+      <button data-lang="ru" title="Русский">🇷🇺</button>
     </div>
   </div>
 
@@ -189,12 +189,12 @@
 </div>
 
 <script>
-/* ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-   API_BASE â Ð°Ð´ÑÐµÑ ÑÐµÑÐ²ÐµÑÐ½Ð¾Ð¹ ÑÑÐ½ÐºÑÐ¸Ð¸ ÐÐ-Ð¿Ð¾Ð¸ÑÐºÐ° (/api/stock).
-   "" = ÑÐ¾Ñ Ð¶Ðµ Ð´Ð¾Ð¼ÐµÐ½ (Ð½ÑÐ¶Ð½ÑÐ¹ Ð²Ð°ÑÐ¸Ð°Ð½Ñ, ÐµÑÐ»Ð¸ Ð¾ÑÐºÑÑÐ²Ð°ÑÑ Ð½Ð° Vercel).
-   ÐÐ»Ñ GitHub Pages Ð²Ð¿Ð¸ÑÐ¸ÑÐµ Ð°Ð´ÑÐµÑ Vercel, Ð½Ð°Ð¿Ñ.:
+/* ──────────────────────────────────────────────────────────────
+   API_BASE — адрес серверной функции ИИ-поиска (/api/stock).
+   "" = тот же домен (нужный вариант, если открывать на Vercel).
+   Для GitHub Pages впишите адрес Vercel, напр.:
    "https://02signal-portfolio-template.vercel.app"
-   ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+   ────────────────────────────────────────────────────────────── */
 const API_BASE = "";
 
 const CURRENCIES = ["EUR", "USD", "GBP", "CHF", "JPY"];
@@ -203,26 +203,26 @@ const T = {
   en: {
     locale: "en-US",
     back: "Portfolio",
-    kicker: "Stock purchase calculator Â· live",
+    kicker: "Stock purchase calculator · live",
     h1: "How many shares can I buy",
-    lead: "Enter a ticker â the name and price are pulled from the web. Currency rates come live from the ECB (the source Eesti Pank uses). The result is a whole number of shares plus the leftover cash.",
+    lead: "Enter a ticker — the name and price are pulled from the web. Currency rates come live from the ECB (the source Eesti Pank uses). The result is a whole number of shares plus the leftover cash.",
     s01: "Stock lookup", s02: "Share price & currency", s03: "Available capital", s04: "Calculation result", s05: "Data log & sources",
-    searchPh: "e.g. AAPL, Tesla, Novo Nordiskâ¦", btnFind: "Find",
+    searchPh: "e.g. AAPL, Tesla, Novo Nordisk…", btnFind: "Find",
     lblPrice: "Price per share", pricePh: "enter a price or search above", lblPriceCcy: "Price currency",
     lblCapital: "Real money to invest", capitalPh: "e.g. 1000", lblCapCcy: "Capital currency",
     thTime: "Time", thType: "Type", thData: "Data", thSource: "Source",
     logEmpty: "Empty for now. Every value pulled from the web will appear here with its time and source.",
     note: "Share price comes from open web sources and may lag the exchange. Rates are ECB reference rates via the open Frankfurter API (the source Eesti Pank uses), fixed once per business day around 16:00 CET. This tool is informational and not investment advice.",
-    fxBase: "ECB base currency â rate", fxPrefix: "Eesti Pank / ECB", fxFrom: "rate from", fxGot: "fetched",
-    fxRefresh: "refresh", fxRetry: "retry", fxLoad: "load", fxLoading: "Fetching ECB rateâ¦",
-    fxFail: "Rate not available.", fxManualLabel: "Rate didn't load â enter 1 EUR =", fxManualPh: "rate",
-    searching: q => `Searching the web for â${q}ââ¦`,
-    notFound: q => `Couldn't find a stock for â${q}â.`,
-    nofunc: "Live search isn't connected on this address. Open the tool on the domain that has the /api/stock function (Vercel), or just enter the price manually below â the calculation still works.",
+    fxBase: "ECB base currency — rate", fxPrefix: "Eesti Pank / ECB", fxFrom: "rate from", fxGot: "fetched",
+    fxRefresh: "refresh", fxRetry: "retry", fxLoad: "load", fxLoading: "Fetching ECB rate…",
+    fxFail: "Rate not available.", fxManualLabel: "Rate didn't load — enter 1 EUR =", fxManualPh: "rate",
+    searching: q => `Searching the web for “${q}”…`,
+    notFound: q => `Couldn't find a stock for “${q}”.`,
+    nofunc: "Live search isn't connected on this address. Open the tool on the domain that has the /api/stock function (Vercel), or just enter the price manually below — the calculation still works.",
     searchErr: e => `Search error: ${e}. Enter the price manually below.`,
-    resEmpty: "Enter a share price and capital â the number of shares will appear here.",
+    resEmpty: "Enter a share price and capital — the number of shares will appear here.",
     resWait: "Waiting for currency rates to load (or enter them manually above).",
-    rowCapital: (a, b) => `Capital (${a} â ${b})`, rowPrice: "Price per share", rowBought: (n, p) => `Bought: ${n} Ã ${p}`,
+    rowCapital: (a, b) => `Capital (${a} → ${b})`, rowPrice: "Price per share", rowBought: (n, p) => `Bought: ${n} × ${p}`,
     remTitle: "Leftover (cash not invested)",
     logStock: "Share price", logInfo: "Company info", logFx: "Currency rates", logFxReserve: "Currency rates (backup)",
     srcWeb: "web search", srcReserve: "currency-api (ECB data)",
@@ -232,73 +232,73 @@ const T = {
   },
   ru: {
     locale: "ru-RU",
-    back: "ÐÐ¾ÑÑÑÐ¾Ð»Ð¸Ð¾",
-    kicker: "ÐÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸ Ð°ÐºÑÐ¸Ð¹ Â· live",
-    h1: "Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ Ð°ÐºÑÐ¸Ð¹ Ñ Ð¼Ð¾Ð³Ñ ÐºÑÐ¿Ð¸ÑÑ",
-    lead: "ÐÐ²ÐµÐ´Ð¸ÑÐµ ÑÐ¸ÐºÐµÑ â Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¸ ÑÐµÐ½Ð° Ð¿Ð¾Ð´ÑÑÐ½ÑÑÑÑ Ð¸Ð· Ð¸Ð½ÑÐµÑÐ½ÐµÑÐ°. ÐÑÑÑ Ð²Ð°Ð»ÑÑ Ð±ÐµÑÑÑÑÑ Ð²Ð¶Ð¸Ð²ÑÑ Ð¸Ð· ÐÐ¦Ð (Ð¸ÑÑÐ¾ÑÐ½Ð¸Ðº Eesti Pank). Ð ÐµÐ·ÑÐ»ÑÑÐ°Ñ â ÑÐµÐ»Ð¾Ðµ ÑÐ¸ÑÐ»Ð¾ Ð°ÐºÑÐ¸Ð¹ Ð¸ Ð¾ÑÑÐ°ÑÐ¾Ðº Ð´ÐµÐ½ÐµÐ³.",
-    s01: "ÐÐ¾Ð¸ÑÐº Ð°ÐºÑÐ¸Ð¸", s02: "Ð¦ÐµÐ½Ð° Ð°ÐºÑÐ¸Ð¸ Ð¸ Ð²Ð°Ð»ÑÑÐ°", s03: "ÐÐ¾ÑÑÑÐ¿Ð½ÑÐ¹ ÐºÐ°Ð¿Ð¸ÑÐ°Ð»", s04: "Ð ÐµÐ·ÑÐ»ÑÑÐ°Ñ ÑÐ°ÑÑÑÑÐ°", s05: "ÐÑÑÐ½Ð°Ð» Ð´Ð°Ð½Ð½ÑÑ Ð¸ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸",
-    searchPh: "Ð½Ð°Ð¿ÑÐ¸Ð¼ÐµÑ AAPL, Tesla, Novo Nordiskâ¦", btnFind: "ÐÐ°Ð¹ÑÐ¸",
-    lblPrice: "Ð¦ÐµÐ½Ð° Ð·Ð° Ð¾Ð´Ð½Ñ Ð°ÐºÑÐ¸Ñ", pricePh: "Ð²Ð²ÐµÐ´Ð¸ÑÐµ ÑÐµÐ½Ñ Ð¸Ð»Ð¸ Ð½Ð°Ð¹Ð´Ð¸ÑÐµ Ð²ÑÑÐµ", lblPriceCcy: "ÐÐ°Ð»ÑÑÐ° ÑÐµÐ½Ñ",
-    lblCapital: "Ð ÐµÐ°Ð»ÑÐ½ÑÐµ Ð´ÐµÐ½ÑÐ³Ð¸ Ð´Ð»Ñ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸", capitalPh: "Ð½Ð°Ð¿ÑÐ¸Ð¼ÐµÑ 1000", lblCapCcy: "ÐÐ°Ð»ÑÑÐ° ÐºÐ°Ð¿Ð¸ÑÐ°Ð»Ð°",
-    thTime: "ÐÑÐµÐ¼Ñ", thType: "Ð¢Ð¸Ð¿", thData: "ÐÐ°Ð½Ð½ÑÐµ", thSource: "ÐÑÑÐ¾ÑÐ½Ð¸Ðº",
-    logEmpty: "ÐÐ¾ÐºÐ° Ð¿ÑÑÑÐ¾. ÐÐ°Ð¶Ð´Ð¾Ðµ Ð·Ð½Ð°ÑÐµÐ½Ð¸Ðµ Ð¸Ð· ÑÐµÑÐ¸ Ð¿Ð¾Ð¿Ð°Ð´ÑÑ ÑÑÐ´Ð° ÑÐ¾ Ð²ÑÐµÐ¼ÐµÐ½ÐµÐ¼ Ð¸ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¾Ð¼.",
-    note: "Ð¦ÐµÐ½Ð° Ð°ÐºÑÐ¸Ð¸ â Ð¸Ð· Ð¾ÑÐºÑÑÑÑÑ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¾Ð² ÑÐµÑÐµÐ· Ð²ÐµÐ±-Ð¿Ð¾Ð¸ÑÐº, Ð¼Ð¾Ð¶ÐµÑ Ð¸Ð´ÑÐ¸ Ñ Ð·Ð°Ð´ÐµÑÐ¶ÐºÐ¾Ð¹ Ð¾ÑÐ½Ð¾ÑÐ¸ÑÐµÐ»ÑÐ½Ð¾ Ð±Ð¸ÑÐ¶Ð¸. ÐÑÑÑÑ â ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½ÑÐµ ÐºÑÑÑÑ ÐÐ¦Ð ÑÐµÑÐµÐ· Ð¾ÑÐºÑÑÑÑÐ¹ API Frankfurter (Ð¸ÑÑÐ¾ÑÐ½Ð¸Ðº Eesti Pank), ÑÐ¸ÐºÑÐ¸ÑÑÑÑÑÑ ÑÐ°Ð· Ð² ÑÐ°Ð±Ð¾ÑÐ¸Ð¹ Ð´ÐµÐ½Ñ Ð¾ÐºÐ¾Ð»Ð¾ 16:00 CET. ÐÐ½ÑÑÑÑÐ¼ÐµÐ½Ñ Ð½Ð¾ÑÐ¸Ñ ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½ÑÐ¹ ÑÐ°ÑÐ°ÐºÑÐµÑ Ð¸ Ð½Ðµ ÑÐ²Ð»ÑÐµÑÑÑ Ð¸Ð½Ð²ÐµÑÑÐ¸ÑÐ¸Ð¾Ð½Ð½Ð¾Ð¹ ÑÐµÐºÐ¾Ð¼ÐµÐ½Ð´Ð°ÑÐ¸ÐµÐ¹.",
-    fxBase: "ÐÐ°Ð·Ð¾Ð²Ð°Ñ Ð²Ð°Ð»ÑÑÐ° ÐÐ¦Ð â ÐºÑÑÑ", fxPrefix: "Eesti Pank / ÐÐ¦Ð", fxFrom: "ÐºÑÑÑ Ð¾Ñ", fxGot: "Ð¿Ð¾Ð»ÑÑÐµÐ½Ð¾",
-    fxRefresh: "Ð¾Ð±Ð½Ð¾Ð²Ð¸ÑÑ", fxRetry: "Ð¿Ð¾Ð²ÑÐ¾ÑÐ¸ÑÑ", fxLoad: "Ð·Ð°Ð³ÑÑÐ·Ð¸ÑÑ", fxLoading: "ÐÐ°Ð¿ÑÐ°ÑÐ¸Ð²Ð°Ñ ÐºÑÑÑ ÐÐ¦Ðâ¦",
-    fxFail: "ÐÑÑÑ Ð½Ðµ Ð¿Ð¾Ð»ÑÑÐµÐ½.", fxManualLabel: "ÐÑÑÑ Ð½Ðµ Ð·Ð°Ð³ÑÑÐ·Ð¸Ð»ÑÑ â Ð²Ð²ÐµÐ´Ð¸ÑÐµ 1 EUR =", fxManualPh: "ÐºÑÑÑ",
-    searching: q => `ÐÑÑ Â«${q}Â» Ð² Ð¸Ð½ÑÐµÑÐ½ÐµÑÐµâ¦`,
-    notFound: q => `ÐÐµ Ð½Ð°ÑÑÐ» Ð°ÐºÑÐ¸Ñ Ð¿Ð¾ Ð·Ð°Ð¿ÑÐ¾ÑÑ Â«${q}Â».`,
-    nofunc: "ÐÐ²ÑÐ¾Ð¿Ð¾Ð¸ÑÐº Ð½Ð° ÑÑÐ¾Ð¼ Ð°Ð´ÑÐµÑÐµ Ð½Ðµ Ð¿Ð¾Ð´ÐºÐ»ÑÑÑÐ½. ÐÑÐºÑÐ¾Ð¹ÑÐµ Ð¸Ð½ÑÑÑÑÐ¼ÐµÐ½Ñ Ð½Ð° Ð´Ð¾Ð¼ÐµÐ½Ðµ Ñ ÑÑÐ½ÐºÑÐ¸ÐµÐ¹ /api/stock (Vercel) Ð¸Ð»Ð¸ Ð²Ð²ÐµÐ´Ð¸ÑÐµ ÑÐµÐ½Ñ Ð²ÑÑÑÐ½ÑÑ Ð½Ð¸Ð¶Ðµ â ÑÐ°ÑÑÑÑ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ Ð² Ð»ÑÐ±Ð¾Ð¼ ÑÐ»ÑÑÐ°Ðµ.",
-    searchErr: e => `ÐÑÐ¸Ð±ÐºÐ° Ð¿Ð¾Ð¸ÑÐºÐ°: ${e}. ÐÐ²ÐµÐ´Ð¸ÑÐµ ÑÐµÐ½Ñ Ð²ÑÑÑÐ½ÑÑ Ð½Ð¸Ð¶Ðµ.`,
-    resEmpty: "ÐÐ°Ð¿Ð¾Ð»Ð½Ð¸ÑÐµ ÑÐµÐ½Ñ Ð°ÐºÑÐ¸Ð¸ Ð¸ ÐºÐ°Ð¿Ð¸ÑÐ°Ð» â Ð·Ð´ÐµÑÑ Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ ÑÐ¸ÑÐ»Ð¾ Ð°ÐºÑÐ¸Ð¹.",
-    resWait: "ÐÐ¾Ð¶Ð´Ð¸ÑÐµÑÑ Ð·Ð°Ð³ÑÑÐ·ÐºÐ¸ ÐºÑÑÑÐ¾Ð² Ð²Ð°Ð»ÑÑ (Ð¸Ð»Ð¸ Ð²Ð²ÐµÐ´Ð¸ÑÐµ Ð¸Ñ Ð²ÑÑÑÐ½ÑÑ Ð²ÑÑÐµ).",
-    rowCapital: (a, b) => `ÐÐ°Ð¿Ð¸ÑÐ°Ð» (${a} â ${b})`, rowPrice: "Ð¦ÐµÐ½Ð° Ð·Ð° Ð°ÐºÑÐ¸Ñ", rowBought: (n, p) => `ÐÑÐ¿Ð»ÐµÐ½Ð¾: ${n} Ã ${p}`,
-    remTitle: "ÐÑÑÐ°ÑÐ¾Ðº (Ð´ÐµÐ½ÑÐ³Ð¸, Ð½Ðµ Ð²Ð¾ÑÐµÐ´ÑÐ¸Ðµ Ð² Ð¿Ð¾ÐºÑÐ¿ÐºÑ)",
-    logStock: "Ð¦ÐµÐ½Ð° Ð°ÐºÑÐ¸Ð¸", logInfo: "ÐÐ½ÑÐ¾ÑÐ¼Ð°ÑÐ¸Ñ Ð¾ ÐºÐ¾Ð¼Ð¿Ð°Ð½Ð¸Ð¸", logFx: "ÐÑÑÑ Ð²Ð°Ð»ÑÑ", logFxReserve: "ÐÑÑÑ Ð²Ð°Ð»ÑÑ (ÑÐµÐ·ÐµÑÐ²)",
-    srcWeb: "Ð²ÐµÐ±-Ð¿Ð¾Ð¸ÑÐº", srcReserve: "currency-api (Ð´Ð°Ð½Ð½ÑÐµ ÐÐ¦Ð)",
-    perMonth: "Ð·Ð° Ð¼ÐµÑÑÑ",
-    curr: { EUR: "ÐµÐ²ÑÐ¾", USD: "Ð´Ð¾Ð»Ð»Ð°Ñ Ð¡Ð¨Ð", GBP: "ÑÑÐ½Ñ ÑÑÐµÑÐ»Ð¸Ð½Ð³Ð¾Ð²", CHF: "ÑÐ²ÐµÐ¹ÑÐ°ÑÑÐºÐ¸Ð¹ ÑÑÐ°Ð½Ðº", JPY: "Ð¸ÐµÐ½Ð°" },
-    canBuy: n => { const a = Math.abs(n) % 100, b = n % 10; let w; if (a > 10 && a < 20) w = "Ð°ÐºÑÐ¸Ð¹"; else if (b === 1) w = "Ð°ÐºÑÐ¸Ñ"; else if (b >= 2 && b <= 4) w = "Ð°ÐºÑÐ¸Ð¸"; else w = "Ð°ÐºÑÐ¸Ð¹"; return `${w} Ð¼Ð¾Ð¶Ð½Ð¾ ÐºÑÐ¿Ð¸ÑÑ`; },
+    back: "Портфолио",
+    kicker: "Калькулятор покупки акций · live",
+    h1: "Сколько акций я могу купить",
+    lead: "Введите тикер — название и цена подтянутся из интернета. Курс валют берётся вживую из ЕЦБ (источник Eesti Pank). Результат — целое число акций и остаток денег.",
+    s01: "Поиск акции", s02: "Цена акции и валюта", s03: "Доступный капитал", s04: "Результат расчёта", s05: "Журнал данных и источники",
+    searchPh: "например AAPL, Tesla, Novo Nordisk…", btnFind: "Найти",
+    lblPrice: "Цена за одну акцию", pricePh: "введите цену или найдите выше", lblPriceCcy: "Валюта цены",
+    lblCapital: "Реальные деньги для покупки", capitalPh: "например 1000", lblCapCcy: "Валюта капитала",
+    thTime: "Время", thType: "Тип", thData: "Данные", thSource: "Источник",
+    logEmpty: "Пока пусто. Каждое значение из сети попадёт сюда со временем и источником.",
+    note: "Цена акции — из открытых источников через веб-поиск, может идти с задержкой относительно биржи. Курсы — справочные курсы ЕЦБ через открытый API Frankfurter (источник Eesti Pank), фиксируются раз в рабочий день около 16:00 CET. Инструмент носит справочный характер и не является инвестиционной рекомендацией.",
+    fxBase: "Базовая валюта ЕЦБ — курс", fxPrefix: "Eesti Pank / ЕЦБ", fxFrom: "курс от", fxGot: "получено",
+    fxRefresh: "обновить", fxRetry: "повторить", fxLoad: "загрузить", fxLoading: "Запрашиваю курс ЕЦБ…",
+    fxFail: "Курс не получен.", fxManualLabel: "Курс не загрузился — введите 1 EUR =", fxManualPh: "курс",
+    searching: q => `Ищу «${q}» в интернете…`,
+    notFound: q => `Не нашёл акцию по запросу «${q}».`,
+    nofunc: "Автопоиск на этом адресе не подключён. Откройте инструмент на домене с функцией /api/stock (Vercel) или введите цену вручную ниже — расчёт работает в любом случае.",
+    searchErr: e => `Ошибка поиска: ${e}. Введите цену вручную ниже.`,
+    resEmpty: "Заполните цену акции и капитал — здесь появится число акций.",
+    resWait: "Дождитесь загрузки курсов валют (или введите их вручную выше).",
+    rowCapital: (a, b) => `Капитал (${a} → ${b})`, rowPrice: "Цена за акцию", rowBought: (n, p) => `Куплено: ${n} × ${p}`,
+    remTitle: "Остаток (деньги, не вошедшие в покупку)",
+    logStock: "Цена акции", logInfo: "Информация о компании", logFx: "Курс валют", logFxReserve: "Курс валют (резерв)",
+    srcWeb: "веб-поиск", srcReserve: "currency-api (данные ЕЦБ)",
+    perMonth: "за месяц",
+    curr: { EUR: "евро", USD: "доллар США", GBP: "фунт стерлингов", CHF: "швейцарский франк", JPY: "иена" },
+    canBuy: n => { const a = Math.abs(n) % 100, b = n % 10; let w; if (a > 10 && a < 20) w = "акций"; else if (b === 1) w = "акция"; else if (b >= 2 && b <= 4) w = "акции"; else w = "акций"; return `${w} можно купить`; },
   },
   et: {
     locale: "et-EE",
     back: "Portfoolio",
-    kicker: "Aktsiate ostu kalkulaator Â· live",
+    kicker: "Aktsiate ostu kalkulaator · live",
     h1: "Mitu aktsiat ma saan osta",
-    lead: "Sisesta tikker â nimi ja hind tÃµmmatakse veebist. Valuutakursid tulevad otse EKP-st (allikas, mida kasutab Eesti Pank). Tulemus on tÃ¤isarv aktsiaid ja raha jÃ¤Ã¤k.",
+    lead: "Sisesta tikker — nimi ja hind tõmmatakse veebist. Valuutakursid tulevad otse EKP-st (allikas, mida kasutab Eesti Pank). Tulemus on täisarv aktsiaid ja raha jääk.",
     s01: "Aktsia otsing", s02: "Aktsia hind ja valuuta", s03: "Saadaolev kapital", s04: "Arvutuse tulemus", s05: "Andmete logi ja allikad",
-    searchPh: "nt AAPL, Tesla, Novo Nordiskâ¦", btnFind: "Otsi",
-    lblPrice: "Ãhe aktsia hind", pricePh: "sisesta hind vÃµi otsi Ã¼leval", lblPriceCcy: "Hinna valuuta",
-    lblCapital: "PÃ¤ris raha ostuks", capitalPh: "nt 1000", lblCapCcy: "Kapitali valuuta",
-    thTime: "Aeg", thType: "TÃ¼Ã¼p", thData: "Andmed", thSource: "Allikas",
-    logEmpty: "Praegu tÃ¼hi. Iga veebist saadud vÃ¤Ã¤rtus ilmub siia koos aja ja allikaga.",
-    note: "Aktsia hind pÃ¤rineb avalikest veebiallikatest ja vÃµib bÃ¶rsist maha jÃ¤Ã¤da. Kursid on EKP viitekursid avatud Frankfurter API kaudu (allikas, mida kasutab Eesti Pank), fikseeritakse kord tÃ¶Ã¶pÃ¤evas u 16:00 CET. TÃ¶Ã¶riist on informatiivne ega ole investeerimissoovitus.",
-    fxBase: "EKP baasvaluuta â kurss", fxPrefix: "Eesti Pank / EKP", fxFrom: "kurss kuupÃ¤evast", fxGot: "saadud",
-    fxRefresh: "vÃ¤rskenda", fxRetry: "proovi uuesti", fxLoad: "lae", fxLoading: "KÃ¼sin EKP kurssiâ¦",
-    fxFail: "Kurssi ei saadud.", fxManualLabel: "Kurss ei laadinud â sisesta 1 EUR =", fxManualPh: "kurss",
-    searching: q => `Otsin veebist â${q}ââ¦`,
-    notFound: q => `Ei leidnud aktsiat pÃ¤ringule â${q}â.`,
-    nofunc: "Automaatne otsing pole sellel aadressil Ã¼hendatud. Ava tÃ¶Ã¶riist domeenil, kus on /api/stock funktsioon (Vercel), vÃµi sisesta hind kÃ¤sitsi allpool â arvutus tÃ¶Ã¶tab nii vÃµi naa.",
-    searchErr: e => `Otsingu viga: ${e}. Sisesta hind kÃ¤sitsi allpool.`,
-    resEmpty: "Sisesta aktsia hind ja kapital â siia ilmub aktsiate arv.",
-    resWait: "Oota, kuni valuutakursid laaditakse (vÃµi sisesta need kÃ¤sitsi Ã¼leval).",
-    rowCapital: (a, b) => `Kapital (${a} â ${b})`, rowPrice: "Aktsia hind", rowBought: (n, p) => `Ostetud: ${n} Ã ${p}`,
-    remTitle: "JÃ¤Ã¤k (raha, mis ostu ei lÃ¤inud)",
-    logStock: "Aktsia hind", logInfo: "EttevÃµtte info", logFx: "Valuutakursid", logFxReserve: "Valuutakursid (varu)",
+    searchPh: "nt AAPL, Tesla, Novo Nordisk…", btnFind: "Otsi",
+    lblPrice: "Ühe aktsia hind", pricePh: "sisesta hind või otsi üleval", lblPriceCcy: "Hinna valuuta",
+    lblCapital: "Päris raha ostuks", capitalPh: "nt 1000", lblCapCcy: "Kapitali valuuta",
+    thTime: "Aeg", thType: "Tüüp", thData: "Andmed", thSource: "Allikas",
+    logEmpty: "Praegu tühi. Iga veebist saadud väärtus ilmub siia koos aja ja allikaga.",
+    note: "Aktsia hind pärineb avalikest veebiallikatest ja võib börsist maha jääda. Kursid on EKP viitekursid avatud Frankfurter API kaudu (allikas, mida kasutab Eesti Pank), fikseeritakse kord tööpäevas u 16:00 CET. Tööriist on informatiivne ega ole investeerimissoovitus.",
+    fxBase: "EKP baasvaluuta — kurss", fxPrefix: "Eesti Pank / EKP", fxFrom: "kurss kuupäevast", fxGot: "saadud",
+    fxRefresh: "värskenda", fxRetry: "proovi uuesti", fxLoad: "lae", fxLoading: "Küsin EKP kurssi…",
+    fxFail: "Kurssi ei saadud.", fxManualLabel: "Kurss ei laadinud — sisesta 1 EUR =", fxManualPh: "kurss",
+    searching: q => `Otsin veebist „${q}”…`,
+    notFound: q => `Ei leidnud aktsiat päringule „${q}”.`,
+    nofunc: "Automaatne otsing pole sellel aadressil ühendatud. Ava tööriist domeenil, kus on /api/stock funktsioon (Vercel), või sisesta hind käsitsi allpool — arvutus töötab nii või naa.",
+    searchErr: e => `Otsingu viga: ${e}. Sisesta hind käsitsi allpool.`,
+    resEmpty: "Sisesta aktsia hind ja kapital — siia ilmub aktsiate arv.",
+    resWait: "Oota, kuni valuutakursid laaditakse (või sisesta need käsitsi üleval).",
+    rowCapital: (a, b) => `Kapital (${a} → ${b})`, rowPrice: "Aktsia hind", rowBought: (n, p) => `Ostetud: ${n} × ${p}`,
+    remTitle: "Jääk (raha, mis ostu ei läinud)",
+    logStock: "Aktsia hind", logInfo: "Ettevõtte info", logFx: "Valuutakursid", logFxReserve: "Valuutakursid (varu)",
     srcWeb: "veebiotsing", srcReserve: "currency-api (EKP andmed)",
     perMonth: "kuus",
-    curr: { EUR: "euro", USD: "USA dollar", GBP: "naelsterling", CHF: "Å veitsi frank", JPY: "jeen" },
+    curr: { EUR: "euro", USD: "USA dollar", GBP: "naelsterling", CHF: "Šveitsi frank", JPY: "jeen" },
     canBuy: n => `${n === 1 ? "aktsia" : "aktsiat"} saad osta`,
   },
 };
 
 let currentLang = "en", numLocale = "en-US", L = T.en, lastStock = null;
-const rates = { EUR: { rate: 1, date: "base", source: "Eesti Pank / ECB", time: "â" } };
+const rates = { EUR: { rate: 1, date: "base", source: "Eesti Pank / ECB", time: "—" } };
 
 const $ = id => document.getElementById(id);
 const nowStr = () => new Date().toLocaleString(numLocale, { hour: "2-digit", minute: "2-digit", second: "2-digit", day: "2-digit", month: "2-digit" });
-const fmt = (n, d = 2) => (n == null || isNaN(n)) ? "â" : Number(n).toLocaleString(numLocale, { minimumFractionDigits: d, maximumFractionDigits: d });
-const fmtInt = n => (n == null || isNaN(n)) ? "â" : Math.trunc(n).toLocaleString(numLocale);
+const fmt = (n, d = 2) => (n == null || isNaN(n)) ? "—" : Number(n).toLocaleString(numLocale, { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtInt = n => (n == null || isNaN(n)) ? "—" : Math.trunc(n).toLocaleString(numLocale);
 const parseNum = v => { const n = parseFloat(String(v).replace(",", ".")); return isNaN(n) ? null : n; };
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
@@ -312,7 +312,7 @@ function buildCurrencyOptions(sel) {
   sel.innerHTML = "";
   CURRENCIES.forEach(code => {
     const o = document.createElement("option");
-    o.value = code; o.textContent = `${code} â ${L.curr[code]}`;
+    o.value = code; o.textContent = `${code} — ${L.curr[code]}`;
     sel.appendChild(o);
   });
   if (prev) sel.value = prev;
@@ -340,7 +340,7 @@ function applyLang(lang) {
 function pushLog(kind, detail, source, extra) {
   const tr = document.createElement("tr");
   tr.innerHTML = `<td class="t">${nowStr()}</td><td style="font-weight:600">${esc(kind)}</td>` +
-    `<td class="d">${esc(detail)}${extra ? ` <span style="color:var(--text-muted)">Â· ${esc(extra)}</span>` : ""}</td>` +
+    `<td class="d">${esc(detail)}${extra ? ` <span style="color:var(--text-muted)">· ${esc(extra)}</span>` : ""}</td>` +
     `<td style="color:var(--text-body)">${esc(source)}</td>`;
   $("logBody").prepend(tr);
   $("logEmpty").style.display = "none"; $("logTable").style.display = "";
@@ -352,7 +352,7 @@ async function fetchRate() {
     const sel = t === "priceFx" ? "priceCcy" : "capCcy"; const cur = $(sel).value;
     if (cur !== "EUR" && (!rates[cur] || rates[cur].error)) $(t).innerHTML = `<span class="placeholder">${L.fxLoading}</span>`;
   });
-  // 1) Frankfurter (api.frankfurter.dev) â ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½ÑÐµ ÐºÑÑÑÑ ÐÐ¦Ð
+  // 1) Frankfurter (api.frankfurter.dev) — справочные курсы ЕЦБ
   try {
     const r = await fetch(`https://api.frankfurter.dev/v1/latest?base=EUR&symbols=${want.join(",")}`);
     if (!r.ok) throw 0;
@@ -361,13 +361,13 @@ async function fetchRate() {
     got.forEach(c => rates[c] = { rate: d.rates[c], date: d.date, source: "ECB / Frankfurter", time: nowStr() });
     if (got.length) { pushLog(L.logFx, got.map(c => `1 EUR = ${fmt(d.rates[c], 4)} ${c}`).join("; "), "ECB / Frankfurter", `${L.fxFrom} ${d.date}`); renderFx(); recompute(); return; }
   } catch (e) {}
-  // 2) Ð ÐµÐ·ÐµÑÐ²: currency-api (CDN jsDelivr), Ð´Ð°Ð½Ð½ÑÐµ ÐÐ¦Ð
+  // 2) Резерв: currency-api (CDN jsDelivr), данные ЕЦБ
   try {
     const r = await fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json");
     if (!r.ok) throw 0;
     const d = await r.json(); const eur = d.eur || {};
     const got = want.filter(c => eur[c.toLowerCase()] != null);
-    got.forEach(c => rates[c] = { rate: eur[c.toLowerCase()], date: d.date || "â", source: L.srcReserve, time: nowStr() });
+    got.forEach(c => rates[c] = { rate: eur[c.toLowerCase()], date: d.date || "—", source: L.srcReserve, time: nowStr() });
     if (got.length) { pushLog(L.logFxReserve, got.map(c => `1 EUR = ${fmt(eur[c.toLowerCase()], 4)} ${c}`).join("; "), L.srcReserve, d.date || ""); renderFx(); recompute(); return; }
   } catch (e) {}
   want.forEach(c => { if (!rates[c] || rates[c].error) rates[c] = { error: true, time: nowStr() }; });
@@ -381,7 +381,7 @@ function renderFx() {
     const rr = rates[ccy];
     if (rr && !rr.error) {
       el.innerHTML = `${L.fxPrefix}: <b>1 EUR = ${fmt(rr.rate, 4)} ${ccy}</b>` +
-        `<span style="color:var(--text-muted)"> Â· ${L.fxFrom} ${rr.date} Â· ${L.fxGot} ${rr.time}</span>` +
+        `<span style="color:var(--text-muted)"> · ${L.fxFrom} ${rr.date} · ${L.fxGot} ${rr.time}</span>` +
         `<button class="mini" data-refresh="1">${L.fxRefresh}</button>`;
       man.style.display = "none";
     } else if (rr && rr.error) {
@@ -389,7 +389,7 @@ function renderFx() {
       man.querySelector(".ml").textContent = L.fxManualLabel; man.querySelector("input").placeholder = L.fxManualPh;
       man.style.display = "flex";
     } else {
-      el.innerHTML = `<span class="placeholder">â</span> <button class="mini" data-refresh="1">${L.fxLoad}</button>`;
+      el.innerHTML = `<span class="placeholder">—</span> <button class="mini" data-refresh="1">${L.fxLoad}</button>`;
       man.style.display = "none";
     }
   });
@@ -413,35 +413,35 @@ async function searchStock() {
     const r = await fetch(`${API_BASE}/api/stock?q=${encodeURIComponent(q)}&lang=${currentLang}`);
     if (!r.ok && r.status === 404) throw { kind: "nofunc" };
     const obj = await r.json();
-    if (obj.found === false) { $("stockMsg").innerHTML = `<div class="msg-err">â  ${esc(obj.error || L.notFound(q))}</div>`; return; }
+    if (obj.found === false) { $("stockMsg").innerHTML = `<div class="msg-err">⚠ ${esc(obj.error || L.notFound(q))}</div>`; return; }
     obj._q = q; lastStock = obj;
     applyStockSideEffects(obj, q);
     renderStockCard(obj);
   } catch (e) {
     if (e && e.kind === "nofunc") $("stockMsg").innerHTML = `<div class="msg-note">${esc(L.nofunc)}</div>`;
-    else $("stockMsg").innerHTML = `<div class="msg-err">â  ${esc(L.searchErr((e && e.message) || ""))}</div>`;
+    else $("stockMsg").innerHTML = `<div class="msg-err">⚠ ${esc(L.searchErr((e && e.message) || ""))}</div>`;
   } finally { $("searchBtn").disabled = false; }
 }
 
 function applyStockSideEffects(obj, q) {
   if (obj.price != null && !isNaN(obj.price)) $("price").value = obj.price;
   if (obj.currency && CURRENCIES.includes(obj.currency)) { $("priceCcy").value = obj.currency; if (!rates[obj.currency]) fetchRate(); }
-  pushLog(L.logStock, `${obj.ticker || q} â ${obj.name || ""}: ${fmt(obj.price)} ${obj.currency || ""}`, obj.source || L.srcWeb, obj.asOf);
+  pushLog(L.logStock, `${obj.ticker || q} — ${obj.name || ""}: ${fmt(obj.price)} ${obj.currency || ""}`, obj.source || L.srcWeb, obj.asOf);
   if (obj.segment || obj.trendNote || obj.monthChangePct != null)
-    pushLog(L.logInfo, `${obj.segment || "â"} Â· ${obj.trendNote || (obj.monthChangePct != null ? fmt(obj.monthChangePct) + "% " + L.perMonth : "â")}`, obj.source || L.srcWeb, obj.asOf);
+    pushLog(L.logInfo, `${obj.segment || "—"} · ${obj.trendNote || (obj.monthChangePct != null ? fmt(obj.monthChangePct) + "% " + L.perMonth : "—")}`, obj.source || L.srcWeb, obj.asOf);
 }
 
 function renderStockCard(obj) {
   $("stockMsg").innerHTML = "";
   const up = obj.monthChangePct != null && obj.monthChangePct >= 0;
   let chip = "";
-  if (obj.monthChangePct != null) chip = `<span class="chip ${up ? "up" : "down"}">${up ? "â² +" : "â¼ -"}${fmt(Math.abs(obj.monthChangePct))} % ${L.perMonth}</span>`;
+  if (obj.monthChangePct != null) chip = `<span class="chip ${up ? "up" : "down"}">${up ? "▲ +" : "▼ -"}${fmt(Math.abs(obj.monthChangePct))} % ${L.perMonth}</span>`;
   else if (obj.trendNote) chip = `<span class="chip">${esc(obj.trendNote)}</span>`;
   $("stockResult").innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
       <div>
         <div class="sname">${esc(obj.name || obj._q || "")}</div>
-        <div class="sticker">${esc(obj.ticker || "")}${obj.exchange ? " Â· " + esc(obj.exchange) : ""}</div>
+        <div class="sticker">${esc(obj.ticker || "")}${obj.exchange ? " · " + esc(obj.exchange) : ""}</div>
       </div>
       <div style="text-align:right">
         <div class="sprice">${fmt(obj.price)} <span class="sccy">${esc(obj.currency || "")}</span></div>
@@ -471,13 +471,13 @@ function recompute() {
     </div>
     <div style="margin-top:18px">
       <div class="rowline"><span>${L.rowCapital(capCcy, priceCcy)}</span><span>${fmt(capInPrice)} ${priceCcy}</span></div>
-      <div class="rowline"><span>${L.rowPrice}</span><span>Ã ${fmt(price)} ${priceCcy}</span></div>
+      <div class="rowline"><span>${L.rowPrice}</span><span>× ${fmt(price)} ${priceCcy}</span></div>
       <div class="dash"></div>
       <div class="rowline strong"><span>${L.rowBought(fmtInt(shares), fmt(price))}</span><span>${fmt(spent)} ${priceCcy}</span></div>
     </div>
     <div class="remainder">
       <div class="rem-l">${L.remTitle}</div>
-      <div class="rem-v">${fmt(remPrice)} ${priceCcy} <span class="rem-sub">(â ${fmt(remCap)} ${capCcy})</span></div>
+      <div class="rem-v">${fmt(remPrice)} ${priceCcy} <span class="rem-sub">(≈ ${fmt(remCap)} ${capCcy})</span></div>
     </div>`;
 }
 
