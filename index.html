@@ -2590,6 +2590,7 @@
       });
       document.documentElement.lang = lang;
       currentLang = lang;
+      try { localStorage.setItem('siteLang', lang); } catch (e) {}
     }
 
     document.querySelectorAll('.lang-option').forEach(opt => {
@@ -2598,6 +2599,12 @@
         setLanguage(opt.getAttribute('data-lang'));
       });
     });
+
+    /* Restore the language chosen earlier — shared with the calculator page */
+    try {
+      const savedLang = localStorage.getItem('siteLang');
+      if (savedLang) setLanguage(savedLang);
+    } catch (e) {}
 
     /* ============================================================
        4. ACTIVE NAV LINK ON SCROLL
