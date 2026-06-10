@@ -1,379 +1,501 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Калькулятор покупки акций — Trading Calculator</title>
-<meta name="description" content="Поиск акции онлайн, живой курс валют из ECB (источник Eesti Pank), расчёт количества акций на капитал." />
+<title>Trading Calculator â Dmitri Tsizov</title>
+<meta name="description" content="How many shares your capital can buy. Live ECB currency rates (the source Eesti Pank uses)." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#F1EEE4; --panel:#FBF9F2; --surface:#FFFFFF;
-    --ink:#1B1A15; --ink2:#46423A; --muted:#8A8473;
-    --line:#E3DBC9; --lineStrong:#D2C8B0;
-    --up:#15724F; --upSoft:#E3EFE8; --down:#A23A2B; --downSoft:#F2E4DF;
-    --gold:#8A6A1F; --goldSoft:#F6EFD8;
-    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace;
+    --navy:#1A1B5C; --navy-deep:#0F1043; --purple-light:#6B5BD2; --purple-soft:#A89BE8; --purple-pale:#EDE9F8;
+    --bg:#F5F5F5; --white:#FFFFFF; --text:#1A1B5C; --text-body:#2C2D3E; --text-muted:#6B6C7E; --border:#E2E2E8;
+    --shadow-sm:0 1px 2px rgba(26,27,92,.06); --shadow-md:0 4px 16px rgba(26,27,92,.08);
+    --gain:#2E7D5B; --gain-soft:#E4F1EA; --loss:#C2453E; --loss-soft:#F7E7E5;
+    --serif:'Cormorant Garamond',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif;
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);padding:26px 16px 48px;line-height:1.5}
-  .wrap{max-width:720px;margin:0 auto}
-  .kicker{font-size:11.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-  h1{font-size:30px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:-.02em}
-  .lead{margin:0;color:var(--ink2);font-size:14.5px;max-width:560px}
-  section{margin-bottom:22px}
-  .eyebrow{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
-  .num{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--gold);background:var(--goldSoft);border:1px solid var(--lineStrong);padding:2px 7px;border-radius:5px;letter-spacing:.04em}
-  .etitle{font-size:11.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ink2)}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
-  label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:6px}
-  .hint{font-weight:400;color:var(--muted)}
-  input,select{width:100%;font-family:var(--mono);font-size:16px;color:var(--ink);background:var(--panel);border:1px solid var(--lineStrong);border-radius:9px;padding:11px 13px;outline:none}
-  select{font-family:var(--sans);font-size:14px;cursor:pointer;appearance:none;padding-right:32px;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%238A8473' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat:no-repeat;background-position:right 12px center}
-  input:focus,select:focus{border-color:var(--up);box-shadow:0 0 0 3px var(--upSoft)}
-  .grid{display:grid;grid-template-columns:1fr 200px;gap:12px}
-  @media(max-width:520px){.grid{grid-template-columns:1fr}}
-  .searchrow{display:flex;gap:10px}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);background:var(--bg);color:var(--text-body);line-height:1.55;font-size:15px;padding:40px 20px 64px}
+  .wrap{max-width:760px;margin:0 auto}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+  .back{font-size:13px;color:var(--text-muted);text-decoration:none;font-weight:600}
+  .back:hover{color:var(--navy)}
+  .langsw{display:inline-flex;gap:2px;background:var(--white);border:1px solid var(--border);border-radius:999px;padding:4px;box-shadow:var(--shadow-sm)}
+  .langsw button{border:none;background:transparent;cursor:pointer;font-size:16px;line-height:1;padding:6px 9px;border-radius:999px;font-family:var(--sans)}
+  .langsw button.active{background:var(--purple-pale)}
+  header.head{text-align:center;margin-bottom:46px}
+  .kicker{font-size:13px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+  h1{font-family:var(--serif);font-size:46px;font-weight:500;color:var(--text);line-height:1.12;margin-bottom:14px}
+  .lead{max-width:560px;margin:0 auto;font-size:15px;line-height:1.7;color:var(--text-body)}
+  section{margin-bottom:28px}
+  .steptag{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .stepnum{font-size:13px;font-weight:600;color:var(--navy);background:var(--purple-pale);border-radius:8px;padding:3px 11px;font-variant-numeric:tabular-nums}
+  .steptitle{font-size:12.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text)}
+  .card{background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-sm);padding:24px}
+  label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:7px}
+  .hint{font-weight:400;color:var(--text-muted)}
+  input,select{width:100%;font-family:var(--sans);font-size:16px;color:var(--text);background:#FAFAFB;border:1px solid var(--border);border-radius:8px;padding:12px 14px;outline:none;transition:border .15s,box-shadow .15s}
+  input::placeholder{color:#A7A6B3}
+  input{font-variant-numeric:tabular-nums}
+  select{cursor:pointer;appearance:none;padding-right:34px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%236B6C7E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 13px center}
+  input:focus,select:focus{border-color:var(--purple-light);box-shadow:0 0 0 3px var(--purple-pale)}
+  .grid{display:grid;grid-template-columns:1fr 210px;gap:14px}
+  .searchrow{display:flex;gap:12px}
   .searchrow .ico{position:relative;flex:1}
-  .searchrow .ico input{padding-left:38px;font-family:var(--sans)}
-  .searchrow .ico svg{position:absolute;left:13px;top:13px;color:var(--muted)}
-  .btn{display:inline-flex;align-items:center;gap:7px;background:var(--up);color:#fff;border:none;border-radius:9px;padding:0 20px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
-  .btn[disabled]{background:var(--lineStrong);cursor:default}
-  .fx{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin-top:9px}
-  .fx b{font-family:var(--mono)}
-  .mini{font-size:11.5px;color:var(--gold);background:transparent;border:none;cursor:pointer;font-weight:600;padding:1px 4px;font-family:var(--sans)}
-  .manualRate{display:none;align-items:center;gap:8px;margin-top:8px}
-  .manualRate input{max-width:140px;font-size:14px;padding:7px 10px}
-  .result{background:var(--panel)}
-  .bignum{font-family:var(--mono);font-size:46px;font-weight:800;color:var(--up);line-height:1}
-  .row{display:flex;justify-content:space-between;padding:3px 0;font-family:var(--mono);font-size:13px;color:var(--ink2)}
-  .row span:first-child{font-family:var(--sans)}
-  .row.strong{color:var(--ink);font-weight:700}
-  .dash{border-top:1px dashed var(--lineStrong);margin:8px 0}
-  .remainder{margin-top:14px;background:var(--goldSoft);border:1px solid var(--lineStrong);border-radius:9px;padding:11px 13px}
-  .rem-l{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
-  .rem-v{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--ink)}
-  table{width:100%;border-collapse:collapse;font-size:12.5px}
-  th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);background:var(--panel)}
-  td{padding:10px 14px;vertical-align:top;border-top:1px solid var(--line)}
-  td.t{font-family:var(--mono);color:var(--muted);white-space:nowrap}
-  td.d{font-family:var(--mono)}
-  .empty{padding:18px;color:var(--muted);font-size:13.5px}
-  .note{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:18px}
-  .placeholder{color:var(--muted)}
-  .chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;border-radius:7px;padding:5px 10px;border:1px solid var(--line);background:var(--panel)}
-  .chip.up{background:var(--upSoft);color:var(--up);font-weight:600;font-family:var(--mono);border-color:#15724f22}
-  .chip.down{background:var(--downSoft);color:var(--down);font-weight:600;font-family:var(--mono);border-color:#a23a2b22}
-  .msg-err{margin-top:12px;display:flex;gap:8px;align-items:flex-start;color:var(--down);font-size:13.5px}
-  .msg-note{margin-top:12px;display:flex;gap:8px;align-items:flex-start;color:var(--ink2);font-size:13px}
+  .searchrow .ico input{padding-left:40px}
+  .searchrow .ico svg{position:absolute;left:14px;top:14px;color:var(--text-muted)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;background:var(--navy);color:#fff;border:none;border-radius:6px;padding:0 24px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--sans);transition:background .2s}
+  .btn:hover{background:var(--purple-light)}
+  .btn[disabled]{background:#B9B8C6;cursor:default}
+  .fx{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--text-body);margin-top:11px}
+  .fx b{font-weight:600;color:var(--text)}
+  .mini{font-size:12px;color:var(--purple-light);background:transparent;border:none;cursor:pointer;font-weight:600;padding:1px 4px;font-family:var(--sans)}
+  .mini:hover{color:var(--navy)}
+  .manualRate{display:none;align-items:center;gap:8px;margin-top:9px}
+  .manualRate .ml{font-size:13px;color:var(--text-body)}
+  .manualRate input{max-width:150px;font-size:14px;padding:8px 11px}
+  .resmsg{color:var(--text-body);font-size:14px}
+  .bignum{font-family:var(--serif);font-size:64px;font-weight:600;color:var(--navy);line-height:1;font-variant-numeric:tabular-nums}
+  .bigword{font-size:16px;font-weight:600;color:var(--text-muted)}
+  .rowline{display:flex;justify-content:space-between;padding:4px 0;font-size:14px;color:var(--text-body);font-variant-numeric:tabular-nums}
+  .rowline span:first-child{font-variant-numeric:normal}
+  .rowline.strong{color:var(--text);font-weight:600}
+  .dash{border-top:1px solid var(--border);margin:10px 0}
+  .remainder{margin-top:16px;background:var(--purple-pale);border-radius:10px;padding:14px 16px}
+  .rem-l{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);opacity:.65;margin-bottom:5px}
+  .rem-v{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums}
+  .rem-sub{color:var(--navy);opacity:.6;font-weight:400;font-size:14px;font-family:var(--sans)}
+  .sname{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--navy);line-height:1.15}
+  .sticker{color:var(--text-muted);font-size:13px;margin-top:3px}
+  .sprice{font-family:var(--serif);font-size:28px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums}
+  .sccy{font-size:15px;color:var(--text-muted);font-family:var(--sans)}
+  .sasof{font-size:11.5px;color:var(--text-muted);margin-top:3px}
+  .sintro{margin-top:14px;font-size:14px;color:var(--text-body);line-height:1.6}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;border-radius:8px;padding:6px 12px;background:var(--purple-pale);color:var(--navy)}
+  .chip.up{background:var(--gain-soft);color:var(--gain);font-weight:600;font-variant-numeric:tabular-nums}
+  .chip.down{background:var(--loss-soft);color:var(--loss);font-weight:600;font-variant-numeric:tabular-nums}
+  .msg-err{margin-top:13px;color:var(--loss);font-size:14px;display:flex;gap:8px}
+  .msg-note{margin-top:13px;color:var(--text-body);font-size:13.5px;line-height:1.55}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text);background:#FAFAFB;border-bottom:1px solid var(--border)}
+  td{padding:11px 16px;vertical-align:top;border-top:1px solid var(--border)}
+  td.t{color:var(--text-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  td.d{font-variant-numeric:tabular-nums}
+  .empty{padding:18px;color:var(--text-muted);font-size:13.5px}
+  .note{font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:20px}
+  .placeholder{color:var(--text-muted)}
+  @media(max-width:540px){
+    .grid{grid-template-columns:1fr}
+    h1{font-size:34px} .bignum{font-size:50px}
+    body{padding:28px 16px 56px}
+    .searchrow{flex-direction:column} .btn{padding:12px 24px}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header style="margin-bottom:26px">
-    <div class="kicker">Калькулятор покупки акций · live</div>
-    <h1>Сколько акций я могу купить</h1>
-    <p class="lead">Введите тикер — название и цена подтянутся из интернета. Курс валют берётся вживую
-    из ECB (источник Eesti Pank). Результат — целое число акций и остаток денег.</p>
+  <div class="topbar">
+    <a class="back" id="backlink" href="index.html">â Portfolio</a>
+    <div class="langsw">
+      <button data-lang="en" title="English">ð¬ð§</button>
+      <button data-lang="et" title="Eesti">ðªðª</button>
+      <button data-lang="ru" title="Ð ÑÑÑÐºÐ¸Ð¹">ð·ðº</button>
+    </div>
+  </div>
+
+  <header class="head">
+    <div class="kicker" id="kicker"></div>
+    <h1 id="h1"></h1>
+    <p class="lead" id="lead"></p>
   </header>
 
   <!-- 01 -->
   <section>
-    <div class="eyebrow"><span class="num">01</span><span class="etitle">Поиск акции</span></div>
+    <div class="steptag"><span class="stepnum">01</span><span class="steptitle" id="t01"></span></div>
     <div class="card">
       <div class="searchrow">
         <div class="ico">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input id="ticker" placeholder="например AAPL, Tesla, Novo Nordisk…" />
+          <input id="ticker" />
         </div>
-        <button class="btn" id="searchBtn">Найти</button>
+        <button class="btn" id="searchBtn"></button>
       </div>
       <div id="stockMsg"></div>
-      <div id="stockResult" style="margin-top:16px;border-top:1px solid var(--line);padding-top:16px;display:none"></div>
+      <div id="stockResult" style="margin-top:18px;border-top:1px solid var(--border);padding-top:18px;display:none"></div>
     </div>
   </section>
 
   <!-- 02 -->
   <section>
-    <div class="eyebrow"><span class="num">02</span><span class="etitle">Цена акции и валюта</span></div>
+    <div class="steptag"><span class="stepnum">02</span><span class="steptitle" id="t02"></span></div>
     <div class="card">
       <div class="grid">
         <div>
-          <label>Цена за одну акцию <span class="hint" id="priceSrc"></span></label>
-          <input id="price" inputmode="decimal" placeholder="введите цену или найдите выше" />
+          <label id="lblPrice"></label>
+          <input id="price" inputmode="decimal" />
         </div>
         <div>
-          <label>Валюта цены</label>
+          <label id="lblPriceCcy"></label>
           <select id="priceCcy"></select>
         </div>
       </div>
       <div class="fx" id="priceFx"></div>
-      <div class="manualRate" id="priceManual"><span style="font-size:12.5px">Курс не загрузился — введите 1 EUR =</span><input inputmode="decimal" placeholder="курс" /></div>
+      <div class="manualRate" id="priceManual"><span class="ml"></span><input inputmode="decimal" /></div>
     </div>
   </section>
 
   <!-- 03 -->
   <section>
-    <div class="eyebrow"><span class="num">03</span><span class="etitle">Доступный капитал</span></div>
+    <div class="steptag"><span class="stepnum">03</span><span class="steptitle" id="t03"></span></div>
     <div class="card">
       <div class="grid">
         <div>
-          <label>Реальные деньги для покупки</label>
-          <input id="capital" inputmode="decimal" placeholder="например 1000" />
+          <label id="lblCapital"></label>
+          <input id="capital" inputmode="decimal" />
         </div>
         <div>
-          <label>Валюта капитала</label>
+          <label id="lblCapCcy"></label>
           <select id="capCcy"></select>
         </div>
       </div>
       <div class="fx" id="capFx"></div>
-      <div class="manualRate" id="capManual"><span style="font-size:12.5px">Курс не загрузился — введите 1 EUR =</span><input inputmode="decimal" placeholder="курс" /></div>
+      <div class="manualRate" id="capManual"><span class="ml"></span><input inputmode="decimal" /></div>
     </div>
   </section>
 
   <!-- 04 -->
   <section>
-    <div class="eyebrow"><span class="num">04</span><span class="etitle">Результат расчёта</span></div>
-    <div class="card result" id="result"></div>
+    <div class="steptag"><span class="stepnum">04</span><span class="steptitle" id="t04"></span></div>
+    <div class="card" id="result"></div>
   </section>
 
   <!-- 05 -->
   <section>
-    <div class="eyebrow"><span class="num">05</span><span class="etitle">Журнал данных и источники</span></div>
+    <div class="steptag"><span class="stepnum">05</span><span class="steptitle" id="t05"></span></div>
     <div class="card" style="padding:0;overflow:hidden">
-      <div id="logEmpty" class="empty">Пока пусто. Каждое значение из сети попадёт сюда со временем и источником.</div>
+      <div id="logEmpty" class="empty"></div>
       <table id="logTable" style="display:none">
-        <thead><tr><th>Время</th><th>Тип</th><th>Данные</th><th>Источник</th></tr></thead>
+        <thead><tr><th id="thTime"></th><th id="thType"></th><th id="thData"></th><th id="thSource"></th></tr></thead>
         <tbody id="logBody"></tbody>
       </table>
     </div>
   </section>
 
-  <p class="note">
-    Цена акции — из открытых источников через веб-поиск, может идти с задержкой относительно биржи.
-    Курсы — справочные курсы ЕЦБ через открытый API Frankfurter (тот же источник, что у Eesti Pank),
-    фиксируются раз в рабочий день около 16:00 CET. Инструмент носит справочный характер и не является
-    инвестиционной рекомендацией.
-  </p>
+  <p class="note" id="note"></p>
 </div>
 
 <script>
-/* ──────────────────────────────────────────────────────────────
-   НАСТРОЙКА: адрес серверной функции (ИИ-поиск цены).
-   • Оставьте "" если страница открыта на том же домене, где работает
-     функция /api/stock (например, ваш домен на Vercel) — это лучший вариант.
-   • Если страница на GitHub Pages, а функция на Vercel — впишите сюда
-     адрес Vercel, например:  "https://02signal-portfolio-template.vercel.app"
-   ────────────────────────────────────────────────────────────── */
+/* ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+   API_BASE â Ð°Ð´ÑÐµÑ ÑÐµÑÐ²ÐµÑÐ½Ð¾Ð¹ ÑÑÐ½ÐºÑÐ¸Ð¸ ÐÐ-Ð¿Ð¾Ð¸ÑÐºÐ° (/api/stock).
+   "" = ÑÐ¾Ñ Ð¶Ðµ Ð´Ð¾Ð¼ÐµÐ½ (Ð½ÑÐ¶Ð½ÑÐ¹ Ð²Ð°ÑÐ¸Ð°Ð½Ñ, ÐµÑÐ»Ð¸ Ð¾ÑÐºÑÑÐ²Ð°ÑÑ Ð½Ð° Vercel).
+   ÐÐ»Ñ GitHub Pages Ð²Ð¿Ð¸ÑÐ¸ÑÐµ Ð°Ð´ÑÐµÑ Vercel, Ð½Ð°Ð¿Ñ.:
+   "https://02signal-portfolio-template.vercel.app"
+   ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 const API_BASE = "";
 
-const CURRENCIES = [
-  {code:"EUR",label:"EUR — евро"},
-  {code:"USD",label:"USD — доллар США"},
-  {code:"GBP",label:"GBP — фунт стерлингов"},
-  {code:"CHF",label:"CHF — швейцарский франк"},
-  {code:"JPY",label:"JPY — иена"},
-];
-const rates = {EUR:{rate:1,date:"база",source:"Eesti Pank / ЕЦБ",time:"—"}};
+const CURRENCIES = ["EUR", "USD", "GBP", "CHF", "JPY"];
+
+const T = {
+  en: {
+    locale: "en-US",
+    back: "Portfolio",
+    kicker: "Stock purchase calculator Â· live",
+    h1: "How many shares can I buy",
+    lead: "Enter a ticker â the name and price are pulled from the web. Currency rates come live from the ECB (the source Eesti Pank uses). The result is a whole number of shares plus the leftover cash.",
+    s01: "Stock lookup", s02: "Share price & currency", s03: "Available capital", s04: "Calculation result", s05: "Data log & sources",
+    searchPh: "e.g. AAPL, Tesla, Novo Nordiskâ¦", btnFind: "Find",
+    lblPrice: "Price per share", pricePh: "enter a price or search above", lblPriceCcy: "Price currency",
+    lblCapital: "Real money to invest", capitalPh: "e.g. 1000", lblCapCcy: "Capital currency",
+    thTime: "Time", thType: "Type", thData: "Data", thSource: "Source",
+    logEmpty: "Empty for now. Every value pulled from the web will appear here with its time and source.",
+    note: "Share price comes from open web sources and may lag the exchange. Rates are ECB reference rates via the open Frankfurter API (the source Eesti Pank uses), fixed once per business day around 16:00 CET. This tool is informational and not investment advice.",
+    fxBase: "ECB base currency â rate", fxPrefix: "Eesti Pank / ECB", fxFrom: "rate from", fxGot: "fetched",
+    fxRefresh: "refresh", fxRetry: "retry", fxLoad: "load", fxLoading: "Fetching ECB rateâ¦",
+    fxFail: "Rate not available.", fxManualLabel: "Rate didn't load â enter 1 EUR =", fxManualPh: "rate",
+    searching: q => `Searching the web for â${q}ââ¦`,
+    notFound: q => `Couldn't find a stock for â${q}â.`,
+    nofunc: "Live search isn't connected on this address. Open the tool on the domain that has the /api/stock function (Vercel), or just enter the price manually below â the calculation still works.",
+    searchErr: e => `Search error: ${e}. Enter the price manually below.`,
+    resEmpty: "Enter a share price and capital â the number of shares will appear here.",
+    resWait: "Waiting for currency rates to load (or enter them manually above).",
+    rowCapital: (a, b) => `Capital (${a} â ${b})`, rowPrice: "Price per share", rowBought: (n, p) => `Bought: ${n} Ã ${p}`,
+    remTitle: "Leftover (cash not invested)",
+    logStock: "Share price", logInfo: "Company info", logFx: "Currency rates", logFxReserve: "Currency rates (backup)",
+    srcWeb: "web search", srcReserve: "currency-api (ECB data)",
+    perMonth: "for the month",
+    curr: { EUR: "euro", USD: "US dollar", GBP: "pound sterling", CHF: "Swiss franc", JPY: "yen" },
+    canBuy: n => `${n === 1 ? "share" : "shares"} you can buy`,
+  },
+  ru: {
+    locale: "ru-RU",
+    back: "ÐÐ¾ÑÑÑÐ¾Ð»Ð¸Ð¾",
+    kicker: "ÐÐ°Ð»ÑÐºÑÐ»ÑÑÐ¾Ñ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸ Ð°ÐºÑÐ¸Ð¹ Â· live",
+    h1: "Ð¡ÐºÐ¾Ð»ÑÐºÐ¾ Ð°ÐºÑÐ¸Ð¹ Ñ Ð¼Ð¾Ð³Ñ ÐºÑÐ¿Ð¸ÑÑ",
+    lead: "ÐÐ²ÐµÐ´Ð¸ÑÐµ ÑÐ¸ÐºÐµÑ â Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¸ ÑÐµÐ½Ð° Ð¿Ð¾Ð´ÑÑÐ½ÑÑÑÑ Ð¸Ð· Ð¸Ð½ÑÐµÑÐ½ÐµÑÐ°. ÐÑÑÑ Ð²Ð°Ð»ÑÑ Ð±ÐµÑÑÑÑÑ Ð²Ð¶Ð¸Ð²ÑÑ Ð¸Ð· ÐÐ¦Ð (Ð¸ÑÑÐ¾ÑÐ½Ð¸Ðº Eesti Pank). Ð ÐµÐ·ÑÐ»ÑÑÐ°Ñ â ÑÐµÐ»Ð¾Ðµ ÑÐ¸ÑÐ»Ð¾ Ð°ÐºÑÐ¸Ð¹ Ð¸ Ð¾ÑÑÐ°ÑÐ¾Ðº Ð´ÐµÐ½ÐµÐ³.",
+    s01: "ÐÐ¾Ð¸ÑÐº Ð°ÐºÑÐ¸Ð¸", s02: "Ð¦ÐµÐ½Ð° Ð°ÐºÑÐ¸Ð¸ Ð¸ Ð²Ð°Ð»ÑÑÐ°", s03: "ÐÐ¾ÑÑÑÐ¿Ð½ÑÐ¹ ÐºÐ°Ð¿Ð¸ÑÐ°Ð»", s04: "Ð ÐµÐ·ÑÐ»ÑÑÐ°Ñ ÑÐ°ÑÑÑÑÐ°", s05: "ÐÑÑÐ½Ð°Ð» Ð´Ð°Ð½Ð½ÑÑ Ð¸ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¸",
+    searchPh: "Ð½Ð°Ð¿ÑÐ¸Ð¼ÐµÑ AAPL, Tesla, Novo Nordiskâ¦", btnFind: "ÐÐ°Ð¹ÑÐ¸",
+    lblPrice: "Ð¦ÐµÐ½Ð° Ð·Ð° Ð¾Ð´Ð½Ñ Ð°ÐºÑÐ¸Ñ", pricePh: "Ð²Ð²ÐµÐ´Ð¸ÑÐµ ÑÐµÐ½Ñ Ð¸Ð»Ð¸ Ð½Ð°Ð¹Ð´Ð¸ÑÐµ Ð²ÑÑÐµ", lblPriceCcy: "ÐÐ°Ð»ÑÑÐ° ÑÐµÐ½Ñ",
+    lblCapital: "Ð ÐµÐ°Ð»ÑÐ½ÑÐµ Ð´ÐµÐ½ÑÐ³Ð¸ Ð´Ð»Ñ Ð¿Ð¾ÐºÑÐ¿ÐºÐ¸", capitalPh: "Ð½Ð°Ð¿ÑÐ¸Ð¼ÐµÑ 1000", lblCapCcy: "ÐÐ°Ð»ÑÑÐ° ÐºÐ°Ð¿Ð¸ÑÐ°Ð»Ð°",
+    thTime: "ÐÑÐµÐ¼Ñ", thType: "Ð¢Ð¸Ð¿", thData: "ÐÐ°Ð½Ð½ÑÐµ", thSource: "ÐÑÑÐ¾ÑÐ½Ð¸Ðº",
+    logEmpty: "ÐÐ¾ÐºÐ° Ð¿ÑÑÑÐ¾. ÐÐ°Ð¶Ð´Ð¾Ðµ Ð·Ð½Ð°ÑÐµÐ½Ð¸Ðµ Ð¸Ð· ÑÐµÑÐ¸ Ð¿Ð¾Ð¿Ð°Ð´ÑÑ ÑÑÐ´Ð° ÑÐ¾ Ð²ÑÐµÐ¼ÐµÐ½ÐµÐ¼ Ð¸ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¾Ð¼.",
+    note: "Ð¦ÐµÐ½Ð° Ð°ÐºÑÐ¸Ð¸ â Ð¸Ð· Ð¾ÑÐºÑÑÑÑÑ Ð¸ÑÑÐ¾ÑÐ½Ð¸ÐºÐ¾Ð² ÑÐµÑÐµÐ· Ð²ÐµÐ±-Ð¿Ð¾Ð¸ÑÐº, Ð¼Ð¾Ð¶ÐµÑ Ð¸Ð´ÑÐ¸ Ñ Ð·Ð°Ð´ÐµÑÐ¶ÐºÐ¾Ð¹ Ð¾ÑÐ½Ð¾ÑÐ¸ÑÐµÐ»ÑÐ½Ð¾ Ð±Ð¸ÑÐ¶Ð¸. ÐÑÑÑÑ â ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½ÑÐµ ÐºÑÑÑÑ ÐÐ¦Ð ÑÐµÑÐµÐ· Ð¾ÑÐºÑÑÑÑÐ¹ API Frankfurter (Ð¸ÑÑÐ¾ÑÐ½Ð¸Ðº Eesti Pank), ÑÐ¸ÐºÑÐ¸ÑÑÑÑÑÑ ÑÐ°Ð· Ð² ÑÐ°Ð±Ð¾ÑÐ¸Ð¹ Ð´ÐµÐ½Ñ Ð¾ÐºÐ¾Ð»Ð¾ 16:00 CET. ÐÐ½ÑÑÑÑÐ¼ÐµÐ½Ñ Ð½Ð¾ÑÐ¸Ñ ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½ÑÐ¹ ÑÐ°ÑÐ°ÐºÑÐµÑ Ð¸ Ð½Ðµ ÑÐ²Ð»ÑÐµÑÑÑ Ð¸Ð½Ð²ÐµÑÑÐ¸ÑÐ¸Ð¾Ð½Ð½Ð¾Ð¹ ÑÐµÐºÐ¾Ð¼ÐµÐ½Ð´Ð°ÑÐ¸ÐµÐ¹.",
+    fxBase: "ÐÐ°Ð·Ð¾Ð²Ð°Ñ Ð²Ð°Ð»ÑÑÐ° ÐÐ¦Ð â ÐºÑÑÑ", fxPrefix: "Eesti Pank / ÐÐ¦Ð", fxFrom: "ÐºÑÑÑ Ð¾Ñ", fxGot: "Ð¿Ð¾Ð»ÑÑÐµÐ½Ð¾",
+    fxRefresh: "Ð¾Ð±Ð½Ð¾Ð²Ð¸ÑÑ", fxRetry: "Ð¿Ð¾Ð²ÑÐ¾ÑÐ¸ÑÑ", fxLoad: "Ð·Ð°Ð³ÑÑÐ·Ð¸ÑÑ", fxLoading: "ÐÐ°Ð¿ÑÐ°ÑÐ¸Ð²Ð°Ñ ÐºÑÑÑ ÐÐ¦Ðâ¦",
+    fxFail: "ÐÑÑÑ Ð½Ðµ Ð¿Ð¾Ð»ÑÑÐµÐ½.", fxManualLabel: "ÐÑÑÑ Ð½Ðµ Ð·Ð°Ð³ÑÑÐ·Ð¸Ð»ÑÑ â Ð²Ð²ÐµÐ´Ð¸ÑÐµ 1 EUR =", fxManualPh: "ÐºÑÑÑ",
+    searching: q => `ÐÑÑ Â«${q}Â» Ð² Ð¸Ð½ÑÐµÑÐ½ÐµÑÐµâ¦`,
+    notFound: q => `ÐÐµ Ð½Ð°ÑÑÐ» Ð°ÐºÑÐ¸Ñ Ð¿Ð¾ Ð·Ð°Ð¿ÑÐ¾ÑÑ Â«${q}Â».`,
+    nofunc: "ÐÐ²ÑÐ¾Ð¿Ð¾Ð¸ÑÐº Ð½Ð° ÑÑÐ¾Ð¼ Ð°Ð´ÑÐµÑÐµ Ð½Ðµ Ð¿Ð¾Ð´ÐºÐ»ÑÑÑÐ½. ÐÑÐºÑÐ¾Ð¹ÑÐµ Ð¸Ð½ÑÑÑÑÐ¼ÐµÐ½Ñ Ð½Ð° Ð´Ð¾Ð¼ÐµÐ½Ðµ Ñ ÑÑÐ½ÐºÑÐ¸ÐµÐ¹ /api/stock (Vercel) Ð¸Ð»Ð¸ Ð²Ð²ÐµÐ´Ð¸ÑÐµ ÑÐµÐ½Ñ Ð²ÑÑÑÐ½ÑÑ Ð½Ð¸Ð¶Ðµ â ÑÐ°ÑÑÑÑ ÑÐ°Ð±Ð¾ÑÐ°ÐµÑ Ð² Ð»ÑÐ±Ð¾Ð¼ ÑÐ»ÑÑÐ°Ðµ.",
+    searchErr: e => `ÐÑÐ¸Ð±ÐºÐ° Ð¿Ð¾Ð¸ÑÐºÐ°: ${e}. ÐÐ²ÐµÐ´Ð¸ÑÐµ ÑÐµÐ½Ñ Ð²ÑÑÑÐ½ÑÑ Ð½Ð¸Ð¶Ðµ.`,
+    resEmpty: "ÐÐ°Ð¿Ð¾Ð»Ð½Ð¸ÑÐµ ÑÐµÐ½Ñ Ð°ÐºÑÐ¸Ð¸ Ð¸ ÐºÐ°Ð¿Ð¸ÑÐ°Ð» â Ð·Ð´ÐµÑÑ Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ ÑÐ¸ÑÐ»Ð¾ Ð°ÐºÑÐ¸Ð¹.",
+    resWait: "ÐÐ¾Ð¶Ð´Ð¸ÑÐµÑÑ Ð·Ð°Ð³ÑÑÐ·ÐºÐ¸ ÐºÑÑÑÐ¾Ð² Ð²Ð°Ð»ÑÑ (Ð¸Ð»Ð¸ Ð²Ð²ÐµÐ´Ð¸ÑÐµ Ð¸Ñ Ð²ÑÑÑÐ½ÑÑ Ð²ÑÑÐµ).",
+    rowCapital: (a, b) => `ÐÐ°Ð¿Ð¸ÑÐ°Ð» (${a} â ${b})`, rowPrice: "Ð¦ÐµÐ½Ð° Ð·Ð° Ð°ÐºÑÐ¸Ñ", rowBought: (n, p) => `ÐÑÐ¿Ð»ÐµÐ½Ð¾: ${n} Ã ${p}`,
+    remTitle: "ÐÑÑÐ°ÑÐ¾Ðº (Ð´ÐµÐ½ÑÐ³Ð¸, Ð½Ðµ Ð²Ð¾ÑÐµÐ´ÑÐ¸Ðµ Ð² Ð¿Ð¾ÐºÑÐ¿ÐºÑ)",
+    logStock: "Ð¦ÐµÐ½Ð° Ð°ÐºÑÐ¸Ð¸", logInfo: "ÐÐ½ÑÐ¾ÑÐ¼Ð°ÑÐ¸Ñ Ð¾ ÐºÐ¾Ð¼Ð¿Ð°Ð½Ð¸Ð¸", logFx: "ÐÑÑÑ Ð²Ð°Ð»ÑÑ", logFxReserve: "ÐÑÑÑ Ð²Ð°Ð»ÑÑ (ÑÐµÐ·ÐµÑÐ²)",
+    srcWeb: "Ð²ÐµÐ±-Ð¿Ð¾Ð¸ÑÐº", srcReserve: "currency-api (Ð´Ð°Ð½Ð½ÑÐµ ÐÐ¦Ð)",
+    perMonth: "Ð·Ð° Ð¼ÐµÑÑÑ",
+    curr: { EUR: "ÐµÐ²ÑÐ¾", USD: "Ð´Ð¾Ð»Ð»Ð°Ñ Ð¡Ð¨Ð", GBP: "ÑÑÐ½Ñ ÑÑÐµÑÐ»Ð¸Ð½Ð³Ð¾Ð²", CHF: "ÑÐ²ÐµÐ¹ÑÐ°ÑÑÐºÐ¸Ð¹ ÑÑÐ°Ð½Ðº", JPY: "Ð¸ÐµÐ½Ð°" },
+    canBuy: n => { const a = Math.abs(n) % 100, b = n % 10; let w; if (a > 10 && a < 20) w = "Ð°ÐºÑÐ¸Ð¹"; else if (b === 1) w = "Ð°ÐºÑÐ¸Ñ"; else if (b >= 2 && b <= 4) w = "Ð°ÐºÑÐ¸Ð¸"; else w = "Ð°ÐºÑÐ¸Ð¹"; return `${w} Ð¼Ð¾Ð¶Ð½Ð¾ ÐºÑÐ¿Ð¸ÑÑ`; },
+  },
+  et: {
+    locale: "et-EE",
+    back: "Portfoolio",
+    kicker: "Aktsiate ostu kalkulaator Â· live",
+    h1: "Mitu aktsiat ma saan osta",
+    lead: "Sisesta tikker â nimi ja hind tÃµmmatakse veebist. Valuutakursid tulevad otse EKP-st (allikas, mida kasutab Eesti Pank). Tulemus on tÃ¤isarv aktsiaid ja raha jÃ¤Ã¤k.",
+    s01: "Aktsia otsing", s02: "Aktsia hind ja valuuta", s03: "Saadaolev kapital", s04: "Arvutuse tulemus", s05: "Andmete logi ja allikad",
+    searchPh: "nt AAPL, Tesla, Novo Nordiskâ¦", btnFind: "Otsi",
+    lblPrice: "Ãhe aktsia hind", pricePh: "sisesta hind vÃµi otsi Ã¼leval", lblPriceCcy: "Hinna valuuta",
+    lblCapital: "PÃ¤ris raha ostuks", capitalPh: "nt 1000", lblCapCcy: "Kapitali valuuta",
+    thTime: "Aeg", thType: "TÃ¼Ã¼p", thData: "Andmed", thSource: "Allikas",
+    logEmpty: "Praegu tÃ¼hi. Iga veebist saadud vÃ¤Ã¤rtus ilmub siia koos aja ja allikaga.",
+    note: "Aktsia hind pÃ¤rineb avalikest veebiallikatest ja vÃµib bÃ¶rsist maha jÃ¤Ã¤da. Kursid on EKP viitekursid avatud Frankfurter API kaudu (allikas, mida kasutab Eesti Pank), fikseeritakse kord tÃ¶Ã¶pÃ¤evas u 16:00 CET. TÃ¶Ã¶riist on informatiivne ega ole investeerimissoovitus.",
+    fxBase: "EKP baasvaluuta â kurss", fxPrefix: "Eesti Pank / EKP", fxFrom: "kurss kuupÃ¤evast", fxGot: "saadud",
+    fxRefresh: "vÃ¤rskenda", fxRetry: "proovi uuesti", fxLoad: "lae", fxLoading: "KÃ¼sin EKP kurssiâ¦",
+    fxFail: "Kurssi ei saadud.", fxManualLabel: "Kurss ei laadinud â sisesta 1 EUR =", fxManualPh: "kurss",
+    searching: q => `Otsin veebist â${q}ââ¦`,
+    notFound: q => `Ei leidnud aktsiat pÃ¤ringule â${q}â.`,
+    nofunc: "Automaatne otsing pole sellel aadressil Ã¼hendatud. Ava tÃ¶Ã¶riist domeenil, kus on /api/stock funktsioon (Vercel), vÃµi sisesta hind kÃ¤sitsi allpool â arvutus tÃ¶Ã¶tab nii vÃµi naa.",
+    searchErr: e => `Otsingu viga: ${e}. Sisesta hind kÃ¤sitsi allpool.`,
+    resEmpty: "Sisesta aktsia hind ja kapital â siia ilmub aktsiate arv.",
+    resWait: "Oota, kuni valuutakursid laaditakse (vÃµi sisesta need kÃ¤sitsi Ã¼leval).",
+    rowCapital: (a, b) => `Kapital (${a} â ${b})`, rowPrice: "Aktsia hind", rowBought: (n, p) => `Ostetud: ${n} Ã ${p}`,
+    remTitle: "JÃ¤Ã¤k (raha, mis ostu ei lÃ¤inud)",
+    logStock: "Aktsia hind", logInfo: "EttevÃµtte info", logFx: "Valuutakursid", logFxReserve: "Valuutakursid (varu)",
+    srcWeb: "veebiotsing", srcReserve: "currency-api (EKP andmed)",
+    perMonth: "kuus",
+    curr: { EUR: "euro", USD: "USA dollar", GBP: "naelsterling", CHF: "Å veitsi frank", JPY: "jeen" },
+    canBuy: n => `${n === 1 ? "aktsia" : "aktsiat"} saad osta`,
+  },
+};
+
+let currentLang = "en", numLocale = "en-US", L = T.en, lastStock = null;
+const rates = { EUR: { rate: 1, date: "base", source: "Eesti Pank / ECB", time: "â" } };
 
 const $ = id => document.getElementById(id);
-const nowStr = () => new Date().toLocaleString("ru-RU",{hour:"2-digit",minute:"2-digit",second:"2-digit",day:"2-digit",month:"2-digit"});
-const fmt = (n,d=2) => (n==null||isNaN(n)) ? "—" : Number(n).toLocaleString("ru-RU",{minimumFractionDigits:d,maximumFractionDigits:d});
-const fmtInt = n => (n==null||isNaN(n)) ? "—" : Math.trunc(n).toLocaleString("ru-RU");
-const parseNum = v => { const n = parseFloat(String(v).replace(",",".")); return isNaN(n)?null:n; };
-const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nowStr = () => new Date().toLocaleString(numLocale, { hour: "2-digit", minute: "2-digit", second: "2-digit", day: "2-digit", month: "2-digit" });
+const fmt = (n, d = 2) => (n == null || isNaN(n)) ? "â" : Number(n).toLocaleString(numLocale, { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtInt = n => (n == null || isNaN(n)) ? "â" : Math.trunc(n).toLocaleString(numLocale);
+const parseNum = v => { const n = parseFloat(String(v).replace(",", ".")); return isNaN(n) ? null : n; };
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-CURRENCIES.forEach(c=>["priceCcy","capCcy"].forEach(id=>{
-  const o=document.createElement("option"); o.value=c.code; o.textContent=c.label; $(id).appendChild(o);
-}));
-$("priceCcy").value="USD"; $("capCcy").value="EUR";
+function pickLang() {
+  try { const s = localStorage.getItem("siteLang"); if (s && T[s]) return s; } catch (e) {}
+  return "en";
+}
 
-function pushLog(kind,detail,source,extra){
-  const tr=document.createElement("tr");
-  tr.innerHTML = `<td class="t">${nowStr()}</td><td style="font-weight:600">${esc(kind)}</td>`+
-    `<td class="d">${esc(detail)}${extra?` <span style="font-family:var(--sans);color:var(--muted)">· ${esc(extra)}</span>`:""}</td>`+
-    `<td style="color:var(--ink2)">${esc(source)}</td>`;
+function buildCurrencyOptions(sel) {
+  const prev = sel.value;
+  sel.innerHTML = "";
+  CURRENCIES.forEach(code => {
+    const o = document.createElement("option");
+    o.value = code; o.textContent = `${code} â ${L.curr[code]}`;
+    sel.appendChild(o);
+  });
+  if (prev) sel.value = prev;
+}
+
+function applyLang(lang) {
+  if (!T[lang]) lang = "en";
+  currentLang = lang; L = T[lang]; numLocale = L.locale;
+  document.documentElement.lang = lang;
+  $("backlink").textContent = "← " + L.back;
+  $("kicker").textContent = L.kicker; $("h1").textContent = L.h1; $("lead").textContent = L.lead;
+  $("t01").textContent = L.s01; $("t02").textContent = L.s02; $("t03").textContent = L.s03; $("t04").textContent = L.s04; $("t05").textContent = L.s05;
+  $("searchBtn").textContent = L.btnFind; $("ticker").placeholder = L.searchPh;
+  $("lblPrice").textContent = L.lblPrice; $("price").placeholder = L.pricePh; $("lblPriceCcy").textContent = L.lblPriceCcy;
+  $("lblCapital").textContent = L.lblCapital; $("capital").placeholder = L.capitalPh; $("lblCapCcy").textContent = L.lblCapCcy;
+  $("thTime").textContent = L.thTime; $("thType").textContent = L.thType; $("thData").textContent = L.thData; $("thSource").textContent = L.thSource;
+  $("logEmpty").textContent = L.logEmpty; $("note").textContent = L.note;
+  buildCurrencyOptions($("priceCcy")); buildCurrencyOptions($("capCcy"));
+  document.querySelectorAll(".langsw button").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+  try { localStorage.setItem("siteLang", lang); } catch (e) {}
+  renderFx(); recompute();
+  if (lastStock) renderStockCard(lastStock);
+}
+
+function pushLog(kind, detail, source, extra) {
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td class="t">${nowStr()}</td><td style="font-weight:600">${esc(kind)}</td>` +
+    `<td class="d">${esc(detail)}${extra ? ` <span style="color:var(--text-muted)">Â· ${esc(extra)}</span>` : ""}</td>` +
+    `<td style="color:var(--text-body)">${esc(source)}</td>`;
   $("logBody").prepend(tr);
-  $("logEmpty").style.display="none"; $("logTable").style.display="";
+  $("logEmpty").style.display = "none"; $("logTable").style.display = "";
 }
 
-/* ─── ИИ-поиск акции через серверную функцию ─── */
-async function searchStock(){
-  const q = $("ticker").value.trim();
-  if(!q) return;
-  $("stockMsg").innerHTML = `<div class="msg-note"><span class="placeholder">Ищу «${esc(q)}» в интернете…</span></div>`;
-  $("stockResult").style.display="none";
-  $("searchBtn").disabled = true;
-  try{
-    const r = await fetch(`${API_BASE}/api/stock?q=`+encodeURIComponent(q));
-    if(!r.ok && r.status===404) throw {kind:"nofunc"};
-    const obj = await r.json();
-    if(obj.found===false){
-      $("stockMsg").innerHTML = `<div class="msg-err">⚠ ${esc(obj.error||("Не нашёл акцию по запросу «"+q+"»."))}</div>`;
-      return;
-    }
-    renderStock(obj, q);
-  }catch(e){
-    if(e && e.kind==="nofunc"){
-      $("stockMsg").innerHTML = `<div class="msg-note">Автопоиск на этом адресе не подключён. Откройте инструмент на домене с функцией <code>/api/stock</code> (Vercel) или просто введите цену вручную ниже — расчёт работает в любом случае.</div>`;
-    } else {
-      $("stockMsg").innerHTML = `<div class="msg-err">⚠ Ошибка поиска: ${esc((e&&e.message)||"сеть недоступна")}. Введите цену вручную ниже.</div>`;
-    }
-  }finally{
-    $("searchBtn").disabled = false;
-  }
-}
-
-function renderStock(obj, q){
-  $("stockMsg").innerHTML = "";
-  const up = obj.monthChangePct!=null && obj.monthChangePct>=0;
-  let trendChip = "";
-  if(obj.monthChangePct!=null){
-    trendChip = `<span class="chip ${up?"up":"down"}">${up?"▲ +":"▼ "}${fmt(obj.monthChangePct)} % за месяц</span>`;
-  } else if(obj.trendNote){
-    trendChip = `<span class="chip">${esc(obj.trendNote)}</span>`;
-  }
-  $("stockResult").innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap">
-      <div>
-        <div style="font-size:19px;font-weight:700">${esc(obj.name||q)}</div>
-        <div style="color:var(--muted);font-size:13px;font-family:var(--mono);margin-top:2px">${esc(obj.ticker||"")}${obj.exchange?" · "+esc(obj.exchange):""}</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-family:var(--mono);font-size:24px;font-weight:700">${fmt(obj.price)} <span style="font-size:15px;color:var(--muted)">${esc(obj.currency||"")}</span></div>
-        <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${esc(obj.asOf||"")}</div>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-      ${obj.segment?`<span class="chip">${esc(obj.segment)}</span>`:""}
-      ${trendChip}
-    </div>
-    ${obj.intro?`<p style="margin:12px 0 0;font-size:13.5px;color:var(--ink2);line-height:1.55">${esc(obj.intro)}</p>`:""}`;
-  $("stockResult").style.display="";
-
-  // подставляем цену и валюту в калькулятор
-  if(obj.price!=null && !isNaN(obj.price)){
-    $("price").value = obj.price;
-    $("priceSrc").textContent = "· подставлено из поиска, можно изменить";
-  }
-  if(obj.currency && CURRENCIES.some(c=>c.code===obj.currency)){
-    $("priceCcy").value = obj.currency;
-    if(!rates[obj.currency]) fetchRate(obj.currency);
-  }
-  pushLog("Цена акции", `${obj.ticker||q} — ${obj.name||""}: ${fmt(obj.price)} ${obj.currency||""}`, obj.source||"веб-поиск", obj.asOf);
-  if(obj.segment||obj.trendNote||obj.monthChangePct!=null){
-    pushLog("Информация о компании", `${obj.segment||"—"} · ${obj.trendNote||(obj.monthChangePct!=null?fmt(obj.monthChangePct)+"% за месяц":"—")}`, obj.source||"веб-поиск", obj.asOf);
-  }
+async function fetchRate() {
+  const want = CURRENCIES.filter(c => c !== "EUR");
+  ["priceFx", "capFx"].forEach(t => {
+    const sel = t === "priceFx" ? "priceCcy" : "capCcy"; const cur = $(sel).value;
+    if (cur !== "EUR" && (!rates[cur] || rates[cur].error)) $(t).innerHTML = `<span class="placeholder">${L.fxLoading}</span>`;
+  });
+  // 1) Frankfurter (api.frankfurter.dev) â ÑÐ¿ÑÐ°Ð²Ð¾ÑÐ½ÑÐµ ÐºÑÑÑÑ ÐÐ¦Ð
+  try {
+    const r = await fetch(`https://api.frankfurter.dev/v1/latest?base=EUR&symbols=${want.join(",")}`);
+    if (!r.ok) throw 0;
+    const d = await r.json(); if (!d || !d.rates) throw 0;
+    const got = want.filter(c => d.rates[c] != null);
+    got.forEach(c => rates[c] = { rate: d.rates[c], date: d.date, source: "ECB / Frankfurter", time: nowStr() });
+    if (got.length) { pushLog(L.logFx, got.map(c => `1 EUR = ${fmt(d.rates[c], 4)} ${c}`).join("; "), "ECB / Frankfurter", `${L.fxFrom} ${d.date}`); renderFx(); recompute(); return; }
+  } catch (e) {}
+  // 2) Ð ÐµÐ·ÐµÑÐ²: currency-api (CDN jsDelivr), Ð´Ð°Ð½Ð½ÑÐµ ÐÐ¦Ð
+  try {
+    const r = await fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json");
+    if (!r.ok) throw 0;
+    const d = await r.json(); const eur = d.eur || {};
+    const got = want.filter(c => eur[c.toLowerCase()] != null);
+    got.forEach(c => rates[c] = { rate: eur[c.toLowerCase()], date: d.date || "â", source: L.srcReserve, time: nowStr() });
+    if (got.length) { pushLog(L.logFxReserve, got.map(c => `1 EUR = ${fmt(eur[c.toLowerCase()], 4)} ${c}`).join("; "), L.srcReserve, d.date || ""); renderFx(); recompute(); return; }
+  } catch (e) {}
+  want.forEach(c => { if (!rates[c] || rates[c].error) rates[c] = { error: true, time: nowStr() }; });
   renderFx(); recompute();
 }
 
-/* ─── Курс валют из ECB (Frankfurter, без ключа) ─── */
-async function fetchRate(ccy){
-  if(ccy==="EUR"){ renderFx(); recompute(); return; }
-  const targets = [];
-  if($("priceCcy").value===ccy) targets.push("priceFx");
-  if($("capCcy").value===ccy) targets.push("capFx");
-  targets.forEach(t=>$(t).innerHTML = `<span class="placeholder">Запрашиваю курс ЕЦБ…</span>`);
-  try{
-    const r = await fetch(`https://api.frankfurter.app/latest?from=EUR&to=${ccy}`);
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const d = await r.json();
-    const rate = d.rates && d.rates[ccy];
-    if(!rate) throw new Error("нет курса");
-    rates[ccy] = {rate, date:d.date, source:"ECB / Frankfurter", time:nowStr()};
-    pushLog("Курс валюты", `1 EUR = ${fmt(rate,4)} ${ccy}`, "ECB / Frankfurter", `курс ЕЦБ от ${d.date}`);
-  }catch(e){
-    rates[ccy] = {error:true, time:nowStr()};
-  }
-  renderFx(); recompute();
-}
-
-function renderFx(){
-  [["priceFx","priceCcy","priceManual"],["capFx","capCcy","capManual"]].forEach(([fxId,selId,manId])=>{
+function renderFx() {
+  [["priceFx", "priceCcy", "priceManual"], ["capFx", "capCcy", "capManual"]].forEach(([fxId, selId, manId]) => {
     const ccy = $(selId).value, el = $(fxId), man = $(manId);
-    if(ccy==="EUR"){ el.innerHTML = `Базовая валюта ЕЦБ — курс <b>1,0000</b>`; man.style.display="none"; return; }
+    if (ccy === "EUR") { el.innerHTML = `${L.fxBase} <b>${fmt(1, 4)}</b>`; man.style.display = "none"; return; }
     const rr = rates[ccy];
-    if(rr && !rr.error){
-      el.innerHTML = `Eesti Pank / ЕЦБ: <b>1 EUR = ${fmt(rr.rate,4)} ${ccy}</b>`+
-        `<span style="color:var(--muted)"> · курс от ${rr.date} · получено ${rr.time}</span>`+
-        `<button class="mini" data-refresh="${ccy}">обновить</button>`;
-      man.style.display="none";
-    } else if(rr && rr.error){
-      el.innerHTML = `<span style="color:var(--down)">Курс не получен. </span><button class="mini" data-refresh="${ccy}">повторить</button>`;
-      man.style.display="flex";
+    if (rr && !rr.error) {
+      el.innerHTML = `${L.fxPrefix}: <b>1 EUR = ${fmt(rr.rate, 4)} ${ccy}</b>` +
+        `<span style="color:var(--text-muted)"> Â· ${L.fxFrom} ${rr.date} Â· ${L.fxGot} ${rr.time}</span>` +
+        `<button class="mini" data-refresh="1">${L.fxRefresh}</button>`;
+      man.style.display = "none";
+    } else if (rr && rr.error) {
+      el.innerHTML = `<span style="color:var(--loss)">${L.fxFail} </span><button class="mini" data-refresh="1">${L.fxRetry}</button>`;
+      man.querySelector(".ml").textContent = L.fxManualLabel; man.querySelector("input").placeholder = L.fxManualPh;
+      man.style.display = "flex";
     } else {
-      el.innerHTML = `<span class="placeholder">Курс ещё не запрошен.</span><button class="mini" data-refresh="${ccy}">загрузить</button>`;
-      man.style.display="none";
+      el.innerHTML = `<span class="placeholder">â</span> <button class="mini" data-refresh="1">${L.fxLoad}</button>`;
+      man.style.display = "none";
     }
   });
 }
 
-function getRate(which){
-  const ccy = which==="price" ? $("priceCcy").value : $("capCcy").value;
-  if(ccy==="EUR") return 1;
+function getRate(which) {
+  const ccy = which === "price" ? $("priceCcy").value : $("capCcy").value;
+  if (ccy === "EUR") return 1;
   const rr = rates[ccy];
-  if(rr && !rr.error) return rr.rate;
-  const man = which==="price" ? $("priceManual") : $("capManual");
+  if (rr && !rr.error) return rr.rate;
+  const man = which === "price" ? $("priceManual") : $("capManual");
   const v = parseNum(man.querySelector("input").value);
-  return (man.style.display!=="none" && v>0) ? v : null;
+  return (man.style.display !== "none" && v > 0) ? v : null;
 }
 
-function recompute(){
-  const price = parseNum($("price").value);
-  const capital = parseNum($("capital").value);
-  const priceCcy = $("priceCcy").value, capCcy = $("capCcy").value;
-  const rPrice = getRate("price"), rCap = getRate("cap");
-  const el = $("result");
+async function searchStock() {
+  const q = $("ticker").value.trim(); if (!q) return;
+  $("stockMsg").innerHTML = `<div class="msg-note"><span class="placeholder">${esc(L.searching(q))}</span></div>`;
+  $("stockResult").style.display = "none"; $("searchBtn").disabled = true;
+  try {
+    const r = await fetch(`${API_BASE}/api/stock?q=${encodeURIComponent(q)}&lang=${currentLang}`);
+    if (!r.ok && r.status === 404) throw { kind: "nofunc" };
+    const obj = await r.json();
+    if (obj.found === false) { $("stockMsg").innerHTML = `<div class="msg-err">â  ${esc(obj.error || L.notFound(q))}</div>`; return; }
+    obj._q = q; lastStock = obj;
+    applyStockSideEffects(obj, q);
+    renderStockCard(obj);
+  } catch (e) {
+    if (e && e.kind === "nofunc") $("stockMsg").innerHTML = `<div class="msg-note">${esc(L.nofunc)}</div>`;
+    else $("stockMsg").innerHTML = `<div class="msg-err">â  ${esc(L.searchErr((e && e.message) || ""))}</div>`;
+  } finally { $("searchBtn").disabled = false; }
+}
 
-  if(!(price>0) || !(capital>0)){
-    el.innerHTML = `<div style="display:flex;gap:10px;color:var(--ink2);font-size:13.5px;align-items:center">Заполните цену акции и капитал — здесь появится число акций.</div>`;
-    return;
-  }
-  if(!rPrice || !rCap){
-    el.innerHTML = `<div style="display:flex;gap:10px;color:var(--ink2);font-size:13.5px;align-items:center">Дождитесь загрузки курсов валют (или введите их вручную выше).</div>`;
-    return;
-  }
+function applyStockSideEffects(obj, q) {
+  if (obj.price != null && !isNaN(obj.price)) $("price").value = obj.price;
+  if (obj.currency && CURRENCIES.includes(obj.currency)) { $("priceCcy").value = obj.currency; if (!rates[obj.currency]) fetchRate(); }
+  pushLog(L.logStock, `${obj.ticker || q} â ${obj.name || ""}: ${fmt(obj.price)} ${obj.currency || ""}`, obj.source || L.srcWeb, obj.asOf);
+  if (obj.segment || obj.trendNote || obj.monthChangePct != null)
+    pushLog(L.logInfo, `${obj.segment || "â"} Â· ${obj.trendNote || (obj.monthChangePct != null ? fmt(obj.monthChangePct) + "% " + L.perMonth : "â")}`, obj.source || L.srcWeb, obj.asOf);
+}
 
-  const capInEUR = capital / rCap;
-  const capInPrice = capInEUR * rPrice;
-  const shares = Math.floor(capInPrice / price);
-  const spent = shares * price;
-  const remPrice = capInPrice - spent;
-  const remCap = (remPrice / rPrice) * rCap;
-  const word = shares===1 ? "акция" : (shares>=2 && shares<=4 ? "акции" : "акций");
-
-  el.innerHTML = `
-    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
-      <div class="bignum">${fmtInt(shares)}</div>
-      <div style="font-size:15px;font-weight:600;color:var(--ink2)">${word} можно купить</div>
+function renderStockCard(obj) {
+  $("stockMsg").innerHTML = "";
+  const up = obj.monthChangePct != null && obj.monthChangePct >= 0;
+  let chip = "";
+  if (obj.monthChangePct != null) chip = `<span class="chip ${up ? "up" : "down"}">${up ? "â² +" : "â¼ -"}${fmt(Math.abs(obj.monthChangePct))} % ${L.perMonth}</span>`;
+  else if (obj.trendNote) chip = `<span class="chip">${esc(obj.trendNote)}</span>`;
+  $("stockResult").innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+      <div>
+        <div class="sname">${esc(obj.name || obj._q || "")}</div>
+        <div class="sticker">${esc(obj.ticker || "")}${obj.exchange ? " Â· " + esc(obj.exchange) : ""}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="sprice">${fmt(obj.price)} <span class="sccy">${esc(obj.currency || "")}</span></div>
+        <div class="sasof">${esc(obj.asOf || "")}</div>
+      </div>
     </div>
-    <div style="margin-top:16px">
-      <div class="row"><span>Капитал (${capCcy} → ${priceCcy})</span><span>${fmt(capInPrice)} ${priceCcy}</span></div>
-      <div class="row"><span>Цена за акцию</span><span>× ${fmt(price)} ${priceCcy}</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+      ${obj.segment ? `<span class="chip">${esc(obj.segment)}</span>` : ""}${chip}
+    </div>
+    ${obj.intro ? `<p class="sintro">${esc(obj.intro)}</p>` : ""}`;
+  $("stockResult").style.display = "";
+}
+
+function recompute() {
+  const price = parseNum($("price").value), capital = parseNum($("capital").value);
+  const priceCcy = $("priceCcy").value, capCcy = $("capCcy").value;
+  const rPrice = getRate("price"), rCap = getRate("cap"); const el = $("result");
+  if (!(price > 0) || !(capital > 0)) { el.innerHTML = `<div class="resmsg">${L.resEmpty}</div>`; return; }
+  if (!rPrice || !rCap) { el.innerHTML = `<div class="resmsg">${L.resWait}</div>`; return; }
+  const capInEUR = capital / rCap, capInPrice = capInEUR * rPrice;
+  const shares = Math.floor(capInPrice / price), spent = shares * price;
+  const remPrice = capInPrice - spent, remCap = (remPrice / rPrice) * rCap;
+  el.innerHTML = `
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <div class="bignum">${fmtInt(shares)}</div>
+      <div class="bigword">${L.canBuy(shares)}</div>
+    </div>
+    <div style="margin-top:18px">
+      <div class="rowline"><span>${L.rowCapital(capCcy, priceCcy)}</span><span>${fmt(capInPrice)} ${priceCcy}</span></div>
+      <div class="rowline"><span>${L.rowPrice}</span><span>Ã ${fmt(price)} ${priceCcy}</span></div>
       <div class="dash"></div>
-      <div class="row strong"><span>Куплено: ${fmtInt(shares)} × ${fmt(price)}</span><span>${fmt(spent)} ${priceCcy}</span></div>
+      <div class="rowline strong"><span>${L.rowBought(fmtInt(shares), fmt(price))}</span><span>${fmt(spent)} ${priceCcy}</span></div>
     </div>
     <div class="remainder">
-      <div class="rem-l">Остаток (деньги, не вошедшие в покупку)</div>
-      <div class="rem-v">${fmt(remPrice)} ${priceCcy} <span style="color:var(--muted);font-weight:400;font-size:13.5px">(≈ ${fmt(remCap)} ${capCcy})</span></div>
+      <div class="rem-l">${L.remTitle}</div>
+      <div class="rem-v">${fmt(remPrice)} ${priceCcy} <span class="rem-sub">(â ${fmt(remCap)} ${capCcy})</span></div>
     </div>`;
 }
 
-/* события */
-$("searchBtn").addEventListener("click", searchStock);
-$("ticker").addEventListener("keydown", e=>{ if(e.key==="Enter") searchStock(); });
-$("priceCcy").addEventListener("change",()=>{ if(!rates[$("priceCcy").value]) fetchRate($("priceCcy").value); else {renderFx();recompute();} });
-$("capCcy").addEventListener("change",()=>{ if(!rates[$("capCcy").value]) fetchRate($("capCcy").value); else {renderFx();recompute();} });
-["price","capital"].forEach(id=>$(id).addEventListener("input",recompute));
-document.querySelectorAll(".manualRate input").forEach(i=>i.addEventListener("input",recompute));
-document.addEventListener("click",e=>{ const b=e.target.closest("[data-refresh]"); if(b) fetchRate(b.getAttribute("data-refresh")); });
+/* init */
+applyLang(pickLang());
+$("priceCcy").value = "USD"; $("capCcy").value = "EUR";
+renderFx(); fetchRate(); recompute();
 
-/* первичная загрузка */
-renderFx();
-fetchRate("USD");
-recompute();
+/* events */
+$("searchBtn").addEventListener("click", searchStock);
+$("ticker").addEventListener("keydown", e => { if (e.key === "Enter") searchStock(); });
+$("priceCcy").addEventListener("change", () => { const v = $("priceCcy").value; if (v !== "EUR" && (!rates[v] || rates[v].error)) fetchRate(); else { renderFx(); recompute(); } });
+$("capCcy").addEventListener("change", () => { const v = $("capCcy").value; if (v !== "EUR" && (!rates[v] || rates[v].error)) fetchRate(); else { renderFx(); recompute(); } });
+["price", "capital"].forEach(id => $(id).addEventListener("input", recompute));
+document.querySelectorAll(".manualRate input").forEach(i => i.addEventListener("input", recompute));
+document.addEventListener("click", e => { if (e.target.closest("[data-refresh]")) fetchRate(); });
+document.querySelectorAll(".langsw button").forEach(b => b.addEventListener("click", () => applyLang(b.dataset.lang)));
+window.addEventListener("storage", e => { if (e.key === "siteLang" && e.newValue && T[e.newValue]) applyLang(e.newValue); });
 </script>
 </body>
 </html>
