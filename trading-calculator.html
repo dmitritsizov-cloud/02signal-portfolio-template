@@ -88,11 +88,22 @@
   .empty{padding:18px;color:var(--text-muted);font-size:13.5px}
   .note{font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:20px}
   .placeholder{color:var(--text-muted)}
+  .donate{background:linear-gradient(135deg,var(--navy) 0%,var(--purple-light) 100%);border:none;color:#fff;text-align:center;padding:36px 30px}
+  .donate h2{font-family:var(--serif);font-size:30px;font-weight:600;color:#fff;line-height:1.15;margin-bottom:13px}
+  .donate p{max-width:540px;margin:0 auto 22px;font-size:14.5px;line-height:1.7;color:rgba(255,255,255,.92)}
+  .donate #donLead{margin-bottom:6px}
+  .donate #donLead p{margin:0 auto 12px}
+  .don-sign{max-width:540px;margin:0 auto 22px;font-size:14px;font-style:italic;color:rgba(255,255,255,.85)}
+  .btn-pay{display:inline-flex;align-items:center;gap:9px;background:#fff;color:var(--navy);border-radius:8px;padding:13px 28px;font-size:15px;font-weight:700;text-decoration:none;font-family:var(--sans);transition:transform .15s,box-shadow .15s}
+  .btn-pay:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(15,16,67,.28)}
+  .btn-pay svg{flex:none}
+  .donfoot{margin-top:14px;font-size:12px;color:rgba(255,255,255,.72);letter-spacing:.01em}
   @media(max-width:540px){
     .grid{grid-template-columns:1fr}
     h1{font-size:34px} .bignum{font-size:50px}
     body{padding:28px 16px 56px}
     .searchrow{flex-direction:column} .btn{padding:12px 24px}
+    .donate{padding:30px 22px} .donate h2{font-size:25px}
   }
 </style>
 </head>
@@ -185,6 +196,20 @@
     </div>
   </section>
 
+  <!-- Donate -->
+  <section>
+    <div class="card donate">
+      <h2 id="donTitle"></h2>
+      <div id="donLead"></div>
+      <div class="don-sign" id="donSign"></div>
+      <a class="btn-pay" id="donBtn" href="#" target="_blank" rel="noopener">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span id="donBtnTxt"></span>
+      </a>
+      <div class="donfoot" id="donFoot"></div>
+    </div>
+  </section>
+
   <p class="note" id="note"></p>
 </div>
 
@@ -196,6 +221,16 @@
    "https://02signal-portfolio-template.vercel.app"
    ────────────────────────────────────────────────────────────── */
 const API_BASE = "";
+
+/* ──────────────────────────────────────────────────────────────
+   PAYPAL_URL — ваша ссылка PayPal.me для приёма пожертвований.
+   Замените YOUR_HANDLE на свой ник, например:
+   "https://paypal.me/dmitritsizov"
+   Где взять ник: откройте https://www.paypal.com/paypalme/ (войдя
+   в свой PayPal) и задайте свой PayPal.me-адрес — это бесплатно и
+   работает на личном аккаунте.
+   ────────────────────────────────────────────────────────────── */
+const PAYPAL_URL = "https://paypal.me/dmitritsizov";
 
 const CURRENCIES = ["EUR", "USD", "GBP", "CHF", "JPY"];
 
@@ -229,6 +264,15 @@ const T = {
     perMonth: "for the month",
     curr: { EUR: "euro", USD: "US dollar", GBP: "pound sterling", CHF: "Swiss franc", JPY: "yen" },
     canBuy: n => `${n === 1 ? "share" : "shares"} you can buy`,
+    donTitle: "Support the project",
+    donLead: [
+      "Thank you for using this tool. I build it so you always have fast, accurate and completely free access to live ECB rates and prices — no ads, no data collection, no hidden motives.",
+      "To keep it running, I pay for the paid APIs out of my own pocket every month. While every cost is on me, new features arrive slower than I'd like.",
+      "If it has saved you time, I'd be grateful for your support. Even a small one-time donation helps keep the project online and lets me put more into developing it. It's a signal that this work matters.",
+    ],
+    donSign: "With thanks, Dmitri",
+    donBtn: "Support via PayPal",
+    donFoot: "One-time · no PayPal account needed · card works too",
   },
   ru: {
     locale: "ru-RU",
@@ -259,6 +303,15 @@ const T = {
     perMonth: "за месяц",
     curr: { EUR: "евро", USD: "доллар США", GBP: "фунт стерлингов", CHF: "швейцарский франк", JPY: "иена" },
     canBuy: n => { const a = Math.abs(n) % 100, b = n % 10; let w; if (a > 10 && a < 20) w = "акций"; else if (b === 1) w = "акция"; else if (b >= 2 && b <= 4) w = "акции"; else w = "акций"; return `${w} можно купить`; },
+    donTitle: "Поддержать проект",
+    donLead: [
+      "Спасибо, что пользуетесь инструментом. Я делаю его, чтобы у вас был быстрый, точный и полностью бесплатный доступ к живым курсам и ценам ЕЦБ — без рекламы, без сбора данных, без скрытых мотивов.",
+      "Чтобы это работало, я каждый месяц оплачиваю платные API из своего кармана. Пока все расходы на мне, новые возможности появляются медленнее, чем хотелось бы.",
+      "Если инструмент сэкономил вам время — буду благодарен за поддержку. Даже небольшой разовый донат помогает держать проект онлайн и вкладывать больше сил в развитие. Это сигнал, что такая работа нужна.",
+    ],
+    donSign: "С уважением, Дмитри",
+    donBtn: "Поддержать через PayPal",
+    donFoot: "Разово · аккаунт PayPal не нужен · можно картой",
   },
   et: {
     locale: "et-EE",
@@ -289,6 +342,15 @@ const T = {
     perMonth: "kuus",
     curr: { EUR: "euro", USD: "USA dollar", GBP: "naelsterling", CHF: "Šveitsi frank", JPY: "jeen" },
     canBuy: n => `${n === 1 ? "aktsia" : "aktsiat"} saad osta`,
+    donTitle: "Toeta projekti",
+    donLead: [
+      "Aitäh, et kasutad seda tööriista. Teen seda selleks, et sul oleks alati kiire, täpne ja täiesti tasuta ligipääs reaalajas EKP kurssidele ja hindadele — ilma reklaami, andmekogumise ja varjatud motiivideta.",
+      "Et see töötaks, maksan tasuliste API-de eest iga kuu oma taskust. Kuni kõik kulud on minu kanda, lisanduvad uued võimalused aeglasemalt kui sooviksin.",
+      "Kui tööriist on sulle aega säästnud, oleksin toetuse eest tänulik. Isegi väike ühekordne annetus aitab hoida projekti töös ja annab mulle võimaluse rohkem arendamisse panustada. See on märk, et selline töö on vajalik.",
+    ],
+    donSign: "Lugupidamisega, Dmitri",
+    donBtn: "Toeta PayPaliga",
+    donFoot: "Ühekordne · PayPali kontot pole vaja · ka kaardiga",
   },
 };
 
@@ -330,6 +392,11 @@ function applyLang(lang) {
   $("lblCapital").textContent = L.lblCapital; $("capital").placeholder = L.capitalPh; $("lblCapCcy").textContent = L.lblCapCcy;
   $("thTime").textContent = L.thTime; $("thType").textContent = L.thType; $("thData").textContent = L.thData; $("thSource").textContent = L.thSource;
   $("logEmpty").textContent = L.logEmpty; $("note").textContent = L.note;
+  $("donTitle").textContent = L.donTitle;
+  $("donLead").innerHTML = L.donLead.map(p => "<p>" + esc(p) + "</p>").join("");
+  $("donSign").textContent = L.donSign;
+  $("donBtnTxt").textContent = L.donBtn; $("donFoot").textContent = L.donFoot;
+  $("donBtn").href = PAYPAL_URL;
   buildCurrencyOptions($("priceCcy")); buildCurrencyOptions($("capCcy"));
   document.querySelectorAll(".langsw button").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
   try { localStorage.setItem("siteLang", lang); } catch (e) {}
