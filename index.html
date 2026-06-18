@@ -1079,6 +1079,38 @@
     @media (max-width: 768px) {
       .aboutme-media { max-width: 420px; margin: 0 auto; }
     }
+
+    /* ===== SUPPORT / DONATE ===== */
+    .support { max-width: 1400px; margin: 0 auto; padding: 40px 32px 72px; }
+    .support-card {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--purple-light) 100%);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      color: #fff;
+      text-align: center;
+      padding: 48px 40px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .support-title { font-family: var(--serif); font-size: 34px; font-weight: 600; color: #fff; line-height: 1.15; margin: 0 0 16px; }
+    .support-lead { max-width: 560px; margin: 0 auto 6px; }
+    .support-lead p { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.92); margin: 0 auto 12px; }
+    .support-sign { max-width: 560px; margin: 0 auto 24px; font-size: 14px; font-style: italic; color: rgba(255,255,255,0.85); }
+    .support-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: #fff; color: var(--navy);
+      border-radius: 8px; padding: 14px 30px;
+      font-size: 15px; font-weight: 700; text-decoration: none; font-family: var(--sans);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .support-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(15,16,67,0.28); }
+    .support-btn svg { flex: none; }
+    .support-foot { margin-top: 14px; font-size: 12px; color: rgba(255,255,255,0.72); }
+    @media (max-width: 768px) {
+      .support { padding: 32px 20px 56px; }
+      .support-card { padding: 34px 22px; }
+      .support-title { font-size: 27px; }
+    }
   </style>
 </head>
 <body>
@@ -1955,6 +1987,24 @@
     </div>
   </section>
 
+  <!-- ===== SUPPORT ===== -->
+  <section class="support" id="support">
+    <div class="support-card">
+      <h2 class="support-title" data-i18n="support_title">Support the project</h2>
+      <div class="support-lead" data-i18n="support_lead">
+        <p>Thank you for using these tools. I build them so you always have fast, accurate and completely free access to live ECB rates and prices — no ads, no data collection, no hidden motives.</p>
+        <p>To keep them running, I pay for the paid APIs out of my own pocket every month. While every cost is on me, new features arrive slower than I'd like.</p>
+        <p>If they have saved you time, I'd be grateful for your support. Even a small one-time donation helps keep the project online and lets me put more into developing it. It's a signal that this work matters.</p>
+      </div>
+      <p class="support-sign" data-i18n="support_sign">With thanks, Dmitri</p>
+      <a class="support-btn" href="https://paypal.me/dmitritsizov" target="_blank" rel="noopener">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span data-i18n="support_btn">Support via PayPal</span>
+      </a>
+      <div class="support-foot" data-i18n="support_foot">One-time · no PayPal account needed · card works too</div>
+    </div>
+  </section>
+
   <!-- ===== FOOTER ===== -->
   <footer id="contact">
     <div class="footer-inner">
@@ -2310,6 +2360,11 @@
       'footer_h2': 'Ühendus',
       'footer_loc': '📍 Eesti',
       'footer_copy': '© 2026 Dmitri Tsizov · Ehitatud 02Signal portfoolio malliga · Disain inspireeritud Alphabet Consultingust',
+      'support_title': 'Toeta projekti',
+      'support_lead': '<p>Aitäh, et kasutad neid tööriistu. Teen neid selleks, et sul oleks alati kiire, täpne ja täiesti tasuta ligipääs reaalajas EKP kurssidele ja hindadele — ilma reklaami, andmekogumise ja varjatud motiivideta.</p><p>Et need töötaks, maksan tasuliste API-de eest iga kuu oma taskust. Kuni kõik kulud on minu kanda, lisanduvad uued võimalused aeglasemalt kui sooviksin.</p><p>Kui need on sulle aega säästnud, oleksin toetuse eest tänulik. Isegi väike ühekordne annetus aitab hoida projekti töös ja annab mulle võimaluse rohkem arendamisse panustada. See on märk, et selline töö on vajalik.</p>',
+      'support_sign': 'Lugupidamisega, Dmitri',
+      'support_btn': 'Toeta PayPaliga',
+      'support_foot': 'Ühekordne · PayPali kontot pole vaja · ka kaardiga',
     },
       ru: {
       'page_title': 'Дмитрий Цизов — консультации по AI-автоматизации',
@@ -2577,6 +2632,11 @@
       'footer_h2': 'Связь',
       'footer_loc': '📍 Эстония',
       'footer_copy': '© 2026 Dmitri Tsizov · Создано на шаблоне портфолио 02Signal · Дизайн вдохновлён Alphabet Consulting',
+      'support_title': 'Поддержать проект',
+      'support_lead': '<p>Спасибо, что пользуетесь этими инструментами. Я делаю их, чтобы у вас был быстрый, точный и полностью бесплатный доступ к живым курсам и ценам ЕЦБ — без рекламы, без сбора данных, без скрытых мотивов.</p><p>Чтобы это работало, я каждый месяц оплачиваю платные API из своего кармана. Пока все расходы на мне, новые возможности появляются медленнее, чем хотелось бы.</p><p>Если они сэкономили вам время — буду благодарен за поддержку. Даже небольшой разовый донат помогает держать проект онлайн и вкладывать больше сил в развитие. Это сигнал, что такая работа нужна.</p>',
+      'support_sign': 'С уважением, Дмитри',
+      'support_btn': 'Поддержать через PayPal',
+      'support_foot': 'Разово · аккаунт PayPal не нужен · можно картой',
     }
     };
 
