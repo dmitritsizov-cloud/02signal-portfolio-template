@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://02signal-portfolio-template-sooty.vercel.app/sitemap.xml
