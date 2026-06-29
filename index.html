@@ -3,8 +3,101 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title data-i18n="page_title">Dmitri Tsizov — AI Automation Consulting</title>
-  <meta name="description" content="Practical AI automation for Estonian businesses. n8n workflows, Telegram bots, data reporting." />
+  <title data-i18n="page_title">Dmitri Tsizov — AI Automation Consultant | n8n, Telegram Bots & AI Assistants (Tartu, Estonia)</title>
+  <meta name="description" content="AI Automation Consultant in Tartu, Estonia. Practical n8n workflows, Telegram bots and AI assistants for small businesses. Real case study: ~600 hours/year saved for the UrbanStyle.ltd retail chain. See portfolio, demos and source code." />
+
+  <!-- Canonical: update to your custom domain once connected -->
+  <link rel="canonical" href="https://02signal-portfolio-template-sooty.vercel.app/" />
+  <meta name="author" content="Dmitri Tsizov" />
+
+  <!-- Open Graph (LinkedIn, Telegram, Facebook previews) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Dmitri Tsizov — AI Automation" />
+  <meta property="og:title" content="Dmitri Tsizov — AI Automation Consultant (Tartu, Estonia)" />
+  <meta property="og:description" content="Practical n8n workflows, Telegram bots and AI assistants for small businesses. Case study: ~600 hours/year saved for a retail chain." />
+  <meta property="og:url" content="https://02signal-portfolio-template-sooty.vercel.app/" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:locale:alternate" content="et_EE" />
+  <meta property="og:locale:alternate" content="ru_RU" />
+  <!-- Optional preview image 1200x630 px: add og-image.png to the repo root and uncomment
+  <meta property="og:image" content="https://02signal-portfolio-template-sooty.vercel.app/og-image.png" /> -->
+
+  <!-- Twitter / X card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Dmitri Tsizov — AI Automation Consultant" />
+  <meta name="twitter:description" content="n8n workflows, Telegram bots and AI assistants for small businesses in Estonia." />
+  <!-- <meta name="twitter:image" content="https://02signal-portfolio-template-sooty.vercel.app/og-image.png" /> -->
+
+  <!-- Structured data: Person + ProfessionalService (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://02signal-portfolio-template-sooty.vercel.app/#person",
+        "name": "Dmitri Tsizov",
+        "alternateName": "Dmitri T\u0161i\u017eov",
+        "jobTitle": "AI Automation Consultant",
+        "url": "https://02signal-portfolio-template-sooty.vercel.app/",
+        "knowsAbout": [
+          "AI automation",
+          "n8n workflows",
+          "Telegram bots",
+          "AI assistants",
+          "Claude API",
+          "Groq",
+          "Process automation"
+        ],
+        "knowsLanguage": ["en", "et", "ru"],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Tartu",
+          "addressCountry": "EE"
+        },
+        "sameAs": [
+          "https://github.com/dmitritsizov-cloud"
+        ]
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": "https://02signal-portfolio-template-sooty.vercel.app/#service",
+        "name": "Dmitri Tsizov — AI Automation Consulting",
+        "description": "Practical AI automation for small businesses: n8n workflows, Telegram bots, AI assistants and data reporting automation.",
+        "url": "https://02signal-portfolio-template-sooty.vercel.app/",
+        "provider": { "@id": "https://02signal-portfolio-template-sooty.vercel.app/#person" },
+        "founder": { "@id": "https://02signal-portfolio-template-sooty.vercel.app/#person" },
+        "areaServed": { "@type": "Country", "name": "Estonia" },
+        "availableLanguage": ["en", "et", "ru"],
+        "serviceType": "AI automation consulting",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Tartu",
+          "addressCountry": "EE"
+        },
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "AI automation services",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "n8n workflow automation" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Telegram bot development" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI assistants & chatbots" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Data reporting automation" } }
+          ]
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID, then this block goes live -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2095,7 +2188,7 @@
     // Pre-translated dictionaries embedded at build time — no API call, works on any host.
     const I18N = {
       et: {
-      'page_title': 'Dmitri Tsizov — AI-automaatika konsultatsioon',
+      'page_title': 'Dmitri Tsizov — AI-automaatika konsultant | n8n, Telegram-botid, AI-assistendid (Tartu, Eesti)',
       'aboutme_tag': 'Minust',
       'aboutme_title': 'Inimene töövoogude taga',
       'aboutme_role': 'AI-automaatika konsultant · Eesti · n8n · Claude · Groq',
@@ -2367,7 +2460,7 @@
       'support_foot': 'Ühekordne · PayPali kontot pole vaja · ka kaardiga',
     },
       ru: {
-      'page_title': 'Дмитрий Цизов — консультации по AI-автоматизации',
+      'page_title': 'Дмитрий Цизов — консультант по AI-автоматизации | n8n, Telegram-боты, AI-ассистенты (Тарту, Эстония)',
       'aboutme_tag': 'Обо мне',
       'aboutme_title': 'Человек, стоящий за workflow',
       'aboutme_role': 'Консультант по AI-автоматизации · Эстония · n8n · Claude · Groq',
